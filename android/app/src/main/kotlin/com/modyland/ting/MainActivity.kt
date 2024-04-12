@@ -1,4 +1,4 @@
-package com.example.ting_maker
+package com.modyland.ting
 
 import io.flutter.embedding.android.FlutterActivity
 
