@@ -35,6 +35,8 @@ class _OnePageScreenState extends State<OnePageScreen>
       color: Colors.black,
     );
     return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: const BoxDecoration(),
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(0, 160, 0, 100),
       child: Column(
@@ -57,7 +59,6 @@ class _OnePageScreenState extends State<OnePageScreen>
           Column(
             children: [
               Stack(
-                clipBehavior: Clip.none,
                 children: [
                   AnimatedBuilder(
                     animation: _controller,

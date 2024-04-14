@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:ting_maker/screen/onboarding/one.dart';
+import 'package:ting_maker/screen/onboarding/onboard_one.dart';
+import 'package:ting_maker/screen/onboarding/onboard_two.dart';
 import 'package:ting_maker/screen/onboarding/start_button_box.dart';
-import 'package:ting_maker/screen/onboarding/two.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
