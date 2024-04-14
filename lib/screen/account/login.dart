@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/widget/input_style.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -86,7 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             text: '아이디 찾기',
                             style: _findStyle,
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () => Get.toNamed('/find_id'),
+                              ..onTap = () => Get.toNamed('/find_id_pwd',
+                                  arguments: {'tab': 'id'}),
                           ),
                         ),
                         Container(
@@ -100,7 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             text: '비밀번호 찾기',
                             style: _findStyle,
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () => Get.toNamed('/find_pwd'),
+                              ..onTap = () => Get.toNamed('/find_id_pwd',
+                                  arguments: {'tab': 'pwd'}),
                           ),
                         )
                       ],
@@ -115,7 +117,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: MaterialButton(
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        shape: const StadiumBorder(),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             // 유효성 검사를 통과하면 실행될 코드를 작성합니다.

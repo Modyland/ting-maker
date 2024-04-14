@@ -122,3 +122,17 @@ TextStyle registerTitleStyle = const TextStyle(
   fontWeight: FontWeight.bold,
   color: Colors.black,
 );
+
+BoxDecoration enableButton = BoxDecoration(
+  borderRadius: BorderRadius.circular(10),
+  color: const Color(0XFF00BFFE),
+);
+
+BoxDecoration disableButton = BoxDecoration(
+  borderRadius: BorderRadius.circular(10),
+  color: Colors.transparent,
+  border: Border.all(
+    color: const Color(0xffbcc0c6),
+    width: 1,
+  ),
+);

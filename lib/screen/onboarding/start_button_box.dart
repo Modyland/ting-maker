@@ -21,9 +21,11 @@ class StartButtonBox extends StatelessWidget {
             ),
             child: MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              shape: const StadiumBorder(),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
               onPressed: () {
-                Get.toNamed('/service_agree');
+                Get.toNamed('/permission');
               },
               child: const Center(
                 child: Text(

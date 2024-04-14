@@ -1,22 +1,32 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ting_maker/controller/sample_controller.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
-import 'package:ting_maker/screen/account/find_id.dart';
-import 'package:ting_maker/screen/account/find_pwd.dart';
+import 'package:ting_maker/screen/account/find_id_pwd.dart';
 import 'package:ting_maker/screen/account/login.dart';
 import 'package:ting_maker/screen/home.dart';
 import 'package:ting_maker/screen/onboarding/onboarding.dart';
+import 'package:ting_maker/screen/onboarding/permission.dart';
 import 'package:ting_maker/screen/register/phone_check.dart';
+import 'package:ting_maker/screen/register/phone_check2.dart';
+import 'package:ting_maker/screen/register/profile_create.dart';
 import 'package:ting_maker/screen/register/register.dart';
+import 'package:ting_maker/screen/register/register2.dart';
 import 'package:ting_maker/screen/register/service_agree.dart';
+import 'package:ting_maker/util/device_info.dart';
 
 late SharedPreferences pref;
+late PackageInfo packageInfo;
+late Map<String, dynamic> deviceInfo;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,11 +35,24 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
+Future<void> deviceData() async {
+  DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  if (Platform.isAndroid) {
+    deviceInfo = readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+  } else if (Platform.isIOS) {
+    deviceInfo = readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+  } else if (kIsWeb) {
+    deviceInfo = readWebBrowserInfo(await deviceInfoPlugin.webBrowserInfo);
+  }
+}
+
 Future<void> init() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await deviceData();
+  packageInfo = await PackageInfo.fromPlatform();
   await dotenv.load();
 }
 
@@ -80,12 +103,41 @@ class MyApp extends StatelessWidget {
                   }
                 }),
             GetPage(
-                name: '/service_agree', page: () => const ServiceAgreeScreen()),
-            GetPage(name: '/phone_check', page: () => const PhoneCheckScreen()),
-            GetPage(name: '/register', page: () => const RegisterScreen()),
-            GetPage(name: '/login', page: () => const LoginScreen()),
-            GetPage(name: '/find_id', page: () => const FindIdScreen()),
-            GetPage(name: '/find_pwd', page: () => const FindPwdScreen())
+              name: '/permission',
+              page: () => const PermissionScreen(),
+            ),
+            GetPage(
+              name: '/service_agree',
+              page: () => const ServiceAgreeScreen(),
+            ),
+            GetPage(
+              name: '/phone_check',
+              page: () => const PhoneCheckScreen(),
+            ),
+            GetPage(
+              name: '/phone_check2',
+              page: () => const PhoneCheckScreen2(),
+            ),
+            GetPage(
+              name: '/register',
+              page: () => const RegisterScreen(),
+            ),
+            GetPage(
+              name: '/register2',
+              page: () => const RegisterScreen2(),
+            ),
+            GetPage(
+              name: '/profile_create',
+              page: () => const ProfileCreateScreen(),
+            ),
+            GetPage(
+              name: '/login',
+              page: () => const LoginScreen(),
+            ),
+            GetPage(
+              name: '/find_id_pwd',
+              page: () => const FindIdPwdScreen(),
+            ),
           ],
         ),
       ),

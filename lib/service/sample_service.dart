@@ -1,21 +1,19 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get_connect/connect.dart';
-import 'package:ting_maker/util/f_logger.dart';
 
 class SampleProvider extends GetConnect {
   @override
   void onInit() {
     super.onInit();
-    Log.d(dotenv.get('HOST_URL'));
 
     httpClient
-      ..baseUrl = 'your baseUrl'
+      ..baseUrl = dotenv.get('HOST_URL')
       ..defaultContentType = 'application/json'
-      ..timeout = const Duration(seconds: 10)
-      ..addRequestModifier<dynamic>((request) {
-        request.headers['Authorization'] = 'token value';
-        return request;
-      });
+      ..timeout = const Duration(seconds: 10);
+    // ..addRequestModifier<dynamic>((request) {
+    //   request.headers['Authorization'] = 'token value';
+    //   return request;
+    // });
   }
 
   // Get request
