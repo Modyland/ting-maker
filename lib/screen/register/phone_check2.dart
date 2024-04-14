@@ -3,14 +3,14 @@ import 'package:ting_maker/service/sample_service.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
-class PhoneCheckScreen extends StatefulWidget {
-  const PhoneCheckScreen({super.key});
+class PhoneCheckScreen2 extends StatefulWidget {
+  const PhoneCheckScreen2({super.key});
 
   @override
-  State<PhoneCheckScreen> createState() => _PhoneCheckScreenState();
+  State<PhoneCheckScreen2> createState() => _PhoneCheckScreen2State();
 }
 
-class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
+class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isNext = false;
 

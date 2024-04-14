@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
-import 'package:ting_maker/widget/input_style.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 class ServiceAgreeScreen extends StatefulWidget {
   const ServiceAgreeScreen({super.key});
@@ -16,6 +18,8 @@ class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
   bool infoAgree2 = false;
   bool locationAgree = false;
   bool marketingAgree = false;
+  Map<Permission, PermissionStatus>? permissions;
+  bool isNext = false;
 
   @override
   void initState() {
@@ -30,6 +34,9 @@ class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
       infoAgree2 = selected;
       locationAgree = selected;
       marketingAgree = selected;
+    });
+    setState(() {
+      isNext = serviceAgree && infoAgree && infoAgree2 && locationAgree;
     });
   }
 
@@ -69,17 +76,16 @@ class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
   }
 
   void _allCheckCheck() {
-    if (serviceAgree &&
-        infoAgree &&
-        infoAgree2 &&
-        locationAgree &&
-        marketingAgree) {
-      setState(() {
-        allCheck = true;
-      });
-    } else {
-      allCheck = false;
-    }
+    setState(() {
+      allCheck = serviceAgree &&
+          infoAgree &&
+          infoAgree2 &&
+          locationAgree &&
+          marketingAgree;
+    });
+    setState(() {
+      isNext = serviceAgree && infoAgree && infoAgree2 && locationAgree;
+    });
   }
 
   @override
@@ -106,10 +112,36 @@ class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
                 (selected) => _infoCheck2(selected), () {}),
             oneCheckRow(locationAgree, '위치기반 서비스 이용약관 동의(필수)',
                 (selected) => _locationCheck(selected), () {}),
-            oneCheckRow(marketingAgree, '마게팅 수신에 동의(선택)',
+            oneCheckRow(marketingAgree, '마케팅 수신에 동의(선택)',
                 (selected) => _marketingCheck(selected), () {}),
             const Spacer(),
-            ElevatedButton(onPressed: () {}, child: const Text('123')),
+            Container(
+              margin: const EdgeInsets.only(bottom: 30),
+              width: double.infinity,
+              height: 52,
+              decoration: isNext ? enableButton : disableButton,
+              child: MaterialButton(
+                animationDuration: Durations.short4,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                onPressed: () {
+                  isNext ? Get.toNamed('phone_check') : null;
+                },
+                child: Center(
+                  child: Text(
+                    '회원가입',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: isNext
+                          ? const Color(0xffffffff)
+                          : const Color(0xff9FA3AB),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
