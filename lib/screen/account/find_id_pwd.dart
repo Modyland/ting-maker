@@ -47,7 +47,7 @@ class _FindIdPwdScreenState extends State<FindIdPwdScreen>
       labelColor: Colors.black,
       labelStyle: const TextStyle(
         fontSize: 16,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w600,
       ),
       unselectedLabelColor: const Color(0xffBCC0C6),
       unselectedLabelStyle: const TextStyle(

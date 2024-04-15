@@ -16,13 +16,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextStyle _labelStyle = const TextStyle(
-      fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black);
+      fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black);
 
   final TextStyle _findStyle = const TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w100,
-      color: Color(0xffBCC0C6),
-      height: 1);
+    fontSize: 12,
+    fontWeight: FontWeight.w300,
+    color: Colors.black87,
+    height: 1,
+  );
 
   @override
   void initState() {
@@ -93,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Container(
                           height: 12,
                           width: 1,
-                          color: const Color(0xffBCC0C6),
+                          color: Colors.black87,
                           margin: const EdgeInsets.symmetric(horizontal: 5),
                         ),
                         RichText(

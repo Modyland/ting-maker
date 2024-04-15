@@ -5,6 +5,7 @@ import 'package:roundcheckbox/roundcheckbox.dart';
 InputDecoration inputDecoration(String hint) {
   return InputDecoration(
       hintText: hint,
+      errorStyle: TextStyle(color: Colors.red.shade400),
       hintStyle: const TextStyle(fontSize: 14, color: Color(0xff9FA3AB)),
       contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
       enabledBorder: OutlineInputBorder(
@@ -119,7 +120,7 @@ Widget oneCheckRow(
 
 TextStyle registerTitleStyle = const TextStyle(
   fontSize: 20,
-  fontWeight: FontWeight.bold,
+  fontWeight: FontWeight.w600,
   color: Colors.black,
 );
 

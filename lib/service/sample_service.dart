@@ -7,7 +7,7 @@ class SampleProvider extends GetConnect {
     super.onInit();
 
     httpClient
-      ..baseUrl = dotenv.get('HOST_URL')
+      ..baseUrl = dotenv.get('HOST_URL2')
       ..defaultContentType = 'application/json'
       ..timeout = const Duration(seconds: 10);
     // ..addRequestModifier<dynamic>((request) {
@@ -16,20 +16,22 @@ class SampleProvider extends GetConnect {
     // });
   }
 
-  // Get request
-  Future<Response> getUser(int id) => get('http://youapi/users/$id');
-  // Post request
-  Future<Response> postUser(Map data) => post('http://youapi/users', data);
-  // Post request with File
-  Future<Response> postCases(List<int> image) {
-    final form = FormData({
-      'file': MultipartFile(image, filename: 'avatar.png'),
-      'otherFile': MultipartFile(image, filename: 'cover.png'),
-    });
-    return post('http://youapi/users/upload', form);
-  }
+  Future<Response> phoneCheck(String phone) => httpClient.get(
+        '/SMS/sendSMS?id=&phone=$phone',
+      );
+  Future<Response> phoneCheck2(String phone, String code) => httpClient.get(
+        '/SMS/checkSMS?phone=$phone&code=$code',
+      );
+  // Future<Response> postUser(Map data) => post('http://youapi/users', data);
+  // Future<Response> postCases(List<int> image) {
+  //   final form = FormData({
+  //     'file': MultipartFile(image, filename: 'avatar.png'),
+  //     'otherFile': MultipartFile(image, filename: 'cover.png'),
+  //   });
+  //   return post('http://youapi/users/upload', form);
+  // }
 
-  GetSocket userMessages() {
-    return socket('https://yourapi/users/socket');
-  }
+  // GetSocket userMessages() {
+  //   return socket('https://yourapi/users/socket');
+  // }
 }

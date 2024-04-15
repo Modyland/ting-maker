@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +23,7 @@ import 'package:ting_maker/screen/register/profile_create.dart';
 import 'package:ting_maker/screen/register/register.dart';
 import 'package:ting_maker/screen/register/register2.dart';
 import 'package:ting_maker/screen/register/service_agree.dart';
+import 'package:ting_maker/service/sample_service.dart';
 import 'package:ting_maker/util/device_info.dart';
 
 late SharedPreferences pref;
@@ -30,6 +32,8 @@ late Map<String, dynamic> deviceInfo;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
+  await NaverMapSdk.instance.initialize(clientId: dotenv.get('NAVER_KEY'));
   pref = await SharedPreferences.getInstance();
   unawaited(init());
   runApp(const MyApp());
@@ -53,7 +57,6 @@ Future<void> init() async {
   ]);
   await deviceData();
   packageInfo = await PackageInfo.fromPlatform();
-  await dotenv.load();
 }
 
 class MyApp extends StatelessWidget {
@@ -81,10 +84,14 @@ class MyApp extends StatelessWidget {
           themeMode: ThemeMode.light,
           theme: ThemeData(
             useMaterial3: true,
-            textSelectionTheme:
-                TextSelectionThemeData(cursorColor: Colors.grey.shade600),
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: Colors.grey.shade600,
+              selectionColor: Colors.grey.shade400,
+              selectionHandleColor: Colors.grey.shade400,
+            ),
           ),
           initialBinding: BindingsBuilder(() {
+            Get.lazyPut<SampleProvider>(() => SampleProvider(), fenix: true);
             Get.lazyPut<SampleController>(() => SampleController(),
                 fenix: true);
           }),
