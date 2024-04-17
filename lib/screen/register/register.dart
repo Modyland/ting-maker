@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -11,18 +12,21 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  String phone = Get.arguments['phone'];
+
+  final TextEditingController _idEditingController = TextEditingController();
+  final TextEditingController _pwdEditingController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool isNext = false;
 
   Map<String, bool> firstValid = {'err': false, 'ok': false};
   Map<String, bool> secondValid = {'err': false, 'ok': false};
   Map<String, bool> thirdValid = {'err': false, 'ok': false};
   Map<String, bool> forthValid = {'err': false, 'ok': false};
 
+  bool isObscure = false;
+
+  bool isNext = false;
   void passwordValidCheck(String value) {
-    //false, false -> 기본색
-    //true, false -> 에러색
-    //false, true -> 초록색
     if (eightRegex.hasMatch(value)) {
       firstValid['ok'] = true;
       firstValid['err'] = false;
@@ -51,6 +55,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
       forthValid['err'] = true;
       forthValid['ok'] = false;
     }
+    isNext = firstValid['ok'] == true &&
+        secondValid['ok'] == true &&
+        thirdValid['ok'] == true &&
+        forthValid['ok'] == true &&
+        _idEditingController.text.isNotEmpty;
+    setState(() {});
+  }
+
+  void passwordVisible() {
+    setState(() {
+      isObscure = !isObscure;
+    });
+  }
+
+  void nextPage() {
+    Get.toNamed('/register2', arguments: {'phone': phone});
   }
 
   @override
@@ -65,7 +85,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
               child: Form(
                 key: _formKey,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -76,6 +95,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
+                      controller: _idEditingController,
                       decoration: inputDecoration('아이디를 입력해주세요'),
                       keyboardType: TextInputType.text,
                       validator: (value) {
@@ -89,9 +109,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Text('\t비밀번호', style: registerTitleStyle),
                     const SizedBox(height: 10),
                     TextFormField(
-                      decoration: inputDecoration('비밀번호를 입력해주세요'),
+                      obscureText: !isObscure,
+                      controller: _pwdEditingController,
+                      decoration: inputDecoration(
+                        '비밀번호를 입력해주세요',
+                        isObscure: isObscure,
+                        suffix: true,
+                        suffixCallback: passwordVisible,
+                      ),
                       keyboardType: TextInputType.text,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        passwordValidCheck(value);
+                      },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '비밀번호를 입력해주세요';
@@ -100,42 +129,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
                     const SizedBox(height: 15),
-                    const Column(
+                    Column(
                       children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.check,
-                              color: Color(0xff717680),
-                              size: 16,
-                            ),
-                            Text(
-                              '8자 이상',
-                              style: TextStyle(
-                                color: Color(0xff717680),
-                                fontSize: 12,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Icon(Icons.check),
-                            Text('영문 포함')
-                          ],
+                        // Color(0xff717680)
+                        checkPasswordRow(
+                          firstValid['err'] == true
+                              ? Colors.red.shade400
+                              : firstValid['ok'] == true
+                                  ? Colors.green.shade400
+                                  : const Color(0xff717680),
+                          '8자 이상',
+                          secondValid['err'] == true
+                              ? Colors.red.shade400
+                              : secondValid['ok'] == true
+                                  ? Colors.green.shade400
+                                  : const Color(0xff717680),
+                          '영문 포함',
                         ),
-                        Row(
-                          children: [
-                            Icon(Icons.check),
-                            Text('숫자 포함'),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Icon(Icons.check),
-                            Text("특수문자 포함 (!@#\$%^&*)")
-                          ],
-                        )
+                        checkPasswordRow(
+                          thirdValid['err'] == true
+                              ? Colors.red.shade400
+                              : thirdValid['ok'] == true
+                                  ? Colors.green.shade400
+                                  : const Color(0xff717680),
+                          '숫자 포함',
+                          forthValid['err'] == true
+                              ? Colors.red.shade400
+                              : forthValid['ok'] == true
+                                  ? Colors.green.shade400
+                                  : const Color(0xff717680),
+                          '특수문자 포함 (!@#\$%^&*)',
+                        ),
                       ],
                     ),
+                    const SizedBox(height: 15),
                     const Spacer(),
                     Container(
                       width: double.infinity,
@@ -148,7 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         onPressed: () {
-                          isNext ? null : null;
+                          isNext ? nextPage() : null;
                         },
                         child: Center(
                           child: Text(

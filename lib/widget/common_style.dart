@@ -2,9 +2,23 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 
-InputDecoration inputDecoration(String hint) {
+InputDecoration inputDecoration(
+  String hint, {
+  bool? isObscure,
+  bool? suffix,
+  VoidCallback? suffixCallback,
+}) {
   return InputDecoration(
       hintText: hint,
+      suffixIcon: suffix == true
+          ? IconButton(
+              onPressed: () {
+                suffixCallback!();
+              },
+              icon: Icon(
+                  size: 25,
+                  isObscure == true ? Icons.visibility : Icons.visibility_off))
+          : null,
       errorStyle: TextStyle(color: Colors.red.shade400),
       hintStyle: const TextStyle(fontSize: 14, color: Color(0xff9FA3AB)),
       contentPadding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -137,3 +151,42 @@ BoxDecoration disableButton = BoxDecoration(
     width: 1,
   ),
 );
+
+Row checkPasswordRow(
+  Color firstColor,
+  String firstText,
+  Color secondColor,
+  String secondText,
+) {
+  return Row(
+    children: <Widget>[
+      Icon(
+        Icons.check,
+        color: firstColor,
+        size: 16,
+      ),
+      Text(
+        firstText,
+        style: TextStyle(
+          color: firstColor,
+          fontSize: 12,
+        ),
+      ),
+      const SizedBox(
+        width: 5,
+      ),
+      Icon(
+        Icons.check,
+        color: secondColor,
+        size: 16,
+      ),
+      Text(
+        secondText,
+        style: TextStyle(
+          color: secondColor,
+          fontSize: 12,
+        ),
+      )
+    ],
+  );
+}

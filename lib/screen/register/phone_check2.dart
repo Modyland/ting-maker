@@ -18,18 +18,26 @@ class PhoneCheckScreen2 extends StatefulWidget {
 }
 
 class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
+  String phone = Get.arguments['phone'];
+
   final TextEditingController _editingController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final service = Get.find<SampleProvider>();
+
   late Timer _timer;
-  String phone = Get.arguments['phone'];
-  bool isNext = false;
-  int validCheck = 0;
   String formattedTime = '00:00';
   Duration _remainingTime = const Duration(minutes: 3);
+
+  bool isNext = false;
+  int validCheck = 0;
+
   @override
   void initState() {
     super.initState();
+    threeMinuteTimer();
+  }
+
+  void threeMinuteTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_remainingTime.inSeconds > 0) {
@@ -43,14 +51,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
     });
   }
 
-  @override
-  void dispose() {
-    _editingController.dispose();
-    _timer.cancel();
-    super.dispose();
-  }
-
-  void phoneCheckCallback2() async {
+  void phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
     final res = await service.phoneCheck2(phone, _editingController.text);
     if (res.body is Map<String, dynamic> && res.body.containsKey('msg')) {
@@ -60,13 +61,20 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
       final data = json.decode(res.body);
       if (data is bool) {
         if (data) {
-          Get.toNamed('/register');
+          Get.toNamed('/register', arguments: {'phone': phone});
         } else {
           validCheck = 0;
           _formKey.currentState!.validate();
         }
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _editingController.dispose();
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -154,7 +162,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       onPressed: () {
-                        isNext ? phoneCheckCallback2() : null;
+                        isNext ? phoneCheckCallback() : null;
                       },
                       child: Center(
                         child: Text(

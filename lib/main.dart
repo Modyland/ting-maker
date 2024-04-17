@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -22,6 +23,7 @@ import 'package:ting_maker/screen/register/phone_check2.dart';
 import 'package:ting_maker/screen/register/profile_create.dart';
 import 'package:ting_maker/screen/register/register.dart';
 import 'package:ting_maker/screen/register/register2.dart';
+import 'package:ting_maker/screen/register/register3.dart';
 import 'package:ting_maker/screen/register/service_agree.dart';
 import 'package:ting_maker/service/sample_service.dart';
 import 'package:ting_maker/util/device_info.dart';
@@ -78,6 +80,13 @@ class MyApp extends StatelessWidget {
             child: child!,
           ),
           enableLog: true,
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('ko', ''),
+          ],
           defaultTransition: Transition.leftToRightWithFade,
           transitionDuration: Durations.short4,
           title: 'Ting',
@@ -132,6 +141,10 @@ class MyApp extends StatelessWidget {
             GetPage(
               name: '/register2',
               page: () => const RegisterScreen2(),
+            ),
+            GetPage(
+              name: '/register3',
+              page: () => const RegisterScreen3(),
             ),
             GetPage(
               name: '/profile_create',

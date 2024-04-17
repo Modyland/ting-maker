@@ -1,39 +1,23 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ting_maker/service/sample_service.dart';
-import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
-class PhoneCheckScreen extends StatefulWidget {
-  const PhoneCheckScreen({super.key});
+class RegisterScreen3 extends StatefulWidget {
+  const RegisterScreen3({super.key});
 
   @override
-  State<PhoneCheckScreen> createState() => _PhoneCheckScreenState();
+  State<RegisterScreen3> createState() => _RegisterScreen3State();
 }
 
-class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
-  final TextEditingController _editingController = TextEditingController();
+class _RegisterScreen3State extends State<RegisterScreen3> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final service = Get.find<SampleProvider>();
   bool isNext = false;
 
-  void phoneCheckCallback() async {
-    FocusScope.of(context).requestFocus(FocusNode());
-    final res = await service.phoneCheck(_editingController.text);
-    final data = json.decode(res.body);
-    if (data) {
-      Get.toNamed('/phone_check2',
-          arguments: {'phone': _editingController.text});
-    }
-  }
+  final service = SampleProvider();
 
-  @override
-  void dispose() {
-    _editingController.dispose();
-    super.dispose();
+  void test() {
+    // service.getUser(id);
   }
 
   @override
@@ -60,21 +44,10 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
                   Form(
                     key: _formKey,
                     child: TextFormField(
-                      autofocus: true,
-                      controller: _editingController,
                       decoration: inputDecoration('휴대폰 번호 ( - 없이 숫자만 입력 )'),
-                      keyboardType: TextInputType.phone,
-                      maxLength: 11,
-                      onChanged: (value) {
-                        setState(() {
-                          isNext = value.length == 11;
-                        });
-                      },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '휴대폰 번호를 입력하세요';
-                        } else if (!phoneNumberRegex.hasMatch(value)) {
-                          return '휴대폰 번호 형식이 일치하지 않습니다.';
                         }
                         return null;
                       },
@@ -92,7 +65,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       onPressed: () {
-                        isNext ? phoneCheckCallback() : null;
+                        isNext ? null : null;
                       },
                       child: Center(
                         child: Text(
