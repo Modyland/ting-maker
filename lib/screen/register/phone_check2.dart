@@ -51,6 +51,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
   }
 
   void phoneCheckCallback2() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     final res = await service.phoneCheck2(phone, _editingController.text);
     if (res.body is Map<String, dynamic> && res.body.containsKey('msg')) {
       validCheck = 1;

@@ -43,9 +43,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
           const StartButtonBox(),
-          const SizedBox(
-            height: 35,
-          )
         ],
       ),
     );

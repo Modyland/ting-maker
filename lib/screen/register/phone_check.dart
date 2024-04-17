@@ -21,6 +21,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
 
   final service = Get.find<SampleProvider>();
   void phoneCheckCallback() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     final res = await service.phoneCheck(_editingController.text);
     final data = json.decode(res.body);
     if (data) {

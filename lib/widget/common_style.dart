@@ -37,7 +37,7 @@ Widget allCheckRow(bool allCheck, Function(bool selected) checkChange) {
           onTap: (selected) {
             checkChange(selected!);
           },
-          size: 20,
+          size: 24,
           border: Border.all(
             width: 1.5,
             color: const Color(0xff9FA3AB),
@@ -46,18 +46,18 @@ Widget allCheckRow(bool allCheck, Function(bool selected) checkChange) {
           checkedWidget: const Icon(
             Icons.check,
             color: Colors.white,
-            size: 14,
+            size: 17,
           ),
           uncheckedColor: Colors.transparent,
           uncheckedWidget: const Icon(
             Icons.check,
             color: Color(0xff9FA3AB),
-            size: 14,
+            size: 17,
           ),
           animationDuration: const Duration(milliseconds: 100),
         ),
       ),
-      const SizedBox(width: 14),
+      const SizedBox(width: 10),
       const Text(
         '모두 동의',
         style: TextStyle(

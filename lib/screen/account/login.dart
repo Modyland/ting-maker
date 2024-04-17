@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:ting_maker/main.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -40,7 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Center(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(0, 110, 0, 30),
+                padding: EdgeInsets.fromLTRB(
+                    0, MyApp.height * 0.13, 0, MyApp.height * 0.04),
                 child: SvgPicture.asset('assets/image/logo.svg'),
               ),
             ),
@@ -58,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 10),
                     TextFormField(
                       decoration: inputDecoration('아이디를 입력하세요'),
+                      keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '아이디를 입력하세요';
@@ -71,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       obscureText: true,
                       decoration: inputDecoration('비밀번호를 입력하세요'),
+                      keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '비밀번호를 입력하세요';
@@ -122,6 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         onPressed: () {
+                          FocusScope.of(context).requestFocus(FocusNode());
                           if (_formKey.currentState!.validate()) {
                             // 유효성 검사를 통과하면 실행될 코드를 작성합니다.
                             // 예를 들어, 로그인 로직을 여기에 구현할 수 있습니다.

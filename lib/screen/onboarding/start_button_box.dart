@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ting_maker/main.dart';
 
 class StartButtonBox extends StatelessWidget {
   const StartButtonBox({super.key});
@@ -8,7 +9,8 @@ class StartButtonBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(30, 19, 30, 35),
+      padding: EdgeInsets.fromLTRB(MyApp.width * 0.1, MyApp.height * 0.03,
+          MyApp.width * 0.1, MyApp.height * 0.05),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -25,7 +27,7 @@ class StartButtonBox extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               onPressed: () {
-                Get.toNamed('/permission');
+                Get.toNamed('/service_agree');
               },
               child: const Center(
                 child: Text(

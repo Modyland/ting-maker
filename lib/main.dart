@@ -16,7 +16,7 @@ import 'package:ting_maker/screen/account/find_id_pwd.dart';
 import 'package:ting_maker/screen/account/login.dart';
 import 'package:ting_maker/screen/home.dart';
 import 'package:ting_maker/screen/onboarding/onboarding.dart';
-import 'package:ting_maker/screen/onboarding/permission.dart';
+import 'package:ting_maker/screen/register/permission.dart';
 import 'package:ting_maker/screen/register/phone_check.dart';
 import 'package:ting_maker/screen/register/phone_check2.dart';
 import 'package:ting_maker/screen/register/profile_create.dart';
@@ -110,12 +110,12 @@ class MyApp extends StatelessWidget {
                   }
                 }),
             GetPage(
-              name: '/permission',
-              page: () => const PermissionScreen(),
-            ),
-            GetPage(
               name: '/service_agree',
               page: () => const ServiceAgreeScreen(),
+            ),
+            GetPage(
+              name: '/permission',
+              page: () => const PermissionScreen(),
             ),
             GetPage(
               name: '/phone_check',

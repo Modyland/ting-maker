@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ting_maker/main.dart';
+import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class PermissionScreen extends StatefulWidget {
@@ -43,7 +44,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
     });
 
     if (allGranted) {
-      Get.toNamed('service_agree');
+      Get.toNamed('/phone_check');
     } else {
       await openAppSettings();
     }
@@ -52,6 +53,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: commonAppbar(),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -71,7 +73,6 @@ class _PermissionScreenState extends State<PermissionScreen> {
                 },
               ),
             ),
-            const Spacer(),
             Container(
               margin: const EdgeInsets.only(bottom: 30),
               width: double.infinity,

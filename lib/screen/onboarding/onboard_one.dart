@@ -38,7 +38,8 @@ class _OnePageScreenState extends State<OnePageScreen>
       clipBehavior: Clip.hardEdge,
       decoration: const BoxDecoration(),
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(0, 160, 0, 100),
+      padding:
+          EdgeInsets.fromLTRB(0, MyApp.height * 0.2, 0, MyApp.height * 0.1),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -57,6 +58,7 @@ class _OnePageScreenState extends State<OnePageScreen>
             ],
           ),
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Stack(
                 children: [
@@ -89,7 +91,6 @@ class _OnePageScreenState extends State<OnePageScreen>
                 ],
               ),
               Stack(
-                clipBehavior: Clip.none,
                 children: [
                   AnimatedBuilder(
                     animation: _controller,

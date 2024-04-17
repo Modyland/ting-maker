@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:ting_maker/main.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -99,11 +100,11 @@ class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
           children: [
             Text('\tTING', style: registerTitleStyle),
             Text('\t서비스 이용약관', style: registerTitleStyle),
-            const SizedBox(height: 30),
+            SizedBox(height: MyApp.height * 0.03),
             allCheckRow(allCheck, (selected) => _checkCallback(selected)),
-            const SizedBox(height: 20),
+            SizedBox(height: MyApp.height * 0.03),
             const Divider(),
-            const SizedBox(height: 20),
+            SizedBox(height: MyApp.height * 0.03),
             oneCheckRow(serviceAgree, '팅 서비스 이용약관 동의(필수)',
                 (selected) => _serviceCheck(selected), () {}),
             oneCheckRow(infoAgree, '개인정보 수집 및 이용 동의(필수)',
@@ -116,7 +117,7 @@ class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
                 (selected) => _marketingCheck(selected), () {}),
             const Spacer(),
             Container(
-              margin: const EdgeInsets.only(bottom: 30),
+              margin: EdgeInsets.only(bottom: MyApp.height * 0.04),
               width: double.infinity,
               height: 52,
               decoration: isNext ? enableButton : disableButton,
@@ -127,7 +128,7 @@ class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 onPressed: () {
-                  isNext ? Get.toNamed('phone_check') : null;
+                  isNext ? Get.toNamed('/permission') : null;
                 },
                 child: Center(
                   child: Text(
