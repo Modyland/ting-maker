@@ -96,7 +96,6 @@ class MyApp extends StatelessWidget {
           title: 'Ting',
           themeMode: ThemeMode.light,
           theme: ThemeData(
-            brightness: Brightness.light,
             bottomSheetTheme: const BottomSheetThemeData(
               backgroundColor: Colors.white,
             ),
