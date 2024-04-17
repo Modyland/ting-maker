@@ -26,6 +26,10 @@ InputDecoration inputDecoration(
         borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: Color(0xffbcc0c6), width: 1.0),
       ),
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xffbcc0c6), width: 1.0),
+      ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(color: Color(0xffbcc0c6), width: 1.0),

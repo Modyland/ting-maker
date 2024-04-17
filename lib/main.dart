@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,20 +80,26 @@ class MyApp extends StatelessWidget {
             data: MediaQuery.of(context),
             child: child!,
           ),
+          debugShowCheckedModeBanner: false,
           enableLog: true,
+          locale: Get.locale,
+          supportedLocales: const [
+            Locale('ko', ''),
+          ],
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('ko', ''),
+            DefaultCupertinoLocalizations.delegate,
           ],
           defaultTransition: Transition.leftToRightWithFade,
           transitionDuration: Durations.short4,
           title: 'Ting',
           themeMode: ThemeMode.light,
           theme: ThemeData(
-            useMaterial3: true,
+            brightness: Brightness.light,
+            bottomSheetTheme: const BottomSheetThemeData(
+              backgroundColor: Colors.white,
+            ),
             textSelectionTheme: TextSelectionThemeData(
               cursorColor: Colors.grey.shade600,
               selectionColor: Colors.grey.shade400,

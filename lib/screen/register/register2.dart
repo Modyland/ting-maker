@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ting_maker/service/sample_service.dart';
+import 'package:flutter/services.dart';
+import 'package:ting_maker/main.dart';
+import 'package:ting_maker/util/f_logger.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/widget/date_bottom_sheet.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class RegisterScreen2 extends StatefulWidget {
   const RegisterScreen2({super.key});
@@ -11,81 +15,115 @@ class RegisterScreen2 extends StatefulWidget {
 }
 
 class _RegisterScreen2State extends State<RegisterScreen2> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _birthdayController = TextEditingController();
   bool isNext = false;
 
-  final service = SampleProvider();
-
-  void test() {
-    // service.getUser(id);
-  }
+//CupertinoDatePicker(
+  //      onDateTimeChanged = (value) {},
+  //      mode = CupertinoDatePickerMode.date,
+  //       maximumYear = DateTime.now().year,
+  //       ))
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: commonAppbar(),
-      body: CustomScrollView(
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 20, 12, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('\t안녕하세요!', style: registerTitleStyle),
-                  Text('\t휴대폰 번호를 입력해주세요.', style: registerTitleStyle),
-                  const SizedBox(height: 10),
-                  const Text(
-                    '\t\t휴대폰 번호는 안전하게 보관되며 타인에게 공개되지 않아요.',
-                    style: TextStyle(color: Colors.black, fontSize: 13),
-                  ),
-                  const SizedBox(height: 30),
-                  Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      decoration: inputDecoration('휴대폰 번호 ( - 없이 숫자만 입력 )'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '휴대폰 번호를 입력하세요';
-                        }
-                        return null;
-                      },
+      body: CustomScrollView(slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 20, 12, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('\t성별을 선택해주세요', style: registerTitleStyle),
+                const SizedBox(height: 10),
+                ToggleSwitch(
+                  minWidth: MyApp.width * 0.8,
+                  minHeight: 50,
+                  cornerRadius: 10,
+                  activeFgColor: Colors.white,
+                  inactiveBgColor: const Color(0xffbcc0c6),
+                  inactiveFgColor: Colors.white,
+                  totalSwitches: 2,
+                  labels: const ['남자', '여자'],
+                  customTextStyles: const [
+                    TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
                     ),
+                    TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                    )
+                  ],
+                  icons: const [
+                    Icons.male,
+                    Icons.female,
+                  ],
+                  iconSize: 30.0,
+                  borderWidth: 2.0,
+                  borderColor: const [
+                    Color(0xffbcc0c6),
+                  ],
+                  activeBgColors: const [
+                    [
+                      Color(0XFF00BFFE),
+                    ],
+                    [Colors.pinkAccent],
+                  ],
+                  onToggle: (index) {
+                    Log.e('switched to: $index');
+                  },
+                ),
+                const SizedBox(height: 15),
+                Text('\t생년월일을 선택해주세요', style: registerTitleStyle),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.mediumImpact();
+                    datePickerBottomSheet();
+                  },
+                  child: TextFormField(
+                    enabled: false,
+                    controller: _birthdayController,
+                    decoration: inputDecoration('YYYY-MM-DD'),
+                    style: const TextStyle(fontSize: 20),
+                    onChanged: (value) {},
                   ),
-                  const Spacer(),
-                  Container(
-                    width: double.infinity,
-                    height: 52,
-                    decoration: isNext ? enableButton : disableButton,
-                    child: MaterialButton(
-                      animationDuration: Durations.short4,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      onPressed: () {
-                        isNext ? null : null;
-                      },
-                      child: Center(
-                        child: Text(
-                          '인증 문자 받기',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: isNext
-                                ? const Color(0xffffffff)
-                                : const Color(0xff9FA3AB),
-                          ),
+                ),
+                const Spacer(),
+                Container(
+                  width: double.infinity,
+                  height: 52,
+                  decoration: isNext ? enableButton : disableButton,
+                  child: MaterialButton(
+                    animationDuration: Durations.short4,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    onPressed: () {
+                      isNext ? null : null;
+                    },
+                    child: Center(
+                      child: Text(
+                        '다음',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: isNext
+                              ? const Color(0xffffffff)
+                              : const Color(0xff9FA3AB),
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 }
