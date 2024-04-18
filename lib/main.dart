@@ -94,10 +94,17 @@ class MyApp extends StatelessWidget {
           defaultTransition: Transition.leftToRightWithFade,
           transitionDuration: Durations.short4,
           title: 'Ting',
-          themeMode: ThemeMode.light,
           theme: ThemeData(
+            brightness: Brightness.light,
+            useMaterial3: false,
+            scaffoldBackgroundColor: Colors.white,
             bottomSheetTheme: const BottomSheetThemeData(
               backgroundColor: Colors.white,
+            ),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              scrolledUnderElevation: 0,
             ),
             textSelectionTheme: TextSelectionThemeData(
               cursorColor: Colors.grey.shade600,

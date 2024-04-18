@@ -70,7 +70,9 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                     [
                       Color(0XFF00BFFE),
                     ],
-                    [Colors.pinkAccent],
+                    [
+                      Color(0XFF00BFFE),
+                    ],
                   ],
                   onToggle: (index) {
                     Log.e('switched to: $index');

@@ -9,7 +9,9 @@ void datePickerBottomSheet() {
       child: Column(
         children: <Widget>[
           Container(
-            decoration: const BoxDecoration(),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -30,9 +32,11 @@ void datePickerBottomSheet() {
           ),
           Expanded(
             child: Container(
-              decoration: const BoxDecoration(),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
               child: CupertinoDatePicker(
-                backgroundColor: ThemeData.light().scaffoldBackgroundColor,
+                backgroundColor: Colors.transparent,
                 minimumYear: 1900,
                 maximumYear: DateTime.now().year,
                 initialDateTime: DateTime.now(),
@@ -45,7 +49,7 @@ void datePickerBottomSheet() {
         ],
       ),
     ),
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.transparent,
     ignoreSafeArea: true,
   );
 }

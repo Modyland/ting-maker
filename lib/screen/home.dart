@@ -19,8 +19,8 @@ class HomeScreen extends StatelessWidget {
           indoorFocusRadius: 30,
           activeLayerGroups: [
             NLayerGroup.building,
-            NLayerGroup.transit,
-            NLayerGroup.traffic
+            // NLayerGroup.transit,
+            // NLayerGroup.traffic
           ],
         ),
         onMapReady: (controller) {

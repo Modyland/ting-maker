@@ -7,6 +7,5 @@ AppBar commonAppbar() {
       icon: const Icon(Icons.arrow_back, color: Color(0xff717680)),
       onPressed: () => Get.back(),
     ),
-    scrolledUnderElevation: 0,
   );
 }
