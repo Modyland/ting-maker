@@ -19,7 +19,6 @@ import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/screen/account/find_id_pwd.dart';
 import 'package:ting_maker/screen/account/login.dart';
 import 'package:ting_maker/screen/home.dart';
-import 'package:ting_maker/screen/onboarding/onboarding.dart';
 import 'package:ting_maker/screen/register/permission.dart';
 import 'package:ting_maker/screen/register/phone_check.dart';
 import 'package:ting_maker/screen/register/phone_check2.dart';
@@ -143,7 +142,7 @@ class MyApp extends StatelessWidget {
                   if (isLogin) {
                     return const HomeScreen();
                   } else {
-                    return const OnboardingScreen();
+                    return const RegisterScreen2();
                   }
                 }),
             GetPage(

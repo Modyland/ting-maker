@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ting_maker/service/sample_service.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/widget/image_profile.dart';
 
 class RegisterScreen3 extends StatefulWidget {
   const RegisterScreen3({super.key});
@@ -33,24 +34,28 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('\t안녕하세요!', style: registerTitleStyle),
-                  Text('\t휴대폰 번호를 입력해주세요.', style: registerTitleStyle),
+                  const ImageProfile(),
                   const SizedBox(height: 10),
-                  const Text(
-                    '\t\t휴대폰 번호는 안전하게 보관되며 타인에게 공개되지 않아요.',
-                    style: TextStyle(color: Colors.black, fontSize: 13),
-                  ),
-                  const SizedBox(height: 30),
+                  Text('\t닉네임', style: registerTitleStyle),
+                  const SizedBox(height: 10),
                   Form(
                     key: _formKey,
                     child: TextFormField(
-                      decoration: inputDecoration('휴대폰 번호 ( - 없이 숫자만 입력 )'),
+                      decoration: inputDecoration('닉네임을 입력해주세요'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return '휴대폰 번호를 입력하세요';
+                          return '닉네임을 입력해주세요';
                         }
                         return null;
                       },
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  const Text(
+                    '신중하게 본인을 가장 잘 나타내는 이름으로 설정해주세요',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xff717680),
                     ),
                   ),
                   const Spacer(),
