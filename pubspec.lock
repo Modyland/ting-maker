@@ -161,6 +161,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  crop_your_image:
+    dependency: "direct main"
+    description:
+      name: crop_your_image
+      sha256: "586a739aa24350b4f4ddc1207ca5e3c58fdc625972f03fe39db9f5a5d46f5e62"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   cross_file:
     dependency: transitive
     description:
@@ -350,6 +358,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.0"
+  flutter_emoji:
+    dependency: "direct main"
+    description:
+      name: flutter_emoji
+      sha256: "3cc794d2459738e6489cee63f50e85de3732257042f425611d255c8049ce1b81"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.1"
   flutter_launcher_icons:
     dependency: "direct main"
     description:

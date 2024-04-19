@@ -39,6 +39,8 @@ dependencies:
   package_info_plus: ^7.0.0
   flutter_naver_map: ^1.2.2
   intl: ^0.18.1
+  flutter_emoji: ^2.5.1
+  crop_your_image: ^1.0.2
 
 dev_dependencies:
   flutter_test:
