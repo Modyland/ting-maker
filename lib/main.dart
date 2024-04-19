@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ting_maker/controller/sample_controller.dart';
+import 'package:ting_maker/firebase_options.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/screen/account/find_id_pwd.dart';
 import 'package:ting_maker/screen/account/login.dart';
@@ -28,6 +30,7 @@ import 'package:ting_maker/screen/register/register3.dart';
 import 'package:ting_maker/screen/register/service_agree.dart';
 import 'package:ting_maker/service/sample_service.dart';
 import 'package:ting_maker/util/device_info.dart';
+import 'package:ting_maker/util/f_logger.dart';
 
 late SharedPreferences pref;
 late PackageInfo packageInfo;
@@ -35,11 +38,16 @@ late Map<String, dynamic> deviceInfo;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
-  await NaverMapSdk.instance.initialize(clientId: dotenv.get('NAVER_KEY'));
-  pref = await SharedPreferences.getInstance();
+  await initStorage();
   unawaited(init());
+  unawaited(initFirebase());
   runApp(const MyApp());
+}
+
+Future<void> initStorage() async {
+  await dotenv.load();
+  pref = await SharedPreferences.getInstance();
+  await NaverMapSdk.instance.initialize(clientId: dotenv.get('NAVER_KEY'));
 }
 
 Future<void> deviceData() async {
@@ -60,6 +68,13 @@ Future<void> init() async {
   ]);
   await deviceData();
   packageInfo = await PackageInfo.fromPlatform();
+}
+
+Future<void> initFirebase() async {
+  FirebaseApp app = await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  Log.i('Initialized Default App $app');
 }
 
 class MyApp extends StatelessWidget {
