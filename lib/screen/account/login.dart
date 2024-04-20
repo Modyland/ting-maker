@@ -17,11 +17,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextStyle _labelStyle = const TextStyle(
-      fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black);
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
 
   final TextStyle _findStyle = const TextStyle(
     fontSize: 12,
-    fontWeight: FontWeight.w300,
+    fontWeight: FontWeight.w400,
     color: Colors.black87,
     height: 1,
   );
@@ -130,9 +133,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (_formKey.currentState!.validate()) {
                             // 유효성 검사를 통과하면 실행될 코드를 작성합니다.
                             // 예를 들어, 로그인 로직을 여기에 구현할 수 있습니다.
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('로그인 처리 중...')),
-                            );
                           }
                         },
                         child: const Center(
@@ -146,6 +146,35 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          '계정이 없으신가요?',
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w200,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        RichText(
+                          text: TextSpan(
+                            text: '회원가입',
+                            style: const TextStyle(
+                              color: Color(0XFF00BFFE),
+                              fontSize: 13,
+                              decoration: TextDecoration.underline,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Get.toNamed('/service_agree');
+                              },
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),

@@ -11,56 +11,54 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
+Map<String, dynamic> registerData = Get.arguments;
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+final TextEditingController _idEditingController = TextEditingController();
+final TextEditingController _pwdEditingController = TextEditingController();
+
 class _RegisterScreenState extends State<RegisterScreen> {
-  String phone = Get.arguments['phone'];
-
-  final TextEditingController _idEditingController = TextEditingController();
-  final TextEditingController _pwdEditingController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   Map<String, bool> firstValid = {'err': false, 'ok': false};
   Map<String, bool> secondValid = {'err': false, 'ok': false};
   Map<String, bool> thirdValid = {'err': false, 'ok': false};
   Map<String, bool> forthValid = {'err': false, 'ok': false};
-
   bool isObscure = false;
-
   bool isNext = false;
   void passwordValidCheck(String value) {
-    if (eightRegex.hasMatch(value)) {
-      firstValid['ok'] = true;
-      firstValid['err'] = false;
-    } else {
-      firstValid['err'] = true;
-      firstValid['ok'] = false;
-    }
-    if (enRegex.hasMatch(value)) {
-      secondValid['ok'] = true;
-      secondValid['err'] = false;
-    } else {
-      secondValid['err'] = true;
-      secondValid['ok'] = false;
-    }
-    if (numRegex.hasMatch(value)) {
-      thirdValid['ok'] = true;
-      thirdValid['err'] = false;
-    } else {
-      thirdValid['err'] = true;
-      thirdValid['ok'] = false;
-    }
-    if (specialRegex.hasMatch(value)) {
-      forthValid['ok'] = true;
-      forthValid['err'] = false;
-    } else {
-      forthValid['err'] = true;
-      forthValid['ok'] = false;
-    }
-    isNext = firstValid['ok'] == true &&
-        secondValid['ok'] == true &&
-        thirdValid['ok'] == true &&
-        forthValid['ok'] == true &&
-        _idEditingController.text.isNotEmpty;
-    setState(() {});
+    setState(() {
+      if (eightRegex.hasMatch(value)) {
+        firstValid['ok'] = true;
+        firstValid['err'] = false;
+      } else {
+        firstValid['err'] = true;
+        firstValid['ok'] = false;
+      }
+      if (enRegex.hasMatch(value)) {
+        secondValid['ok'] = true;
+        secondValid['err'] = false;
+      } else {
+        secondValid['err'] = true;
+        secondValid['ok'] = false;
+      }
+      if (numRegex.hasMatch(value)) {
+        thirdValid['ok'] = true;
+        thirdValid['err'] = false;
+      } else {
+        thirdValid['err'] = true;
+        thirdValid['ok'] = false;
+      }
+      if (specialRegex.hasMatch(value)) {
+        forthValid['ok'] = true;
+        forthValid['err'] = false;
+      } else {
+        forthValid['err'] = true;
+        forthValid['ok'] = false;
+      }
+      isNext = firstValid['ok'] == true &&
+          secondValid['ok'] == true &&
+          thirdValid['ok'] == true &&
+          forthValid['ok'] == true &&
+          _idEditingController.text.isNotEmpty;
+    });
   }
 
   void passwordVisible() {
@@ -70,7 +68,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void nextPage() {
-    Get.toNamed('/register2', arguments: {'phone': phone});
+    Get.toNamed('/register2', arguments: {
+      'phone': registerData['phone'],
+      'id': _idEditingController.text,
+      'pwd': _pwdEditingController.text
+    });
+  }
+
+  @override
+  void dispose() {
+    _idEditingController.dispose();
+    _pwdEditingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -131,7 +140,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 15),
                     Column(
                       children: [
-                        // Color(0xff717680)
                         checkPasswordRow(
                           firstValid['err'] == true
                               ? Colors.red.shade400

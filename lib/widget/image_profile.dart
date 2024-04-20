@@ -1,8 +1,10 @@
-import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ting_maker/controller/profile_controller.dart';
 
 class BorderPainter extends CustomPainter {
   @override
@@ -23,12 +25,11 @@ class BorderPainter extends CustomPainter {
       ..moveTo(center.dx + radius * cos(angle), center.dy + radius * sin(angle))
       ..addArc(rect, angle, 2 * pi - 0.55 * angle);
 
-    // 완성된 경로를 사용하여 그립니다.
     canvas.drawPath(path, paint);
   }
 
   @override
-  bool shouldRepaint(CustomPainter old) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
 class ImageProfile extends StatefulWidget {
@@ -38,51 +39,60 @@ class ImageProfile extends StatefulWidget {
   State<ImageProfile> createState() => _ImageProfileState();
 }
 
+final ImagePicker _picker = ImagePicker();
+final ImageProfileController _imageProfileController =
+    Get.find<ImageProfileController>();
+
 class _ImageProfileState extends State<ImageProfile> {
-  XFile? _image;
-  final ImagePicker picker = ImagePicker();
+  late Uint8List _cropImage;
 
   Future getImage() async {
     final XFile? pickedFile =
-        await picker.pickImage(source: ImageSource.gallery);
+        await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _image = XFile(pickedFile.path);
-      });
+      _cropImage = await XFile(pickedFile.path).readAsBytes();
+      final finishCrop =
+          await Get.toNamed('/profile_create', arguments: {'crop': _cropImage});
+      if (finishCrop != null && finishCrop['crop'] is Uint8List) {
+        setState(() {
+          _imageProfileController.setFinishCropImage(finishCrop['crop']);
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: InkWell(
-        splashColor: Colors.transparent,
-        onTap: () {
-          getImage();
-        },
-        child: Stack(
-          children: [
-            CustomPaint(
+      child: Stack(
+        children: [
+          InkWell(
+            splashColor: Colors.transparent,
+            onTap: () {
+              getImage();
+            },
+            child: CustomPaint(
               painter: BorderPainter(),
               child: CircleAvatar(
                 radius: 80,
                 backgroundColor: Colors.transparent,
-                backgroundImage: _image == null
+                backgroundImage: _imageProfileController.finishCropImage == null
                     ? const AssetImage('assets/image/profile.png')
-                    : FileImage(File(_image!.path)) as ImageProvider<Object>,
+                    : MemoryImage(_imageProfileController.finishCropImage!)
+                        as ImageProvider<Object>,
               ),
             ),
-            const Positioned(
-              bottom: 10,
-              right: 10,
-              child: ClipRect(
-                  child: Icon(
-                Icons.camera_alt_outlined,
-                size: 30,
-              )),
-            )
-          ],
-        ),
+          ),
+          const Positioned(
+            bottom: 10,
+            right: 10,
+            child: ClipRect(
+                child: Icon(
+              Icons.camera_alt_outlined,
+              size: 30,
+            )),
+          )
+        ],
       ),
     );
   }

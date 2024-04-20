@@ -17,6 +17,7 @@ InputDecoration inputDecoration(
               },
               icon: Icon(
                   size: 25,
+                  color: const Color(0xffbcc0c6),
                   isObscure == true ? Icons.visibility : Icons.visibility_off))
           : null,
       errorStyle: TextStyle(color: Colors.red.shade400),
@@ -79,7 +80,10 @@ Widget allCheckRow(bool allCheck, Function(bool selected) checkChange) {
       const Text(
         '모두 동의',
         style: TextStyle(
-            fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
+        ),
       )
     ],
   );

@@ -3,10 +3,9 @@ import 'package:get/get.dart';
 import 'package:ting_maker/util/f_logger.dart';
 
 class RouterObserver extends GetObserver {
-  final isLoggedIn = false;
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    if (route.settings.name == '/protectedPage' && !isLoggedIn) {
+    if (route.settings.name == '/protectedPage') {
       Get.offAllNamed('/login');
     } else {
       Log.d('Route push: ${route.settings.name}');

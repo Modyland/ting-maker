@@ -19,6 +19,7 @@ import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/screen/account/find_id_pwd.dart';
 import 'package:ting_maker/screen/account/login.dart';
 import 'package:ting_maker/screen/home.dart';
+import 'package:ting_maker/screen/onboarding/onboarding.dart';
 import 'package:ting_maker/screen/register/permission.dart';
 import 'package:ting_maker/screen/register/phone_check.dart';
 import 'package:ting_maker/screen/register/phone_check2.dart';
@@ -27,7 +28,7 @@ import 'package:ting_maker/screen/register/register.dart';
 import 'package:ting_maker/screen/register/register2.dart';
 import 'package:ting_maker/screen/register/register3.dart';
 import 'package:ting_maker/screen/register/service_agree.dart';
-import 'package:ting_maker/service/sample_service.dart';
+import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/device_info.dart';
 import 'package:ting_maker/util/f_logger.dart';
 
@@ -127,7 +128,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           initialBinding: BindingsBuilder(() {
-            Get.lazyPut<SampleProvider>(() => SampleProvider(), fenix: true);
+            Get.lazyPut<MainProvider>(() => MainProvider(), fenix: true);
             Get.lazyPut<SampleController>(() => SampleController(),
                 fenix: true);
           }),
@@ -142,7 +143,7 @@ class MyApp extends StatelessWidget {
                   if (isLogin) {
                     return const HomeScreen();
                   } else {
-                    return const RegisterScreen2();
+                    return const OnboardingScreen();
                   }
                 }),
             GetPage(

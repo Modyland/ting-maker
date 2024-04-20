@@ -12,6 +12,8 @@ class ServiceAgreeScreen extends StatefulWidget {
   State<ServiceAgreeScreen> createState() => _ServiceAgreeScreenState();
 }
 
+Map<Permission, PermissionStatus>? permissions;
+
 class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
   bool allCheck = false;
   bool serviceAgree = false;
@@ -19,7 +21,6 @@ class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
   bool infoAgree2 = false;
   bool locationAgree = false;
   bool marketingAgree = false;
-  Map<Permission, PermissionStatus>? permissions;
   bool isNext = false;
 
   @override

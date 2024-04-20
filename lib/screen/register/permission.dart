@@ -16,34 +16,36 @@ class PermissionScreen extends StatefulWidget {
 
 class _PermissionScreenState extends State<PermissionScreen> {
   List<Permission> permissions = [
-    Permission.locationWhenInUse,
     (Platform.isAndroid && deviceInfo['version.sdkInt'] >= 33) || Platform.isIOS
         ? Permission.photos
         : Permission.storage,
     Permission.camera,
     Permission.notification,
+    Permission.locationWhenInUse,
   ];
 
   void _requestPermissions() async {
     Map<Permission, PermissionStatus> permissionsCheck = await [
-      Permission.locationWhenInUse,
       (Platform.isAndroid && deviceInfo['version.sdkInt'] >= 33) ||
               Platform.isIOS
           ? Permission.photos
           : Permission.storage,
       Permission.camera,
       Permission.notification,
+      Permission.locationWhenInUse,
     ].request();
 
-    bool allGranted = true;
+    bool isLocationGranted = false;
     permissionsCheck.forEach((permission, status) {
-      if (status != PermissionStatus.granted) {
-        allGranted = false;
-        return;
+      if (permission == Permission.locationWhenInUse) {
+        if (status == PermissionStatus.granted) {
+          isLocationGranted = true;
+          return;
+        }
       }
     });
 
-    if (allGranted) {
+    if (isLocationGranted) {
       Get.toNamed('/phone_check');
     } else {
       await openAppSettings();
@@ -105,20 +107,6 @@ class _PermissionScreenState extends State<PermissionScreen> {
   }
 }
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
-
-  @override
-  State<MyWidget> createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
 class PermissionWidget extends StatefulWidget {
   const PermissionWidget(this.permission, {super.key});
 
@@ -129,45 +117,145 @@ class PermissionWidget extends StatefulWidget {
 }
 
 class _PermissionState extends State<PermissionWidget> {
-  PermissionStatus _permissionStatus = PermissionStatus.denied;
-
   @override
   void initState() {
     super.initState();
-    _listenForPermissionStatus();
-  }
-
-  void _listenForPermissionStatus() async {
-    final status = await widget.permission.status;
-    setState(() {
-      _permissionStatus = status;
-    });
   }
 
   String permissionName(String original) {
     switch (original) {
       case 'Permission.locationWhenInUse':
-        return '위치 사용 권한';
+        return '위치 사용 권한 (필수)';
       case 'Permission.photos' || 'Permission.storage':
-        return '앨범 접근 권한';
+        return '앨범 접근 권한 (선택)';
       case 'Permission.camera':
-        return '카메라 접근 권한';
+        return '카메라 접근 권한 (선택)';
       case 'Permission.notification':
-        return '알림 메시지';
+        return '알림 메시지 (선택)';
       default:
         return '';
     }
   }
 
+  CircleAvatar? permissionIcon(String original) {
+    switch (original) {
+      case 'Permission.locationWhenInUse':
+        return const CircleAvatar(
+          backgroundColor: Color(0xffbcc0c6),
+          radius: 20,
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 19,
+            child: Icon(
+              Icons.location_on_outlined,
+              color: Color(0XFF00BFFE),
+            ),
+          ),
+        );
+      case 'Permission.photos' || 'Permission.storage':
+        return const CircleAvatar(
+          backgroundColor: Color(0xffbcc0c6),
+          radius: 20,
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 19,
+            child: Icon(
+              Icons.image_outlined,
+              color: Color(0XFF00BFFE),
+            ),
+          ),
+        );
+      case 'Permission.camera':
+        return const CircleAvatar(
+          backgroundColor: Color(0xffbcc0c6),
+          radius: 20,
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 19,
+            child: Icon(
+              Icons.camera_alt_outlined,
+              color: Color(0XFF00BFFE),
+            ),
+          ),
+        );
+      case 'Permission.notification':
+        return const CircleAvatar(
+          backgroundColor: Color(0xffbcc0c6),
+          radius: 20,
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 19,
+            child: Icon(
+              Icons.sms_outlined,
+              color: Color(0XFF00BFFE),
+            ),
+          ),
+        );
+    }
+    return null;
+  }
+
+  RichText? permissionSubscription(String original) {
+    switch (original) {
+      case 'Permission.locationWhenInUse':
+        return RichText(
+          text: const TextSpan(
+            text:
+                'ting 지도 서비스 이용\n위치 기반 동네 게시물 확인\n* ting은 서비스 제공을 위한 용도로만 위치정보가 수집되며\n그 외의 용도로 위치정보를 수집하지 않습니다.',
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xff9FA3AB),
+            ),
+          ),
+        );
+      case 'Permission.photos' || 'Permission.storage':
+        return RichText(
+          text: const TextSpan(
+            text: '프로필 설정, 게시물 이미지 업로드',
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xff9FA3AB),
+            ),
+          ),
+        );
+      case 'Permission.camera':
+        return RichText(
+          text: const TextSpan(
+            text: '게시물 이미지 업로드',
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xff9FA3AB),
+            ),
+          ),
+        );
+      case 'Permission.notification':
+        return RichText(
+          text: const TextSpan(
+            text: '채팅 메시지 및 혜택 정보 알림',
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xff9FA3AB),
+            ),
+          ),
+        );
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      leading: permissionIcon(widget.permission.toString()),
       title: Text(
         permissionName(widget.permission.toString()),
-        style: Theme.of(context).textTheme.bodyLarge,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
+        ),
       ),
-      subtitle: Text(
-        _permissionStatus.toString(),
+      subtitle: permissionSubscription(
+        widget.permission.toString(),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:ting_maker/util/f_logger.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,7 +25,7 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         onMapReady: (controller) {
-          print("네이버 맵 로딩됨!");
+          Log.e("네이버 맵 로딩됨!");
         },
       ),
     );

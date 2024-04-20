@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/service/sample_service.dart';
+import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -14,10 +14,11 @@ class PhoneCheckScreen extends StatefulWidget {
   State<PhoneCheckScreen> createState() => _PhoneCheckScreenState();
 }
 
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+final TextEditingController _editingController = TextEditingController();
+final service = Get.find<MainProvider>();
+
 class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
-  final TextEditingController _editingController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final service = Get.find<SampleProvider>();
   bool isNext = false;
 
   void phoneCheckCallback() async {
@@ -54,7 +55,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
                   const SizedBox(height: 10),
                   const Text(
                     '\t\t휴대폰 번호는 안전하게 보관되며 타인에게 공개되지 않아요.',
-                    style: TextStyle(color: Colors.black, fontSize: 13),
+                    style: TextStyle(color: Colors.black87, fontSize: 13),
                   ),
                   const SizedBox(height: 30),
                   Form(

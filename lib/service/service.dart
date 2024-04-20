@@ -1,13 +1,13 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get_connect/connect.dart';
 
-class SampleProvider extends GetConnect {
+class MainProvider extends GetConnect {
   @override
   void onInit() {
     super.onInit();
 
     httpClient
-      ..baseUrl = dotenv.get('HOST_URL2')
+      ..baseUrl = dotenv.get('TEST_URL')
       ..defaultContentType = 'application/json'
       ..timeout = const Duration(seconds: 10);
     // ..addRequestModifier<dynamic>((request) {
@@ -22,7 +22,8 @@ class SampleProvider extends GetConnect {
   Future<Response> phoneCheck2(String phone, String code) => httpClient.get(
         '/SMS/checkSMS?phone=$phone&code=$code',
       );
-  // Future<Response> postUser(Map data) => post('http://youapi/users', data);
+  Future<Response> signupUser(Map data) =>
+      httpClient.post('/ting/api_getdata', body: {data});
   // Future<Response> postCases(List<int> image) {
   //   final form = FormData({
   //     'file': MultipartFile(image, filename: 'avatar.png'),

@@ -10,14 +10,15 @@ class RegisterScreen2 extends StatefulWidget {
   State<RegisterScreen2> createState() => _RegisterScreen2State();
 }
 
-class _RegisterScreen2State extends State<RegisterScreen2> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _yearController = TextEditingController();
-  final TextEditingController _monthController = TextEditingController();
-  final TextEditingController _dayController = TextEditingController();
+Map<String, dynamic> registerData = Get.arguments;
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+final TextEditingController _yearController = TextEditingController();
+final TextEditingController _monthController = TextEditingController();
+final TextEditingController _dayController = TextEditingController();
+final FocusNode _monthFocus = FocusNode();
+final FocusNode _dayFocus = FocusNode();
 
-  final FocusNode _monthFocus = FocusNode();
-  final FocusNode _dayFocus = FocusNode();
+class _RegisterScreen2State extends State<RegisterScreen2> {
   bool female = false;
   bool male = false;
 
@@ -45,7 +46,24 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
   }
 
   void goNextPage() {
-    Get.toNamed('/register3');
+    Get.toNamed('/register3', arguments: {
+      'phone': registerData['phone'],
+      'id': registerData['id'],
+      'pwd': registerData['pwd'],
+      'gender': female ? 'woman' : 'man',
+      'birth':
+          '${_yearController.text}${_monthController.text}${_dayController.text}'
+    });
+  }
+
+  @override
+  void dispose() {
+    _yearController.dispose();
+    _monthController.dispose();
+    _dayController.dispose();
+    _monthFocus.dispose();
+    _dayFocus.dispose();
+    super.dispose();
   }
 
   @override

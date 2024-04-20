@@ -1,7 +1,8 @@
+import 'dart:typed_data';
+
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
-import 'package:ting_maker/service/sample_service.dart';
-import 'package:ting_maker/widget/common_appbar.dart';
-import 'package:ting_maker/widget/common_style.dart';
+import 'package:get/get.dart';
 
 class ProfileCreateScreen extends StatefulWidget {
   const ProfileCreateScreen({super.key});
@@ -11,81 +12,51 @@ class ProfileCreateScreen extends StatefulWidget {
 }
 
 class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool isNext = false;
+  final _controller = CropController();
+  final Uint8List _cropImage = Get.arguments['crop'];
 
-  final service = SampleProvider();
+  void cancelCrop() {
+    Get.back(result: {'crop': false});
+  }
 
-  void test() {
-    // service.getUser(id);
+  void successCrop() {
+    _controller.crop();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: commonAppbar(),
-      body: CustomScrollView(
-        slivers: [
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 20, 12, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('\t안녕하세요!', style: registerTitleStyle),
-                  Text('\t휴대폰 번호를 입력해주세요.', style: registerTitleStyle),
-                  const SizedBox(height: 10),
-                  const Text(
-                    '\t\t휴대폰 번호는 안전하게 보관되며 타인에게 공개되지 않아요.',
-                    style: TextStyle(color: Colors.black, fontSize: 13),
-                  ),
-                  const SizedBox(height: 30),
-                  Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      decoration: inputDecoration('휴대폰 번호 ( - 없이 숫자만 입력 )'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '휴대폰 번호를 입력하세요';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const Spacer(),
-                  Container(
-                    width: double.infinity,
-                    height: 52,
-                    decoration: isNext ? enableButton : disableButton,
-                    child: MaterialButton(
-                      animationDuration: Durations.short4,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      onPressed: () {
-                        isNext ? null : null;
-                      },
-                      child: Center(
-                        child: Text(
-                          '인증 문자 받기',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: isNext
-                                ? const Color(0xffffffff)
-                                : const Color(0xff9FA3AB),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+    return Stack(children: [
+      Crop(
+        image: _cropImage,
+        controller: _controller,
+        onCropped: (image) {
+          Get.back(result: {'crop': image});
+        },
+        withCircleUi: true,
+        baseColor: const Color(0XFF00BFFE),
+        maskColor: Colors.black45,
+        progressIndicator: const CircularProgressIndicator(),
+        cornerDotBuilder: (size, edgeAlignment) => const DotControl(
+          color: Color(0XFF00BFFE),
+        ),
+        clipBehavior: Clip.hardEdge,
       ),
-    );
+      Positioned(
+        bottom: 0,
+        left: 0,
+        child: ElevatedButton(
+          child: const Text('Cancel'),
+          onPressed: () => cancelCrop(),
+        ),
+      ),
+      Positioned(
+        bottom: 0,
+        right: 0,
+        child: ElevatedButton(
+          child: const Text('Crop'),
+          onPressed: () => successCrop(),
+        ),
+      )
+    ]);
   }
 }

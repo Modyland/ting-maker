@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/service/sample_service.dart';
+import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -17,16 +17,15 @@ class PhoneCheckScreen2 extends StatefulWidget {
   State<PhoneCheckScreen2> createState() => _PhoneCheckScreen2State();
 }
 
+Map<String, dynamic> registerData = Get.arguments;
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+final TextEditingController _editingController = TextEditingController();
+final service = Get.find<MainProvider>();
+
 class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
-  String phone = Get.arguments['phone'];
-
-  final TextEditingController _editingController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final service = Get.find<SampleProvider>();
-
   late Timer _timer;
-  String formattedTime = '00:00';
   Duration _remainingTime = const Duration(minutes: 3);
+  String formattedTime = '00:00';
 
   bool isNext = false;
   int validCheck = 0;
@@ -53,7 +52,8 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
 
   void phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
-    final res = await service.phoneCheck2(phone, _editingController.text);
+    final res = await service.phoneCheck2(
+        registerData['phone'], _editingController.text);
     if (res.body is Map<String, dynamic> && res.body.containsKey('msg')) {
       validCheck = 1;
       _formKey.currentState!.validate();
@@ -61,7 +61,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
       final data = json.decode(res.body);
       if (data is bool) {
         if (data) {
-          Get.toNamed('/register', arguments: {'phone': phone});
+          Get.toNamed('/register', arguments: {'phone': registerData['phone']});
         } else {
           validCheck = 0;
           _formKey.currentState!.validate();

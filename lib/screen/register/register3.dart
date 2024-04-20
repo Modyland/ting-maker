@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ting_maker/service/sample_service.dart';
+import 'package:get/get.dart';
+import 'package:ting_maker/controller/profile_controller.dart';
+import 'package:ting_maker/service/service.dart';
+import 'package:ting_maker/util/f_logger.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/image_profile.dart';
@@ -11,14 +14,37 @@ class RegisterScreen3 extends StatefulWidget {
   State<RegisterScreen3> createState() => _RegisterScreen3State();
 }
 
+Map<String, dynamic> registerData = Get.arguments;
+final ImageProfileController _imageProfileController =
+    Get.put(ImageProfileController());
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+final TextEditingController _editingController = TextEditingController();
+final service = Get.find<MainProvider>();
+
 class _RegisterScreen3State extends State<RegisterScreen3> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isNext = false;
 
-  final service = SampleProvider();
+  void goSignup() async {
+    final Map<String, dynamic> requestData = {
+      'kind': 'signUp',
+      'id': registerData['id'],
+      'pwd': registerData['pwd'],
+      'phone': registerData['phone'],
+      'birth': registerData['birth'],
+      'gender': registerData['gender'],
+    };
+    if (_imageProfileController.finishCropImage != null) {
+      requestData['profile'] = _imageProfileController.finishCropImage;
+    }
+    final res = await service.signupUser(requestData);
+    Log.e(res);
+  }
 
-  void test() {
-    // service.getUser(id);
+  @override
+  void dispose() {
+    _imageProfileController.dispose();
+    _editingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,10 +67,18 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
                   Form(
                     key: _formKey,
                     child: TextFormField(
-                      decoration: inputDecoration('닉네임을 입력해주세요'),
+                      controller: _editingController,
+                      decoration: inputDecoration('닉네임을 입력해주세요 (2글자 이상)'),
+                      onChanged: (value) {
+                        setState(() {
+                          isNext = value.length >= 2;
+                        });
+                      },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '닉네임을 입력해주세요';
+                        } else if (value.length < 4) {
+                          return '닉네임은 최소 2글자 이상이어야 합니다';
                         }
                         return null;
                       },
@@ -70,11 +104,11 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       onPressed: () {
-                        isNext ? null : null;
+                        isNext ? goSignup() : null;
                       },
                       child: Center(
                         child: Text(
-                          '인증 문자 받기',
+                          '가입하기',
                           style: TextStyle(
                             fontSize: 16,
                             color: isNext
