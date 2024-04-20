@@ -13,6 +13,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ting_maker/controller/navigation_controller.dart';
 import 'package:ting_maker/controller/sample_controller.dart';
 import 'package:ting_maker/firebase_options.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
@@ -128,6 +129,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           initialBinding: BindingsBuilder(() {
+            Get.put(NavigationController(), permanent: true);
             Get.lazyPut<MainProvider>(() => MainProvider(), fenix: true);
             Get.lazyPut<SampleController>(() => SampleController(),
                 fenix: true);
@@ -140,8 +142,8 @@ class MyApp extends StatelessWidget {
                 name: '/',
                 page: () {
                   final isLogin = pref.getBool('isLogin') ?? false;
-                  if (isLogin) {
-                    return const HomeScreen();
+                  if (!isLogin) {
+                    return const MainScreen();
                   } else {
                     return const OnboardingScreen();
                   }
