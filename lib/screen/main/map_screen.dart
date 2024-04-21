@@ -6,7 +6,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/map_controller.dart';
-import 'package:ting_maker/util/f_logger.dart';
+import 'package:ting_maker/util/logger.dart';
 
 class NaverMapScreen extends StatefulWidget {
   const NaverMapScreen({super.key});
@@ -22,7 +22,7 @@ StreamSubscription<Position> _positionStream = Geolocator.getPositionStream(
   locationSettings: const LocationSettings(),
 ).listen((Position position) async {
   _customNaverMapController.setPosition = position;
-  Log.e(position);
+  Log.f(position);
 });
 
 Future<Position> _determinePosition() async {
@@ -63,7 +63,7 @@ class _NaverMapScreenState extends State<NaverMapScreen>
     final position = _customNaverMapController.getPosition;
     List<Placemark> placemark =
         await placemarkFromCoordinates(position!.latitude, position.longitude);
-    Log.e(
+    Log.f(
       '${placemark[0].subLocality} , ${placemark[0].thoroughfare}',
     );
     NMarker marker1 = NMarker(
@@ -82,7 +82,7 @@ class _NaverMapScreenState extends State<NaverMapScreen>
 
   void cameraChangeStream() {
     _onCameraChangeStreamController.stream.listen((reason) {
-      Log.e(reason);
+      Log.f(reason);
     });
   }
 

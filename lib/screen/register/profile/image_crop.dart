@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 class ImageCropScreen extends StatefulWidget {
   const ImageCropScreen({super.key});
@@ -33,11 +34,11 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
           Get.back(result: {'crop': image});
         },
         withCircleUi: true,
-        baseColor: const Color(0XFF00BFFE),
+        baseColor: pointColor,
         maskColor: Colors.black45,
         progressIndicator: const CircularProgressIndicator(),
-        cornerDotBuilder: (size, edgeAlignment) => const DotControl(
-          color: Color(0XFF00BFFE),
+        cornerDotBuilder: (size, edgeAlignment) => DotControl(
+          color: pointColor,
         ),
         clipBehavior: Clip.hardEdge,
       ),

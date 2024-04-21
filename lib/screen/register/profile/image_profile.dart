@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ting_maker/controller/profile_controller.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 class BorderPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..style = PaintingStyle.stroke
-      ..color = const Color(0xffD9D9D9)
+      ..color = grey400
       ..strokeWidth = 1;
 
     final center = Offset(size.width / 2, size.height / 2);

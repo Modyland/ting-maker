@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 class FindIdPwdScreen extends StatefulWidget {
   const FindIdPwdScreen({super.key});
@@ -40,8 +41,10 @@ class _FindIdPwdScreenState extends State<FindIdPwdScreen>
   Widget _tabBar() {
     return TabBar(
       controller: tabController,
-      overlayColor: const MaterialStatePropertyAll(Colors.transparent),
-      indicatorColor: const Color(0XFF00BFFE),
+      overlayColor: const MaterialStatePropertyAll(
+        Colors.transparent,
+      ),
+      indicatorColor: pointColor,
       indicatorSize: TabBarIndicatorSize.tab,
       indicatorWeight: 2,
       labelColor: Colors.black,
@@ -49,7 +52,7 @@ class _FindIdPwdScreenState extends State<FindIdPwdScreen>
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
-      unselectedLabelColor: const Color(0xffBCC0C6),
+      unselectedLabelColor: grey300,
       unselectedLabelStyle: const TextStyle(
         fontSize: 14,
       ),

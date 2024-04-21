@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/util/f_logger.dart';
+import 'package:ting_maker/util/logger.dart';
 
 class RouterObserver extends GetObserver {
   @override
@@ -8,17 +8,17 @@ class RouterObserver extends GetObserver {
     if (route.settings.name == '/protectedPage') {
       Get.offAllNamed('/login');
     } else {
-      Log.d('Route push: ${route.settings.name}');
+      Log.f('Route push: ${route.settings.name}');
     }
   }
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    Log.d('Route popped: ${route.settings.name}');
+    Log.f('Route popped: ${route.settings.name}');
   }
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    Log.d('Route replaced: ${newRoute?.settings.name}');
+    Log.f('Route replaced: ${newRoute?.settings.name}');
   }
 }

@@ -142,30 +142,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       children: [
                         checkPasswordRow(
                           firstValid['err'] == true
-                              ? Colors.red.shade400
+                              ? errColor
                               : firstValid['ok'] == true
-                                  ? Colors.green.shade400
-                                  : const Color(0xff717680),
+                                  ? okColor
+                                  : grey500,
                           '8자 이상',
                           secondValid['err'] == true
-                              ? Colors.red.shade400
+                              ? errColor
                               : secondValid['ok'] == true
-                                  ? Colors.green.shade400
-                                  : const Color(0xff717680),
+                                  ? okColor
+                                  : grey500,
                           '영문 포함',
                         ),
                         checkPasswordRow(
                           thirdValid['err'] == true
-                              ? Colors.red.shade400
+                              ? errColor
                               : thirdValid['ok'] == true
-                                  ? Colors.green.shade400
-                                  : const Color(0xff717680),
+                                  ? okColor
+                                  : grey500,
                           '숫자 포함',
                           forthValid['err'] == true
-                              ? Colors.red.shade400
+                              ? errColor
                               : forthValid['ok'] == true
-                                  ? Colors.green.shade400
-                                  : const Color(0xff717680),
+                                  ? okColor
+                                  : grey500,
                           '특수문자 포함 (!@#\$%^&*)',
                         ),
                       ],
@@ -190,9 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             '다음',
                             style: TextStyle(
                               fontSize: 16,
-                              color: isNext
-                                  ? const Color(0xffffffff)
-                                  : const Color(0xff9FA3AB),
+                              color: isNext ? Colors.white : grey400,
                             ),
                           ),
                         ),

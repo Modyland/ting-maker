@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +30,7 @@ import 'package:ting_maker/screen/register/register3.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/device_info.dart';
-import 'package:ting_maker/util/f_logger.dart';
+import 'package:ting_maker/util/logger.dart';
 
 late SharedPreferences pref;
 late PackageInfo packageInfo;
@@ -75,7 +74,7 @@ Future<void> initFirebase() async {
   FirebaseApp app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  Log.i('Initialized Default App ${app.name}');
+  Log.t('Initialized Default App ${app.name}');
 }
 
 class MyApp extends StatelessWidget {
@@ -105,14 +104,13 @@ class MyApp extends StatelessWidget {
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
-            DefaultCupertinoLocalizations.delegate,
           ],
           defaultTransition: Transition.leftToRightWithFade,
           transitionDuration: Durations.short4,
           title: 'Ting',
           theme: ThemeData(
-            brightness: Brightness.light,
             useMaterial3: false,
+            brightness: Brightness.light,
             scaffoldBackgroundColor: Colors.white,
             bottomSheetTheme: const BottomSheetThemeData(
               backgroundColor: Colors.white,

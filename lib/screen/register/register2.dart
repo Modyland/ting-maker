@@ -87,9 +87,9 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                     children: [
                       Ink(
                         decoration: female
-                            ? const ShapeDecoration(
-                                shape: CircleBorder(),
-                                color: Color(0XFF00BFFE),
+                            ? ShapeDecoration(
+                                shape: const CircleBorder(),
+                                color: pointColor,
                               )
                             : null,
                         child: InkWell(
@@ -105,9 +105,9 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                       ),
                       Ink(
                         decoration: male
-                            ? const ShapeDecoration(
-                                shape: CircleBorder(),
-                                color: Color(0XFF00BFFE),
+                            ? ShapeDecoration(
+                                shape: const CircleBorder(),
+                                color: pointColor,
                               )
                             : null,
                         child: InkWell(
@@ -221,20 +221,20 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  const Text(
+                  Text(
                     '생년월일은 공개되지 않으며 본인확인용으로만 사용됩니다.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Color(0xff717680),
+                      color: grey500,
                     ),
                   ),
                   const Spacer(),
                   const SizedBox(height: 10),
-                  const Text(
+                  Text(
                     'TING은 모든 가입자의 신원을 검증하며, 거짓 정보를 입력하거나 타인의 정보를 도용할 경우 법적 처벌을 받을 수 있습니다.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Color(0xff717680),
+                      color: grey500,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -256,9 +256,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                           '다음',
                           style: TextStyle(
                             fontSize: 16,
-                            color: isNext
-                                ? const Color(0xffffffff)
-                                : const Color(0xff9FA3AB),
+                            color: isNext ? Colors.white : grey400,
                           ),
                         ),
                       ),

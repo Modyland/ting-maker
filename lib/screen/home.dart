@@ -7,6 +7,7 @@ import 'package:ting_maker/screen/main/myinfo_screen.dart';
 import 'package:ting_maker/screen/main/myplace_screen.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 class MainScreen extends GetView<NavigationProvider> {
   const MainScreen({super.key});
@@ -36,7 +37,7 @@ class MainScreen extends GetView<NavigationProvider> {
               showSelectedLabels: true,
               showUnselectedLabels: true,
               selectedItemColor: Colors.black,
-              unselectedItemColor: const Color(0xffbcc0c6),
+              unselectedItemColor: grey300,
               onTap: controller.changeIndex,
               items: const [
                 BottomNavigationBarItem(

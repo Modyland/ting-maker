@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ting_maker/main.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 class OnePageScreen extends StatefulWidget {
   const OnePageScreen({super.key});
@@ -30,31 +31,34 @@ class _OnePageScreenState extends State<OnePageScreen>
 
   @override
   Widget build(BuildContext context) {
-    const regularStyle = TextStyle(
-      fontSize: 16,
-      color: Colors.black,
-    );
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: const BoxDecoration(),
       width: double.infinity,
-      padding:
-          EdgeInsets.fromLTRB(0, MyApp.height * 0.2, 0, MyApp.height * 0.1),
+      padding: EdgeInsets.fromLTRB(
+        0,
+        MyApp.height * 0.15,
+        0,
+        MyApp.height * 0.05,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Column(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 '여기서 뭐하지?',
-                style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black,
-                ),
+                style: onboardTitleStyle,
               ),
-              Text('빠르고 쉬운 실시간 동네 소모임', style: regularStyle),
-              Text('어렵지 않아요', style: regularStyle)
+              Text(
+                '빠르고 쉬운 실시간 동네 소모임',
+                style: onboardRegularStyle,
+              ),
+              Text(
+                '어렵지 않아요',
+                style: onboardRegularStyle,
+              )
             ],
           ),
           Column(

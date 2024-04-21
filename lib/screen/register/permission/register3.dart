@@ -37,7 +37,7 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
       requestData['profile'] = _imageProfileController.getFinishCropImage;
     }
     final res = await service.signupUser(requestData);
-    Log.f(res);
+    Log.e(res);
   }
 
   @override
@@ -85,11 +85,11 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  Text(
+                  const Text(
                     '신중하게 본인을 가장 잘 나타내는 이름으로 설정해주세요',
                     style: TextStyle(
                       fontSize: 12,
-                      color: grey500,
+                      color: Color(0xff717680),
                     ),
                   ),
                   const Spacer(),
@@ -111,7 +111,9 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
                           '가입하기',
                           style: TextStyle(
                             fontSize: 16,
-                            color: isNext ? Colors.white : grey400,
+                            color: isNext
+                                ? const Color(0xffffffff)
+                                : const Color(0xff9FA3AB),
                           ),
                         ),
                       ),

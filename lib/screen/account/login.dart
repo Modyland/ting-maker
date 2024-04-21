@@ -12,23 +12,23 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
+const TextStyle _labelStyle = TextStyle(
+  fontSize: 20,
+  fontWeight: FontWeight.w600,
+  color: Colors.black,
+);
+
+const TextStyle _findStyle = TextStyle(
+  fontSize: 12,
+  fontWeight: FontWeight.w400,
+  color: Colors.black,
+  height: 1,
+);
+
+final ScrollController _scrollController = ScrollController();
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
 class _LoginScreenState extends State<LoginScreen> {
-  final ScrollController _scrollController = ScrollController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final TextStyle _labelStyle = const TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
-    color: Colors.black,
-  );
-
-  final TextStyle _findStyle = const TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    color: Colors.black87,
-    height: 1,
-  );
-
   @override
   void initState() {
     super.initState();
@@ -45,7 +45,11 @@ class _LoginScreenState extends State<LoginScreen> {
             Center(
               child: Container(
                 padding: EdgeInsets.fromLTRB(
-                    0, MyApp.height * 0.13, 0, MyApp.height * 0.04),
+                  0,
+                  MyApp.height * 0.1,
+                  0,
+                  MyApp.height * 0.05,
+                ),
                 child: SvgPicture.asset('assets/image/logo.svg'),
               ),
             ),
@@ -56,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
+                    const Text(
                       '아이디',
                       style: _labelStyle,
                     ),
@@ -72,7 +76,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                     const SizedBox(height: 10),
-                    Text('비밀번호', style: _labelStyle),
+                    const Text(
+                      '비밀번호',
+                      style: _labelStyle,
+                    ),
                     const SizedBox(height: 10),
                     TextFormField(
                       obscureText: true,
@@ -94,14 +101,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             text: '아이디 찾기',
                             style: _findStyle,
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () => Get.toNamed('/find_id_pwd',
-                                  arguments: {'tab': 'id'}),
+                              ..onTap = () {
+                                Get.toNamed(
+                                  '/find_id_pwd',
+                                  arguments: {'tab': 'id'},
+                                );
+                              },
                           ),
                         ),
                         Container(
                           height: 12,
                           width: 1,
-                          color: Colors.black87,
+                          color: Colors.black,
                           margin: const EdgeInsets.symmetric(horizontal: 5),
                         ),
                         RichText(
@@ -109,8 +120,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             text: '비밀번호 찾기',
                             style: _findStyle,
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () => Get.toNamed('/find_id_pwd',
-                                  arguments: {'tab': 'pwd'}),
+                              ..onTap = () {
+                                Get.toNamed(
+                                  '/find_id_pwd',
+                                  arguments: {'tab': 'pwd'},
+                                );
+                              },
                           ),
                         )
                       ],
@@ -121,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 48,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: const Color(0XFF00BFFE),
+                        color: pointColor,
                       ),
                       child: MaterialButton(
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -135,13 +150,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             // 예를 들어, 로그인 로직을 여기에 구현할 수 있습니다.
                           }
                         },
-                        child: const Center(
+                        child: Center(
                           child: Text(
                             '로그인',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color(0XFFFFFFFF),
-                            ),
+                            style: buttonWhiteTextStyle,
                           ),
                         ),
                       ),
@@ -158,13 +170,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: <TextSpan>[
                             TextSpan(
                               text: '회원가입',
-                              style: const TextStyle(
-                                color: Color(0XFF00BFFE),
+                              style: TextStyle(
+                                color: pointColor,
                                 fontSize: 13,
                                 decoration: TextDecoration.underline,
                               ),
                               recognizer: TapGestureRecognizer()
-                                ..onTap = () => Get.toNamed('/service_agree'),
+                                ..onTap = () {
+                                  Get.toNamed('/service_agree');
+                                },
                             )
                           ],
                         ),

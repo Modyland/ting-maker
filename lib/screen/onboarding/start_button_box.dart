@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 class StartButtonBox extends StatelessWidget {
   const StartButtonBox({super.key});
@@ -9,8 +10,12 @@ class StartButtonBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(MyApp.width * 0.1, MyApp.height * 0.03,
-          MyApp.width * 0.1, MyApp.height * 0.05),
+      padding: EdgeInsets.fromLTRB(
+        MyApp.width * 0.1,
+        MyApp.height * 0.03,
+        MyApp.width * 0.1,
+        MyApp.height * 0.03,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -19,7 +24,7 @@ class StartButtonBox extends StatelessWidget {
             height: 52,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: const Color(0XFF00BFFE),
+              color: pointColor,
             ),
             child: MaterialButton(
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -29,13 +34,10 @@ class StartButtonBox extends StatelessWidget {
               onPressed: () {
                 Get.toNamed('/service_agree');
               },
-              child: const Center(
+              child: Center(
                 child: Text(
                   '시작하기',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0XFFFFFFFF),
-                  ),
+                  style: buttonWhiteTextStyle,
                 ),
               ),
             ),
@@ -51,13 +53,15 @@ class StartButtonBox extends StatelessWidget {
               children: <TextSpan>[
                 TextSpan(
                   text: '로그인',
-                  style: const TextStyle(
-                    color: Color(0XFF00BFFE),
+                  style: TextStyle(
+                    color: pointColor,
                     fontSize: 13,
                     decoration: TextDecoration.underline,
                   ),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () => Get.offAndToNamed('/login'),
+                    ..onTap = () {
+                      Get.offAndToNamed('/login');
+                    },
                 )
               ],
             ),

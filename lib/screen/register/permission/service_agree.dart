@@ -136,9 +136,7 @@ class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
                     '회원가입',
                     style: TextStyle(
                       fontSize: 16,
-                      color: isNext
-                          ? const Color(0xffffffff)
-                          : const Color(0xff9FA3AB),
+                      color: isNext ? Colors.white : grey400,
                     ),
                   ),
                 ),

@@ -94,7 +94,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
                     '확인',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Color(0xffffffff),
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -140,54 +140,54 @@ class _PermissionState extends State<PermissionWidget> {
   CircleAvatar? permissionIcon(String original) {
     switch (original) {
       case 'Permission.locationWhenInUse':
-        return const CircleAvatar(
-          backgroundColor: Color(0xffbcc0c6),
+        return CircleAvatar(
+          backgroundColor: grey300,
           radius: 20,
           child: CircleAvatar(
             backgroundColor: Colors.white,
             radius: 19,
             child: Icon(
               Icons.location_on_outlined,
-              color: Color(0XFF00BFFE),
+              color: pointColor,
             ),
           ),
         );
       case 'Permission.photos' || 'Permission.storage':
-        return const CircleAvatar(
-          backgroundColor: Color(0xffbcc0c6),
+        return CircleAvatar(
+          backgroundColor: grey300,
           radius: 20,
           child: CircleAvatar(
             backgroundColor: Colors.white,
             radius: 19,
             child: Icon(
               Icons.image_outlined,
-              color: Color(0XFF00BFFE),
+              color: pointColor,
             ),
           ),
         );
       case 'Permission.camera':
-        return const CircleAvatar(
-          backgroundColor: Color(0xffbcc0c6),
+        return CircleAvatar(
+          backgroundColor: grey300,
           radius: 20,
           child: CircleAvatar(
             backgroundColor: Colors.white,
             radius: 19,
             child: Icon(
               Icons.camera_alt_outlined,
-              color: Color(0XFF00BFFE),
+              color: pointColor,
             ),
           ),
         );
       case 'Permission.notification':
-        return const CircleAvatar(
-          backgroundColor: Color(0xffbcc0c6),
+        return CircleAvatar(
+          backgroundColor: grey300,
           radius: 20,
           child: CircleAvatar(
             backgroundColor: Colors.white,
             radius: 19,
             child: Icon(
               Icons.sms_outlined,
-              color: Color(0XFF00BFFE),
+              color: pointColor,
             ),
           ),
         );
@@ -199,42 +199,42 @@ class _PermissionState extends State<PermissionWidget> {
     switch (original) {
       case 'Permission.locationWhenInUse':
         return RichText(
-          text: const TextSpan(
+          text: TextSpan(
             text:
                 'ting 지도 서비스 이용\n위치 기반 동네 게시물 확인\n* ting은 서비스 제공을 위한 용도로만 위치정보가 수집되며\n그 외의 용도로 위치정보를 수집하지 않습니다.',
             style: TextStyle(
               fontSize: 12,
-              color: Color(0xff9FA3AB),
+              color: grey400,
             ),
           ),
         );
       case 'Permission.photos' || 'Permission.storage':
         return RichText(
-          text: const TextSpan(
+          text: TextSpan(
             text: '프로필 설정, 게시물 이미지 업로드',
             style: TextStyle(
               fontSize: 12,
-              color: Color(0xff9FA3AB),
+              color: grey400,
             ),
           ),
         );
       case 'Permission.camera':
         return RichText(
-          text: const TextSpan(
+          text: TextSpan(
             text: '게시물 이미지 업로드',
             style: TextStyle(
               fontSize: 12,
-              color: Color(0xff9FA3AB),
+              color: grey400,
             ),
           ),
         );
       case 'Permission.notification':
         return RichText(
-          text: const TextSpan(
+          text: TextSpan(
             text: '채팅 메시지 및 혜택 정보 알림',
             style: TextStyle(
               fontSize: 12,
-              color: Color(0xff9FA3AB),
+              color: grey400,
             ),
           ),
         );

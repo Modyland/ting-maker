@@ -13,8 +13,16 @@ class Log {
     Logger(printer: prettyPrinter).d(msg);
   }
 
+  static void f(dynamic msg) {
+    Logger(printer: prettyPrinter).f(msg);
+  }
+
   static void i(dynamic msg) {
     Logger(printer: prettyPrinter).i(msg);
+  }
+
+  static void t(dynamic msg) {
+    Logger(printer: prettyPrinter).t(msg);
   }
 
   static void e(dynamic msg) {
