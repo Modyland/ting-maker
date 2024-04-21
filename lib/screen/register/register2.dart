@@ -10,15 +10,14 @@ class RegisterScreen2 extends StatefulWidget {
   State<RegisterScreen2> createState() => _RegisterScreen2State();
 }
 
-Map<String, dynamic> registerData = Get.arguments;
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-final TextEditingController _yearController = TextEditingController();
-final TextEditingController _monthController = TextEditingController();
-final TextEditingController _dayController = TextEditingController();
-final FocusNode _monthFocus = FocusNode();
-final FocusNode _dayFocus = FocusNode();
-
 class _RegisterScreen2State extends State<RegisterScreen2> {
+  Map<String, dynamic> registerData = Get.arguments;
+  final GlobalKey<FormState> _dateFormKey = GlobalKey<FormState>();
+  final TextEditingController _yearController = TextEditingController();
+  final TextEditingController _monthController = TextEditingController();
+  final TextEditingController _dayController = TextEditingController();
+  final FocusNode _monthFocus = FocusNode();
+  final FocusNode _dayFocus = FocusNode();
   bool female = false;
   bool male = false;
 
@@ -76,7 +75,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 20, 12, 8),
             child: Form(
-              key: _formKey,
+              key: _dateFormKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

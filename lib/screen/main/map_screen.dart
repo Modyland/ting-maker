@@ -18,47 +18,49 @@ class NaverMapScreen extends StatefulWidget {
 CustomNaverMapController _customNaverMapController =
     Get.find<CustomNaverMapController>();
 
-StreamSubscription<Position> _positionStream = Geolocator.getPositionStream(
-  locationSettings: const LocationSettings(),
-).listen((Position position) async {
-  _customNaverMapController.setPosition = position;
-  Log.f(position);
-});
-
-Future<Position> _determinePosition() async {
-  bool serviceEnabled;
-  LocationPermission permission;
-
-  serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    return Future.error('위치 꺼놨을때');
-  }
-
-  permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      await Geolocator.openAppSettings();
-      return Future.error('위치 권한 거부');
-    }
-  }
-
-  if (permission == LocationPermission.deniedForever) {
-    await Geolocator.openLocationSettings();
-    return Future.error('영구적으로 거부');
-  }
-
-  final position = await Geolocator.getCurrentPosition();
-
-  _customNaverMapController.setPosition = position;
-
-  return position;
-}
-
 class _NaverMapScreenState extends State<NaverMapScreen>
     with AutomaticKeepAliveClientMixin {
+  final StreamSubscription<Position> _positionStream =
+      Geolocator.getPositionStream(
+    locationSettings: const LocationSettings(),
+  ).listen((Position position) async {
+    _customNaverMapController.setPosition = position;
+    Log.f(position);
+  });
+
   final StreamController<NCameraUpdateReason> _onCameraChangeStreamController =
       StreamController<NCameraUpdateReason>.broadcast();
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('위치 꺼놨을때');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        await Geolocator.openAppSettings();
+        return Future.error('위치 권한 거부');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      await Geolocator.openLocationSettings();
+      return Future.error('영구적으로 거부');
+    }
+
+    final position = await Geolocator.getCurrentPosition();
+
+    _customNaverMapController.setPosition = position;
+
+    return position;
+  }
+
   void test() async {
     final position = _customNaverMapController.getPosition;
     List<Placemark> placemark =

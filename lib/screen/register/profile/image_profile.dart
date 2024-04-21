@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ting_maker/controller/profile_controller.dart';
+import 'package:ting_maker/screen/register/register3.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class BorderPainter extends CustomPainter {
@@ -40,12 +40,9 @@ class ImageProfile extends StatefulWidget {
   State<ImageProfile> createState() => _ImageProfileState();
 }
 
-final ImagePicker _picker = ImagePicker();
-final ImageProfileController _imageProfileController =
-    Get.find<ImageProfileController>();
-
 class _ImageProfileState extends State<ImageProfile> {
   late Uint8List _cropImage;
+  final ImagePicker _picker = ImagePicker();
 
   Future getImage() async {
     final XFile? pickedFile =
@@ -56,7 +53,7 @@ class _ImageProfileState extends State<ImageProfile> {
           await Get.toNamed('/image_crop', arguments: {'crop': _cropImage});
       if (finishCrop != null && finishCrop['crop'] is Uint8List) {
         setState(() {
-          _imageProfileController.setFinishCropImage = finishCrop['crop'];
+          imageProfileController.setFinishCropImage = finishCrop['crop'];
         });
       }
     }
@@ -77,10 +74,10 @@ class _ImageProfileState extends State<ImageProfile> {
               child: CircleAvatar(
                 radius: 80,
                 backgroundColor: Colors.transparent,
-                backgroundImage: _imageProfileController.getFinishCropImage ==
+                backgroundImage: imageProfileController.getFinishCropImage ==
                         null
                     ? const AssetImage('assets/image/profile.png')
-                    : MemoryImage(_imageProfileController.getFinishCropImage!)
+                    : MemoryImage(imageProfileController.getFinishCropImage!)
                         as ImageProvider<Object>,
               ),
             ),

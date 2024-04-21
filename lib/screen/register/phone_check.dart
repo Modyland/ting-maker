@@ -14,26 +14,27 @@ class PhoneCheckScreen extends StatefulWidget {
   State<PhoneCheckScreen> createState() => _PhoneCheckScreenState();
 }
 
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-final TextEditingController _editingController = TextEditingController();
 final service = Get.find<MainProvider>();
 
 class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
+  final GlobalKey<FormState> _phoneFormkey = GlobalKey<FormState>();
+  final TextEditingController _phoneCheckEditing = TextEditingController();
+
   bool isNext = false;
 
   void phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
-    final res = await service.phoneCheck(_editingController.text);
+    final res = await service.phoneCheck(_phoneCheckEditing.text);
     final data = json.decode(res.body);
     if (data) {
       Get.toNamed('/phone_check2',
-          arguments: {'phone': _editingController.text});
+          arguments: {'phone': _phoneCheckEditing.text});
     }
   }
 
   @override
   void dispose() {
-    _editingController.dispose();
+    _phoneCheckEditing.dispose();
     super.dispose();
   }
 
@@ -59,10 +60,10 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
                   ),
                   const SizedBox(height: 30),
                   Form(
-                    key: _formKey,
+                    key: _phoneFormkey,
                     child: TextFormField(
                       autofocus: true,
-                      controller: _editingController,
+                      controller: _phoneCheckEditing,
                       decoration: inputDecoration('휴대폰 번호 ( - 없이 숫자만 입력 )'),
                       keyboardType: TextInputType.phone,
                       maxLength: 11,

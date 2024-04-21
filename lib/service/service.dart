@@ -23,7 +23,7 @@ class MainProvider extends GetConnect {
         '/SMS/checkSMS?phone=$phone&code=$code',
       );
   Future<Response> signupUser(Map data) =>
-      httpClient.post('/ting/api_getdata', body: {data});
+      httpClient.post('/ting/api_getdata', body: data);
   // Future<Response> postCases(List<int> image) {
   //   final form = FormData({
   //     'file': MultipartFile(image, filename: 'avatar.png'),

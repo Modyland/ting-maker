@@ -1,9 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/profile_controller.dart';
+import 'package:ting_maker/screen/register/phone_check.dart';
 import 'package:ting_maker/screen/register/profile/image_profile.dart';
-import 'package:ting_maker/service/service.dart';
-import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -14,14 +15,14 @@ class RegisterScreen3 extends StatefulWidget {
   State<RegisterScreen3> createState() => _RegisterScreen3State();
 }
 
-Map<String, dynamic> registerData = Get.arguments;
-final ImageProfileController _imageProfileController =
-    Get.put(ImageProfileController());
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-final TextEditingController _editingController = TextEditingController();
-final service = Get.find<MainProvider>();
+final ImageProfileController imageProfileController =
+    Get.find<ImageProfileController>();
 
 class _RegisterScreen3State extends State<RegisterScreen3> {
+  Map<String, dynamic> registerData = Get.arguments;
+  final GlobalKey<FormState> _nickNameFormKey = GlobalKey<FormState>();
+  final TextEditingController _nickNameEditing = TextEditingController();
+
   bool isNext = false;
 
   void goSignup() async {
@@ -33,17 +34,26 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
       'birth': registerData['birth'],
       'gender': registerData['gender'],
     };
-    if (_imageProfileController.getFinishCropImage != null) {
-      requestData['profile'] = _imageProfileController.getFinishCropImage;
+    if (imageProfileController.getFinishCropImage != null) {
+      requestData['profile'] = imageProfileController.getFinishCropImage;
     }
     final res = await service.signupUser(requestData);
-    Log.f(res);
+    final data = json.decode(res.body);
+    if (data) {
+      imageProfileController.dispose();
+      Get.offAllNamed('/login');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    imageProfileController.clearCropImage();
   }
 
   @override
   void dispose() {
-    _imageProfileController.dispose();
-    _editingController.dispose();
+    _nickNameEditing.dispose();
     super.dispose();
   }
 
@@ -65,9 +75,9 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
                   Text('\t닉네임', style: registerTitleStyle),
                   const SizedBox(height: 10),
                   Form(
-                    key: _formKey,
+                    key: _nickNameFormKey,
                     child: TextFormField(
-                      controller: _editingController,
+                      controller: _nickNameEditing,
                       decoration: inputDecoration('닉네임을 입력해주세요 (2글자 이상)'),
                       onChanged: (value) {
                         setState(() {

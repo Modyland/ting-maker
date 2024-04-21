@@ -13,7 +13,7 @@ class ImageCropScreen extends StatefulWidget {
 }
 
 class _ImageCropScreenState extends State<ImageCropScreen> {
-  final _controller = CropController();
+  final _cropController = CropController();
   final Uint8List _cropImage = Get.arguments['crop'];
 
   void cancelCrop() {
@@ -21,7 +21,7 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
   }
 
   void successCrop() {
-    _controller.crop();
+    _cropController.crop();
   }
 
   @override
@@ -29,7 +29,7 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
     return Stack(children: [
       Crop(
         image: _cropImage,
-        controller: _controller,
+        controller: _cropController,
         onCropped: (image) {
           Get.back(result: {'crop': image});
         },

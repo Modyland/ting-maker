@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/service/service.dart';
+import 'package:ting_maker/screen/register/phone_check.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -17,12 +17,11 @@ class PhoneCheckScreen2 extends StatefulWidget {
   State<PhoneCheckScreen2> createState() => _PhoneCheckScreen2State();
 }
 
-Map<String, dynamic> registerData = Get.arguments;
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-final TextEditingController _editingController = TextEditingController();
-final service = Get.find<MainProvider>();
-
 class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
+  Map<String, dynamic> registerData = Get.arguments;
+  final GlobalKey<FormState> _phoneFormKey2 = GlobalKey<FormState>();
+  final TextEditingController _phoneCheckEditing2 = TextEditingController();
+
   late Timer _timer;
   Duration _remainingTime = const Duration(minutes: 3);
   String formattedTime = '00:00';
@@ -53,26 +52,28 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
   void phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
     final res = await service.phoneCheck2(
-        registerData['phone'], _editingController.text);
+      registerData['phone'],
+      _phoneCheckEditing2.text,
+    );
     if (res.body is Map<String, dynamic> && res.body.containsKey('msg')) {
+      // 인증시간 만료
       validCheck = 1;
-      _formKey.currentState!.validate();
+      _phoneFormKey2.currentState!.validate();
     } else {
       final data = json.decode(res.body);
-      if (data is bool) {
-        if (data) {
-          Get.toNamed('/register', arguments: {'phone': registerData['phone']});
-        } else {
-          validCheck = 0;
-          _formKey.currentState!.validate();
-        }
+      if (data) {
+        Get.toNamed('/register', arguments: {'phone': registerData['phone']});
+      } else {
+        //인증번호 틀림
+        validCheck = 0;
+        _phoneFormKey2.currentState!.validate();
       }
     }
   }
 
   @override
   void dispose() {
-    _editingController.dispose();
+    _phoneCheckEditing2.dispose();
     _timer.cancel();
     super.dispose();
   }
@@ -98,11 +99,11 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
                   ),
                   const SizedBox(height: 30),
                   Form(
-                    key: _formKey,
+                    key: _phoneFormKey2,
                     child: TextFormField(
                       autofocus: true,
                       autofillHints: const <String>[AutofillHints.oneTimeCode],
-                      controller: _editingController,
+                      controller: _phoneCheckEditing2,
                       decoration: inputDecoration('000000'),
                       keyboardType: TextInputType.number,
                       maxLength: 6,

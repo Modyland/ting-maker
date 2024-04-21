@@ -11,12 +11,11 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-Map<String, dynamic> registerData = Get.arguments;
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-final TextEditingController _idEditingController = TextEditingController();
-final TextEditingController _pwdEditingController = TextEditingController();
-
 class _RegisterScreenState extends State<RegisterScreen> {
+  Map<String, dynamic> registerData = Get.arguments;
+  final GlobalKey<FormState> _accountFormkey = GlobalKey<FormState>();
+  final TextEditingController _idEditingController = TextEditingController();
+  final TextEditingController _pwdEditingController = TextEditingController();
   Map<String, bool> firstValid = {'err': false, 'ok': false};
   Map<String, bool> secondValid = {'err': false, 'ok': false};
   Map<String, bool> thirdValid = {'err': false, 'ok': false};
@@ -93,7 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
               child: Form(
-                key: _formKey,
+                key: _accountFormkey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ting_maker/controller/map_controller.dart';
+import 'package:ting_maker/controller/profile_controller.dart';
 import 'package:ting_maker/firebase_options.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/screen/account/find_id_pwd.dart';
@@ -129,6 +130,7 @@ class MyApp extends StatelessWidget {
           ),
           initialBinding: BindingsBuilder(() {
             Get.put(NavigationProvider(), permanent: true);
+            Get.put(ImageProfileController());
             Get.put(CustomNaverMapController(), permanent: true);
             Get.lazyPut<MainProvider>(() => MainProvider(), fenix: true);
           }),
