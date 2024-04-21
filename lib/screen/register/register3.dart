@@ -33,8 +33,8 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
       'birth': registerData['birth'],
       'gender': registerData['gender'],
     };
-    if (_imageProfileController.finishCropImage != null) {
-      requestData['profile'] = _imageProfileController.finishCropImage;
+    if (_imageProfileController.getFinishCropImage != null) {
+      requestData['profile'] = _imageProfileController.getFinishCropImage;
     }
     final res = await service.signupUser(requestData);
     Log.e(res);

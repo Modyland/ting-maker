@@ -55,7 +55,7 @@ class _ImageProfileState extends State<ImageProfile> {
           await Get.toNamed('/profile_create', arguments: {'crop': _cropImage});
       if (finishCrop != null && finishCrop['crop'] is Uint8List) {
         setState(() {
-          _imageProfileController.setFinishCropImage(finishCrop['crop']);
+          _imageProfileController.setFinishCropImage = finishCrop['crop'];
         });
       }
     }
@@ -76,9 +76,10 @@ class _ImageProfileState extends State<ImageProfile> {
               child: CircleAvatar(
                 radius: 80,
                 backgroundColor: Colors.transparent,
-                backgroundImage: _imageProfileController.finishCropImage == null
+                backgroundImage: _imageProfileController.getFinishCropImage ==
+                        null
                     ? const AssetImage('assets/image/profile.png')
-                    : MemoryImage(_imageProfileController.finishCropImage!)
+                    : MemoryImage(_imageProfileController.getFinishCropImage!)
                         as ImageProvider<Object>,
               ),
             ),
