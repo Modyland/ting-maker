@@ -31,6 +31,7 @@ import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/device_info.dart';
 import 'package:ting_maker/util/logger.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 late SharedPreferences pref;
 late PackageInfo packageInfo;
@@ -121,9 +122,9 @@ class MyApp extends StatelessWidget {
               scrolledUnderElevation: 0,
             ),
             textSelectionTheme: TextSelectionThemeData(
-              cursorColor: Colors.grey.shade600,
-              selectionColor: Colors.grey.shade400,
-              selectionHandleColor: Colors.grey.shade400,
+              cursorColor: grey500,
+              selectionColor: grey400,
+              selectionHandleColor: grey400,
             ),
           ),
           initialBinding: BindingsBuilder(() {

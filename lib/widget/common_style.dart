@@ -163,7 +163,10 @@ Widget oneCheckRow(
       const SizedBox(width: 6),
       Text(
         text,
-        style: TextStyle(fontSize: 14, color: grey500),
+        style: TextStyle(
+          fontSize: 14,
+          color: grey500,
+        ),
       ),
       const Spacer(),
       RichText(
