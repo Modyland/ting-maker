@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/screen/chatting.dart';
-import 'package:ting_maker/screen/community_screen.dart';
-import 'package:ting_maker/screen/map_screen.dart';
-import 'package:ting_maker/screen/myinfo.dart';
-import 'package:ting_maker/screen/myplace_screen.dart';
+import 'package:ting_maker/screen/main/chatting_screen.dart';
+import 'package:ting_maker/screen/main/community_screen.dart';
+import 'package:ting_maker/screen/main/map_screen.dart';
+import 'package:ting_maker/screen/main/myinfo_screen.dart';
+import 'package:ting_maker/screen/main/myplace_screen.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 

@@ -147,34 +147,29 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          '계정이 없으신가요?',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w200,
-                            fontSize: 12,
+                    Center(
+                      child: RichText(
+                        text: TextSpan(
+                          text: '계정이 없으신가요?\t\t',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.black,
                           ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: '회원가입',
+                              style: const TextStyle(
+                                color: Color(0XFF00BFFE),
+                                fontSize: 13,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => Get.toNamed('/service_agree'),
+                            )
+                          ],
                         ),
-                        const SizedBox(width: 5),
-                        RichText(
-                          text: TextSpan(
-                            text: '회원가입',
-                            style: const TextStyle(
-                              color: Color(0XFF00BFFE),
-                              fontSize: 13,
-                              decoration: TextDecoration.underline,
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Get.toNamed('/service_agree');
-                              },
-                          ),
-                        ),
-                      ],
-                    )
+                      ),
+                    ),
                   ],
                 ),
               ),

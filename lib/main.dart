@@ -20,14 +20,14 @@ import 'package:ting_maker/screen/account/find_id_pwd.dart';
 import 'package:ting_maker/screen/account/login.dart';
 import 'package:ting_maker/screen/home.dart';
 import 'package:ting_maker/screen/onboarding/onboarding.dart';
-import 'package:ting_maker/screen/register/permission.dart';
+import 'package:ting_maker/screen/register/permission/permission.dart';
+import 'package:ting_maker/screen/register/permission/service_agree.dart';
 import 'package:ting_maker/screen/register/phone_check.dart';
 import 'package:ting_maker/screen/register/phone_check2.dart';
-import 'package:ting_maker/screen/register/profile_create.dart';
+import 'package:ting_maker/screen/register/profile/image_crop.dart';
 import 'package:ting_maker/screen/register/register.dart';
 import 'package:ting_maker/screen/register/register2.dart';
 import 'package:ting_maker/screen/register/register3.dart';
-import 'package:ting_maker/screen/register/service_agree.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/device_info.dart';
@@ -75,7 +75,7 @@ Future<void> initFirebase() async {
   FirebaseApp app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  Log.i('Initialized Default App $app');
+  Log.i('Initialized Default App ${app.name}');
 }
 
 class MyApp extends StatelessWidget {
@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
           enableLog: true,
           locale: Get.locale,
           supportedLocales: const [
-            Locale('ko', ''),
+            Locale('ko', 'KR'),
           ],
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
@@ -141,7 +141,7 @@ class MyApp extends StatelessWidget {
                 name: '/',
                 page: () {
                   final isLogin = pref.getBool('isLogin') ?? false;
-                  if (!isLogin) {
+                  if (isLogin) {
                     return const MainScreen();
                   } else {
                     return const OnboardingScreen();
@@ -176,8 +176,8 @@ class MyApp extends StatelessWidget {
               page: () => const RegisterScreen3(),
             ),
             GetPage(
-              name: '/profile_create',
-              page: () => const ProfileCreateScreen(),
+              name: '/image_crop',
+              page: () => const ImageCropScreen(),
             ),
             GetPage(
               name: '/login',

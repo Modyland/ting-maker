@@ -38,7 +38,7 @@ Future<Position> _determinePosition() async {
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
-      await Geolocator.openLocationSettings();
+      await Geolocator.openAppSettings();
       return Future.error('위치 권한 거부');
     }
   }

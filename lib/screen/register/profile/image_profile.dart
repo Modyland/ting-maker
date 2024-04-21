@@ -52,7 +52,7 @@ class _ImageProfileState extends State<ImageProfile> {
     if (pickedFile != null) {
       _cropImage = await XFile(pickedFile.path).readAsBytes();
       final finishCrop =
-          await Get.toNamed('/profile_create', arguments: {'crop': _cropImage});
+          await Get.toNamed('/image_crop', arguments: {'crop': _cropImage});
       if (finishCrop != null && finishCrop['crop'] is Uint8List) {
         setState(() {
           _imageProfileController.setFinishCropImage = finishCrop['crop'];

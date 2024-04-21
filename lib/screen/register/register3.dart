@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/profile_controller.dart';
+import 'package:ting_maker/screen/register/profile/image_profile.dart';
 import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/f_logger.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
-import 'package:ting_maker/widget/image_profile.dart';
 
 class RegisterScreen3 extends StatefulWidget {
   const RegisterScreen3({super.key});

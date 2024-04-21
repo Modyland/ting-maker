@@ -40,9 +40,7 @@ class StartButtonBox extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
-            height: 19,
-          ),
+          const SizedBox(height: 19),
           RichText(
             text: TextSpan(
               text: '이미 계정이 있나요?\t\t',

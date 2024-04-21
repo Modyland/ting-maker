@@ -4,14 +4,14 @@ import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ProfileCreateScreen extends StatefulWidget {
-  const ProfileCreateScreen({super.key});
+class ImageCropScreen extends StatefulWidget {
+  const ImageCropScreen({super.key});
 
   @override
-  State<ProfileCreateScreen> createState() => _ProfileCreateScreenState();
+  State<ImageCropScreen> createState() => _ImageCropScreenState();
 }
 
-class _ProfileCreateScreenState extends State<ProfileCreateScreen> {
+class _ImageCropScreenState extends State<ImageCropScreen> {
   final _controller = CropController();
   final Uint8List _cropImage = Get.arguments['crop'];
 
