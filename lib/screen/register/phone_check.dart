@@ -21,14 +21,20 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
   final TextEditingController _phoneCheckEditing = TextEditingController();
 
   bool isNext = false;
+  int validCheck = -1;
 
   void phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
     final res = await service.phoneCheck(_phoneCheckEditing.text);
     final data = json.decode(res.body);
-    if (data) {
-      Get.toNamed('/phone_check2',
-          arguments: {'phone': _phoneCheckEditing.text});
+    if (res.body is Map<String, dynamic> && res.body.containsKey('msg')) {
+      validCheck = 1;
+      _phoneFormkey.currentState!.validate();
+    } else {
+      if (data) {
+        Get.toNamed('/phone_check2',
+            arguments: {'phone': _phoneCheckEditing.text});
+      }
     }
   }
 
@@ -77,7 +83,10 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
                           return '휴대폰 번호를 입력하세요';
                         } else if (!phoneNumberRegex.hasMatch(value)) {
                           return '휴대폰 번호 형식이 일치하지 않습니다.';
+                        } else if (validCheck == 1) {
+                          return '이미 가입된 휴대폰 번호 입니다.';
                         }
+                        validCheck = -1;
                         return null;
                       },
                     ),

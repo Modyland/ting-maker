@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ting_maker/screen/register/phone_check.dart';
 import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -23,26 +26,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
     'special': null
   };
   bool isObscure = false;
+  bool idCheck = false;
   bool isNext = false;
+  int validCheck = -1;
+
   void passwordValidCheck(String value) {
     validators['length'] = eightRegex.hasMatch(value);
     validators['english'] = enRegex.hasMatch(value);
     validators['number'] = numRegex.hasMatch(value);
     validators['special'] = specialRegex.hasMatch(value);
     setState(() {
-      isNext = validators.values.every((v) => v!) &&
-          _idEditingController.text.isNotEmpty;
+      isNext = validators.values.every((v) => v ?? false) && idCheck;
     });
   }
 
-  void passwordVisible() {
-    setState(() {
-      isObscure = !isObscure;
-    });
+  void isIdCheck() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    final Map<String, dynamic> requestData = {
+      'kind': 'idDupe',
+      'id': _idEditingController.text,
+    };
+    final res = await service.exsistIdCheck(requestData);
+    final data = json.decode(res.body);
+    if (res.body is Map<String, dynamic> && res.body.containsKey('msg')) {
+      validCheck = 1;
+      _accountFormkey.currentState!.validate();
+    } else {
+      if (data) {
+        idCheck = true;
+      }
+    }
   }
 
   void nextPage() {
-    if (isNext) {
+    if (isNext && idCheck) {
       Get.toNamed('/register2', arguments: {
         'phone': registerData['phone'],
         'id': _idEditingController.text,
@@ -86,7 +103,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '아이디를 입력해주세요';
+                        } else if (validCheck == 1) {
+                          return '이미 사용중인 아이디 입니다.';
+                        } else if (!idCheck) {
+                          return '아이디 중복확인이 필요합니다.';
                         }
+                        validCheck = -1;
                         return null;
                       },
                     ),
@@ -100,8 +122,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         '비밀번호를 입력해주세요',
                         isObscure: isObscure,
                         suffix: true,
-                        suffixCallback: passwordVisible,
+                        suffixCallback: () {
+                          setState(() {
+                            isObscure = !isObscure;
+                          });
+                        },
                       ),
+                      onTap: _idEditingController.text.isNotEmpty
+                          ? isIdCheck
+                          : null,
                       keyboardType: TextInputType.text,
                       onChanged: (value) {
                         passwordValidCheck(value);

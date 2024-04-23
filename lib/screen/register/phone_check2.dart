@@ -27,7 +27,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
   String formattedTime = '00:00';
 
   bool isNext = false;
-  int validCheck = 0;
+  int validCheck = -1;
 
   @override
   void initState() {
@@ -62,6 +62,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
     } else {
       final data = json.decode(res.body);
       if (data) {
+        validCheck = -1;
         Get.toNamed('/register', arguments: {'phone': registerData['phone']});
       } else {
         //인증번호 틀림
