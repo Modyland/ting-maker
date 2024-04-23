@@ -16,46 +16,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _accountFormkey = GlobalKey<FormState>();
   final TextEditingController _idEditingController = TextEditingController();
   final TextEditingController _pwdEditingController = TextEditingController();
-  Map<String, bool> firstValid = {'err': false, 'ok': false};
-  Map<String, bool> secondValid = {'err': false, 'ok': false};
-  Map<String, bool> thirdValid = {'err': false, 'ok': false};
-  Map<String, bool> forthValid = {'err': false, 'ok': false};
+  Map<String, bool?> validators = {
+    'length': null,
+    'english': null,
+    'number': null,
+    'special': null
+  };
   bool isObscure = false;
   bool isNext = false;
   void passwordValidCheck(String value) {
+    validators['length'] = eightRegex.hasMatch(value);
+    validators['english'] = enRegex.hasMatch(value);
+    validators['number'] = numRegex.hasMatch(value);
+    validators['special'] = specialRegex.hasMatch(value);
     setState(() {
-      if (eightRegex.hasMatch(value)) {
-        firstValid['ok'] = true;
-        firstValid['err'] = false;
-      } else {
-        firstValid['err'] = true;
-        firstValid['ok'] = false;
-      }
-      if (enRegex.hasMatch(value)) {
-        secondValid['ok'] = true;
-        secondValid['err'] = false;
-      } else {
-        secondValid['err'] = true;
-        secondValid['ok'] = false;
-      }
-      if (numRegex.hasMatch(value)) {
-        thirdValid['ok'] = true;
-        thirdValid['err'] = false;
-      } else {
-        thirdValid['err'] = true;
-        thirdValid['ok'] = false;
-      }
-      if (specialRegex.hasMatch(value)) {
-        forthValid['ok'] = true;
-        forthValid['err'] = false;
-      } else {
-        forthValid['err'] = true;
-        forthValid['ok'] = false;
-      }
-      isNext = firstValid['ok'] == true &&
-          secondValid['ok'] == true &&
-          thirdValid['ok'] == true &&
-          forthValid['ok'] == true &&
+      isNext = validators.values.every((v) => v!) &&
           _idEditingController.text.isNotEmpty;
     });
   }
@@ -67,11 +42,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void nextPage() {
-    Get.toNamed('/register2', arguments: {
-      'phone': registerData['phone'],
-      'id': _idEditingController.text,
-      'pwd': _pwdEditingController.text
-    });
+    if (isNext) {
+      Get.toNamed('/register2', arguments: {
+        'phone': registerData['phone'],
+        'id': _idEditingController.text,
+        'pwd': _pwdEditingController.text
+      });
+    }
   }
 
   @override
@@ -140,31 +117,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Column(
                       children: [
                         checkPasswordRow(
-                          firstValid['err'] == true
-                              ? errColor
-                              : firstValid['ok'] == true
-                                  ? okColor
-                                  : grey500,
+                          validators['length'] ?? false ? errColor : grey500,
                           '8자 이상',
-                          secondValid['err'] == true
-                              ? errColor
-                              : secondValid['ok'] == true
-                                  ? okColor
-                                  : grey500,
+                          validators['english'] ?? false ? errColor : grey500,
                           '영문 포함',
                         ),
                         checkPasswordRow(
-                          thirdValid['err'] == true
-                              ? errColor
-                              : thirdValid['ok'] == true
-                                  ? okColor
-                                  : grey500,
+                          validators['number'] ?? false ? errColor : grey500,
                           '숫자 포함',
-                          forthValid['err'] == true
-                              ? errColor
-                              : forthValid['ok'] == true
-                                  ? okColor
-                                  : grey500,
+                          validators['special'] ?? false ? errColor : grey500,
                           '특수문자 포함 (!@#\$%^&*)',
                         ),
                       ],
