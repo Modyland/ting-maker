@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/profile_controller.dart';
-import 'package:ting_maker/screen/register/phone_check.dart';
+import 'package:ting_maker/main.dart';
 import 'package:ting_maker/screen/register/profile/image_profile.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -37,8 +37,8 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
     if (imageProfileController.getFinishCropImage != null) {
       requestData['profile'] = imageProfileController.getFinishCropImage;
     }
-    final res = await service.signupUser(requestData);
-    final data = json.decode(res.body);
+    final res = await service.tingApiGetdata(requestData);
+    final data = json.decode(res.bodyString!);
     if (data) {
       imageProfileController.dispose();
       Get.offAllNamed('/login');
@@ -78,6 +78,7 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
                     key: _nickNameFormKey,
                     child: TextFormField(
                       controller: _nickNameEditing,
+                      keyboardType: TextInputType.text,
                       decoration: inputDecoration('닉네임을 입력해주세요 (2글자 이상)'),
                       onChanged: (value) {
                         setState(() {
@@ -87,7 +88,7 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '닉네임을 입력해주세요';
-                        } else if (value.length < 4) {
+                        } else if (2 > value.length) {
                           return '닉네임은 최소 2글자 이상이어야 합니다';
                         }
                         return null;

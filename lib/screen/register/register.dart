@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/screen/register/phone_check.dart';
+import 'package:ting_maker/main.dart';
 import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -30,49 +30,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isNext = false;
   int validCheck = -1;
 
+  @override
+  void dispose() {
+    _idEditingController.dispose();
+    _pwdEditingController.dispose();
+    super.dispose();
+  }
+
   void passwordValidCheck(String value) {
     validators['length'] = eightRegex.hasMatch(value);
     validators['english'] = enRegex.hasMatch(value);
     validators['number'] = numRegex.hasMatch(value);
     validators['special'] = specialRegex.hasMatch(value);
     setState(() {
-      isNext = validators.values.every((v) => v ?? false) && idCheck;
+      isNext = validators.values.every((v) => v ?? false) &&
+          _idEditingController.text.isNotEmpty;
     });
   }
 
   void isIdCheck() async {
-    FocusScope.of(context).requestFocus(FocusNode());
     final Map<String, dynamic> requestData = {
       'kind': 'idDupe',
       'id': _idEditingController.text,
     };
-    final res = await service.exsistIdCheck(requestData);
+    final res = await service.tingApiGetdata(requestData);
     final data = json.decode(res.body);
-    if (res.body is Map<String, dynamic> && res.body.containsKey('msg')) {
-      validCheck = 1;
+    if (data is Map<String, dynamic> && data.containsKey('msg')) {
+      //0 아이디 중복
+      if (data['msg'] == 0) {
+        validCheck = 0;
+      }
       _accountFormkey.currentState!.validate();
     } else {
       if (data) {
+        validCheck = -1;
         idCheck = true;
+        nextPage();
       }
     }
   }
 
   void nextPage() {
-    if (isNext && idCheck) {
+    if (isNext && validCheck == -1 && idCheck) {
       Get.toNamed('/register2', arguments: {
         'phone': registerData['phone'],
         'id': _idEditingController.text,
         'pwd': _pwdEditingController.text
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _idEditingController.dispose();
-    _pwdEditingController.dispose();
-    super.dispose();
   }
 
   @override
@@ -103,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '아이디를 입력해주세요';
-                        } else if (validCheck == 1) {
+                        } else if (validCheck == 0) {
                           return '이미 사용중인 아이디 입니다.';
                         } else if (!idCheck) {
                           return '아이디 중복확인이 필요합니다.';
@@ -128,9 +133,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           });
                         },
                       ),
-                      onTap: _idEditingController.text.isNotEmpty
-                          ? isIdCheck
-                          : null,
                       keyboardType: TextInputType.text,
                       onChanged: (value) {
                         passwordValidCheck(value);
@@ -146,15 +148,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Column(
                       children: [
                         checkPasswordRow(
-                          validators['length'] ?? false ? errColor : grey500,
+                          validators['length'] == null
+                              ? grey500
+                              : validators['length'] == false
+                                  ? errColor
+                                  : okColor,
                           '8자 이상',
-                          validators['english'] ?? false ? errColor : grey500,
+                          validators['english'] == null
+                              ? grey500
+                              : validators['english'] == false
+                                  ? errColor
+                                  : okColor,
                           '영문 포함',
                         ),
                         checkPasswordRow(
-                          validators['number'] ?? false ? errColor : grey500,
+                          validators['number'] == null
+                              ? grey500
+                              : validators['number'] == false
+                                  ? errColor
+                                  : okColor,
                           '숫자 포함',
-                          validators['special'] ?? false ? errColor : grey500,
+                          validators['special'] == null
+                              ? grey500
+                              : validators['special'] == false
+                                  ? errColor
+                                  : okColor,
                           '특수문자 포함 (!@#\$%^&*)',
                         ),
                       ],
@@ -172,7 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         onPressed: () {
-                          isNext ? nextPage() : null;
+                          isNext ? isIdCheck() : null;
                         },
                         child: Center(
                           child: Text(

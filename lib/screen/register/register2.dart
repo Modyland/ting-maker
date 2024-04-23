@@ -27,6 +27,16 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
 
   bool isNext = false;
 
+  @override
+  void dispose() {
+    _yearController.dispose();
+    _monthController.dispose();
+    _dayController.dispose();
+    _monthFocus.dispose();
+    _dayFocus.dispose();
+    super.dispose();
+  }
+
   void genderSelect(int type) {
     if (type == 0) {
       female = true;
@@ -44,7 +54,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
     });
   }
 
-  void goNextPage() {
+  void nextPage() {
     Get.toNamed('/register3', arguments: {
       'phone': registerData['phone'],
       'id': registerData['id'],
@@ -53,16 +63,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
       'birth':
           '${_yearController.text}${_monthController.text}${_dayController.text}'
     });
-  }
-
-  @override
-  void dispose() {
-    _yearController.dispose();
-    _monthController.dispose();
-    _dayController.dispose();
-    _monthFocus.dispose();
-    _dayFocus.dispose();
-    super.dispose();
   }
 
   @override
@@ -84,39 +84,29 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Ink(
-                        decoration: female
-                            ? ShapeDecoration(
-                                shape: const CircleBorder(),
-                                color: pointColor,
-                              )
-                            : null,
+                      Opacity(
+                        opacity: female ? 1.0 : 0.5,
                         child: InkWell(
                           splashColor: Colors.transparent,
                           onTap: () {
                             genderSelect(0);
                           },
-                          child: Image.asset(
-                            'assets/image/female.png',
-                            scale: 1.5,
+                          child: const Text(
+                            '\u{1F467}',
+                            style: TextStyle(fontSize: 100),
                           ),
                         ),
                       ),
-                      Ink(
-                        decoration: male
-                            ? ShapeDecoration(
-                                shape: const CircleBorder(),
-                                color: pointColor,
-                              )
-                            : null,
+                      Opacity(
+                        opacity: male ? 1.0 : 0.5,
                         child: InkWell(
                           splashColor: Colors.transparent,
                           onTap: () {
                             genderSelect(1);
                           },
-                          child: Image.asset(
-                            'assets/image/male.png',
-                            scale: 1.5,
+                          child: const Text(
+                            '\u{1F466}',
+                            style: TextStyle(fontSize: 100),
                           ),
                         ),
                       )
@@ -132,7 +122,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                         child: TextFormField(
                           controller: _yearController,
                           decoration: inputDecoration('년(YYYY)'),
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.datetime,
                           maxLength: 4,
                           buildCounter: (BuildContext context,
                                   {required int currentLength,
@@ -163,7 +153,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                             controller: _monthController,
                             focusNode: _monthFocus,
                             decoration: inputDecoration('월(MM)'),
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.datetime,
                             maxLength: 2,
                             buildCounter: (BuildContext context,
                                     {required int currentLength,
@@ -193,7 +183,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                             controller: _dayController,
                             focusNode: _dayFocus,
                             decoration: inputDecoration('일(DD)'),
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.datetime,
                             maxLength: 2,
                             buildCounter: (BuildContext context,
                                     {required int currentLength,
@@ -248,7 +238,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       onPressed: () {
-                        isNext ? goNextPage() : null;
+                        isNext ? nextPage() : null;
                       },
                       child: Center(
                         child: Text(

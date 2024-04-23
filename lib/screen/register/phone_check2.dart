@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/screen/register/phone_check.dart';
+import 'package:ting_maker/main.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -35,6 +35,13 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
     threeMinuteTimer();
   }
 
+  @override
+  void dispose() {
+    _phoneCheckEditing2.dispose();
+    _timer.cancel();
+    super.dispose();
+  }
+
   void threeMinuteTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -55,28 +62,28 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
       registerData['phone'],
       _phoneCheckEditing2.text,
     );
-    if (res.body is Map<String, dynamic> && res.body.containsKey('msg')) {
-      // 인증시간 만료
-      validCheck = 1;
+    final data = json.decode(res.bodyString!);
+    if (data is Map<String, dynamic> && data.containsKey('msg')) {
+      // 0 인증번호 틀림
+      // 1 인증시간 만료
+      if (data['msg'] == 0) {
+        validCheck = 0;
+      } else if (data['msg'] == 1) {
+        validCheck = 1;
+      }
       _phoneFormKey2.currentState!.validate();
     } else {
-      final data = json.decode(res.body);
       if (data) {
         validCheck = -1;
-        Get.toNamed('/register', arguments: {'phone': registerData['phone']});
-      } else {
-        //인증번호 틀림
-        validCheck = 0;
-        _phoneFormKey2.currentState!.validate();
+        nextPage();
       }
     }
   }
 
-  @override
-  void dispose() {
-    _phoneCheckEditing2.dispose();
-    _timer.cancel();
-    super.dispose();
+  void nextPage() {
+    if (isNext && validCheck == -1) {
+      Get.toNamed('/register', arguments: {'phone': registerData['phone']});
+    }
   }
 
   @override

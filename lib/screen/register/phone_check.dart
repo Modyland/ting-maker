@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/service/service.dart';
+import 'package:ting_maker/main.dart';
 import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -14,34 +14,44 @@ class PhoneCheckScreen extends StatefulWidget {
   State<PhoneCheckScreen> createState() => _PhoneCheckScreenState();
 }
 
-final service = Get.find<MainProvider>();
-
 class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
   final GlobalKey<FormState> _phoneFormkey = GlobalKey<FormState>();
   final TextEditingController _phoneCheckEditing = TextEditingController();
-
   bool isNext = false;
   int validCheck = -1;
-
-  void phoneCheckCallback() async {
-    FocusScope.of(context).requestFocus(FocusNode());
-    final res = await service.phoneCheck(_phoneCheckEditing.text);
-    final data = json.decode(res.body);
-    if (res.body is Map<String, dynamic> && res.body.containsKey('msg')) {
-      validCheck = 1;
-      _phoneFormkey.currentState!.validate();
-    } else {
-      if (data) {
-        Get.toNamed('/phone_check2',
-            arguments: {'phone': _phoneCheckEditing.text});
-      }
-    }
-  }
 
   @override
   void dispose() {
     _phoneCheckEditing.dispose();
     super.dispose();
+  }
+
+  void phoneCheckCallback() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    final res = await service.phoneCheck(_phoneCheckEditing.text);
+    final data = json.decode(res.bodyString!);
+    if (data is Map<String, dynamic> && data.containsKey('msg')) {
+      // 0 이미 가입된 휴대폰
+      // 1 인증 횟수 초과
+      if (data['msg'] == 0) {
+        validCheck = 0;
+      } else if (data['msg'] == 1) {
+        validCheck = 1;
+      }
+      _phoneFormkey.currentState!.validate();
+    } else {
+      if (data) {
+        validCheck = -1;
+        nextPage();
+      }
+    }
+  }
+
+  void nextPage() {
+    if (isNext && validCheck == -1) {
+      Get.toNamed('/phone_check2',
+          arguments: {'phone': _phoneCheckEditing.text});
+    }
   }
 
   @override
@@ -83,8 +93,10 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
                           return '휴대폰 번호를 입력하세요';
                         } else if (!phoneNumberRegex.hasMatch(value)) {
                           return '휴대폰 번호 형식이 일치하지 않습니다.';
-                        } else if (validCheck == 1) {
+                        } else if (validCheck == 0) {
                           return '이미 가입된 휴대폰 번호 입니다.';
+                        } else if (validCheck == 1) {
+                          return '하루 인증 횟수를 초과하였습니다.';
                         }
                         validCheck = -1;
                         return null;

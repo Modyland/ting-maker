@@ -22,9 +22,7 @@ class MainProvider extends GetConnect {
   Future<Response> phoneCheck2(String phone, String code) => httpClient.get(
         '/SMS/checkSMS?phone=$phone&code=$code',
       );
-  Future<Response> exsistIdCheck(Map data) =>
-      httpClient.post('/ting/api_getdata', body: data);
-  Future<Response> signupUser(Map data) =>
+  Future<Response> tingApiGetdata(Map data) =>
       httpClient.post('/ting/api_getdata', body: data);
   // Future<Response> postCases(List<int> image) {
   //   final form = FormData({

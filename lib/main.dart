@@ -38,6 +38,8 @@ late SharedPreferences pref;
 late PackageInfo packageInfo;
 late Map<String, dynamic> deviceInfo;
 
+final service = Get.find<MainProvider>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initStorage();

@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
+import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -25,14 +28,27 @@ const TextStyle _findStyle = TextStyle(
   height: 1,
 );
 
-final ScrollController _scrollController = ScrollController();
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
 class _LoginScreenState extends State<LoginScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _idEditingController = TextEditingController();
+  final TextEditingController _pwdEditingController = TextEditingController();
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
+  }
+
+  void loginService() async {
+    final Map<String, dynamic> requestData = {
+      'kind': 'signUp',
+      'id': _idEditingController.text,
+      'pwd': _pwdEditingController.text,
+      'guard': 0
+    };
+    final res = await service.tingApiGetdata(requestData);
+    final data = json.decode(res.bodyString!);
+    Log.f(data);
   }
 
   @override
@@ -66,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
+                      controller: _idEditingController,
                       decoration: inputDecoration('아이디를 입력하세요'),
                       keyboardType: TextInputType.text,
                       validator: (value) {
@@ -82,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
+                      controller: _pwdEditingController,
                       obscureText: true,
                       decoration: inputDecoration('비밀번호를 입력하세요'),
                       keyboardType: TextInputType.text,
@@ -145,10 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         onPressed: () {
                           FocusScope.of(context).requestFocus(FocusNode());
-                          if (_formKey.currentState!.validate()) {
-                            // 유효성 검사를 통과하면 실행될 코드를 작성합니다.
-                            // 예를 들어, 로그인 로직을 여기에 구현할 수 있습니다.
-                          }
+                          loginService();
                         },
                         child: Center(
                           child: Text(

@@ -12,19 +12,19 @@ class BorderPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..style = PaintingStyle.stroke
-      ..color = grey400
+      ..color = grey300
       ..strokeWidth = 1;
 
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
-    const double angle = pi / 2.9;
+    const double angle = pi / 3;
 
     final Rect rect = Rect.fromCircle(center: center, radius: radius);
 
     final Path path = Path()
       ..moveTo(center.dx + radius * cos(angle), center.dy + radius * sin(angle))
-      ..addArc(rect, angle, 2 * pi - 0.55 * angle);
+      ..addArc(rect, angle, 2 * pi - 0.48 * angle);
 
     canvas.drawPath(path, paint);
   }
@@ -71,25 +71,42 @@ class _ImageProfileState extends State<ImageProfile> {
             },
             child: CustomPaint(
               painter: BorderPainter(),
-              child: CircleAvatar(
-                radius: 80,
-                backgroundColor: Colors.transparent,
-                backgroundImage: imageProfileController.getFinishCropImage ==
-                        null
-                    ? const AssetImage('assets/image/profile.png')
-                    : MemoryImage(imageProfileController.getFinishCropImage!)
-                        as ImageProvider<Object>,
-              ),
+              child: imageProfileController.getFinishCropImage != null
+                  ? CircleAvatar(
+                      radius: 80,
+                      backgroundColor: Colors.transparent,
+                      backgroundImage: MemoryImage(
+                              imageProfileController.getFinishCropImage!)
+                          as ImageProvider<Object>,
+                    )
+                  : ClipOval(
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 25),
+                        width: 160,
+                        height: 160,
+                        color: Colors.transparent,
+                        child: const Center(
+                          child: Text(
+                            '\u{1F464}',
+                            style: TextStyle(
+                              fontSize: 100,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
             ),
           ),
-          const Positioned(
-            bottom: 10,
-            right: 10,
+          Positioned(
+            bottom: 8,
+            right: 8,
             child: ClipRect(
-                child: Icon(
-              Icons.camera_alt_outlined,
-              size: 30,
-            )),
+              child: Icon(
+                color: grey500,
+                Icons.camera_alt_outlined,
+                size: 30,
+              ),
+            ),
           )
         ],
       ),
