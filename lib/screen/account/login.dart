@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/model/user_model.dart';
+import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -50,24 +50,34 @@ class _LoginScreenState extends State<LoginScreen> {
     };
     final res = await service.tingApiGetdata(requestData);
     final data = json.decode(res.bodyString!);
-    if (data is Map<String, dynamic> && data.containsKey('msg')) {
-      if (data['msg'] == 0) {
-        validCheck = 0;
-      }
-      _formKey.currentState!.validate();
-    } else if (data is Map<String, dynamic> && data.containsKey('profile')) {
-      final profile = json.decode(data['profile']);
-      final UserModel user = UserModel.fromJson(profile);
-      await pref.setBool('isLogin', true);
-      final isSave = await pref.setString('user', user.toJson().toString());
-      if (isSave) {
-        nextPage();
-      }
-      validCheck = -1;
-    }
+    Log.f(data);
+    Log.e(data['profile'].runtimeType);
+    // if (data is Map<String, dynamic> && data.containsKey('msg')) {
+    //   if (data['msg'] == 0) {
+    //     validCheck = 0;
+    //   }
+    //   _formKey.currentState!.validate();
+    // } else if (data is Map<String, dynamic> && data.containsKey('profile')) {
+    //   final profile = data['profile'];
+    //   validCheck = -1;
+    //   if (profile['profile'] != null) {
+    //     Log.e(profile['profile']);
+    //     Uint8List profileBytes = base64Decode(profile['profile']);
+    //     Log.e(profileBytes.runtimeType);
+    //   }
+
+    //   final UserModel user = UserModel.fromJson(profile);
+    //   await pref.setBool('isLogin', true);
+    //   final isSave = await pref.setString('user', user.toJson().toString());
+    //   if (isSave) {
+    //     nextPage();
+    //   }
+    // }
   }
 
-  void nextPage() {}
+  void nextPage() {
+    Get.offAllNamed('/home');
+  }
 
   @override
   Widget build(BuildContext context) {

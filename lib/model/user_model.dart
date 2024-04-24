@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 class UserModel {
@@ -6,7 +5,7 @@ class UserModel {
   final String phone;
   final String birth;
   final String gender;
-  final Uint8List? profile;
+  final List<ByteData>? profile;
   final String? aka;
 
   UserModel({
@@ -24,7 +23,7 @@ class UserModel {
       phone: json['phone'],
       birth: json['birth'],
       gender: json['gender'],
-      profile: json['profile'] != null ? base64Decode(json['profile']) : null,
+      profile: json['profile'],
       aka: json['aka'],
     );
   }
@@ -34,7 +33,7 @@ class UserModel {
         'phone': phone,
         'birth': birth,
         'gender': gender,
-        'profile': profile != null ? base64Encode(profile!) : null,
+        'profile': profile,
         'aka': aka,
       };
 }

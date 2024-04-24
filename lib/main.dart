@@ -153,6 +153,7 @@ class MyApp extends StatelessWidget {
                     return const OnboardingScreen();
                   }
                 }),
+            GetPage(name: '/home', page: () => const MainScreen()),
             GetPage(
               name: '/service_agree',
               page: () => const ServiceAgreeScreen(),

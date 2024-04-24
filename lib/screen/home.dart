@@ -38,7 +38,7 @@ class MainScreen extends GetView<NavigationProvider>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: commonAppbar(),
+        appBar: commonAppbar(isBack: false),
         body: Obx(() {
           switch (Navigation.values[controller.currentIndex.value]) {
             case Navigation.naverMap:
