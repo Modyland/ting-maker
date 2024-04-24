@@ -113,7 +113,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         } else if (!idCheck) {
                           return '아이디 중복확인이 필요합니다.';
                         }
-                        validCheck = -1;
                         return null;
                       },
                     ),

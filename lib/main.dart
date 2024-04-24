@@ -41,6 +41,9 @@ late Map<String, dynamic> deviceInfo;
 final service = Get.find<MainProvider>();
 
 Future<void> main() async {
+  // Isolate.current.addOnExitListener(RawReceivePort((pair) async {
+  //   Log.e(pair);
+  // }).sendPort);
   WidgetsFlutterBinding.ensureInitialized();
   await initStorage();
   unawaited(init());

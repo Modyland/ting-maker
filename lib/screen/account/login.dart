@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/util/logger.dart';
+import 'package:ting_maker/model/user_model.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -33,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _idEditingController = TextEditingController();
   final TextEditingController _pwdEditingController = TextEditingController();
+  int validCheck = -1;
   @override
   void initState() {
     super.initState();
@@ -40,16 +41,33 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void loginService() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     final Map<String, dynamic> requestData = {
-      'kind': 'signUp',
+      'kind': 'login',
       'id': _idEditingController.text,
       'pwd': _pwdEditingController.text,
       'guard': 0
     };
     final res = await service.tingApiGetdata(requestData);
     final data = json.decode(res.bodyString!);
-    Log.f(data);
+    if (data is Map<String, dynamic> && data.containsKey('msg')) {
+      if (data['msg'] == 0) {
+        validCheck = 0;
+      }
+      _formKey.currentState!.validate();
+    } else if (data is Map<String, dynamic> && data.containsKey('profile')) {
+      final profile = json.decode(data['profile']);
+      final UserModel user = UserModel.fromJson(profile);
+      await pref.setBool('isLogin', true);
+      final isSave = await pref.setString('user', user.toJson().toString());
+      if (isSave) {
+        nextPage();
+      }
+      validCheck = -1;
+    }
   }
+
+  void nextPage() {}
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '비밀번호를 입력하세요';
+                        } else if (validCheck == 0) {
+                          return '아이디 또는 비밀번호를 확인해주세요.';
                         }
                         return null;
                       },

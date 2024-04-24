@@ -98,7 +98,6 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
                         } else if (validCheck == 1) {
                           return '하루 인증 횟수를 초과하였습니다.';
                         }
-                        validCheck = -1;
                         return null;
                       },
                     ),

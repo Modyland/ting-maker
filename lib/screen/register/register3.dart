@@ -33,6 +33,7 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
       'phone': registerData['phone'],
       'birth': registerData['birth'],
       'gender': registerData['gender'],
+      'aka': _nickNameEditing.text,
     };
     if (imageProfileController.getFinishCropImage != null) {
       requestData['profile'] = imageProfileController.getFinishCropImage;
