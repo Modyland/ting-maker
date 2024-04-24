@@ -5,7 +5,7 @@ class UserModel {
   final String phone;
   final String birth;
   final String gender;
-  final List<ByteData>? profile;
+  final Uint8List? profile;
   final String? aka;
 
   UserModel({
