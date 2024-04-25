@@ -1,0 +1,4 @@
+HOST_URL=https://port-0-ting-backend-abq3c52alscufhsv.sel5.cloudtype.app
+TEST_URL=http://db.medsyslab.co.kr:4500
+NAVER_KEY=rd7wkll3uk
+NAVER_SECRET=8fIq427E4mq3qsNyqDmbtoJ1K1aCuy3bETBgtW3D
