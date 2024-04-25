@@ -66,7 +66,7 @@ class _NaverMapScreenState extends State<NaverMapScreen>
     List<Placemark> placemark =
         await placemarkFromCoordinates(position!.latitude, position.longitude);
     Log.f(
-      '${placemark[0].subLocality} , ${placemark[0].thoroughfare}',
+      '${placemark[0]}, ${placemark[0].subLocality}, ${placemark[0].thoroughfare}',
     );
     NMarker marker1 = NMarker(
       id: '1',

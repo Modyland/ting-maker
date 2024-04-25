@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.modyland.ting">
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW"/>
@@ -15,13 +15,13 @@
     <!-- Permissions options for the `location` group -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <!-- Permissions options for the `activityRecognition` group -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <!-- Permissions options for the `manage external storage` group -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <!-- Permissions options for the `system alert windows` group -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <application
         android:requestLegacyExternalStorage="true"
         android:label="ting_maker"
@@ -47,6 +47,10 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <service
+            android:name="id.flutter.flutter_background_service.BackgroundService"
+            android:foregroundServiceType="shortService"
+        />
     </application>
     <queries>
         <intent>

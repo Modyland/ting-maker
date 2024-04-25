@@ -1,4 +1,19 @@
+import 'dart:io';
+
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
+import 'package:ting_maker/main.dart';
+
+Future<void> deviceData() async {
+  DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  if (Platform.isAndroid) {
+    deviceInfo = readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+  } else if (Platform.isIOS) {
+    deviceInfo = readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+  } else if (kIsWeb) {
+    deviceInfo = readWebBrowserInfo(await deviceInfoPlugin.webBrowserInfo);
+  }
+}
 
 Map<String, dynamic> readAndroidBuildData(AndroidDeviceInfo build) {
   return <String, dynamic>{

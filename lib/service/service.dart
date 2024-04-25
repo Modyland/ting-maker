@@ -16,6 +16,9 @@ class MainProvider extends GetConnect {
     // });
   }
 
+  Future<Response> loginLog(Map data) =>
+      httpClient.post('/Login_log/api_getdata', body: data);
+
   Future<Response> phoneCheck(String phone) => httpClient.get(
         '/SMS/sendSMS?id=&phone=$phone',
       );

@@ -45,18 +45,22 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+    <string>dev.flutter.background.refresh</string>
+	</array>
 	<!-- Permission options for the `location` group -->
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Need location when in use</string>
+    <string>ting 지도 서비스 이용\n위치 기반 동네 게시물 확인\n* ting은 서비스 제공을 위한 용도로만 위치정보가 수집되며\n그 외의 용도로 위치정보를 수집하지 않습니다.</string>
     <key>NSLocationUsageDescription</key>
-    <string>Older devices need location.</string>
+    <string>ting 지도 서비스 이용\n위치 기반 동네 게시물 확인\n* ting은 서비스 제공을 위한 용도로만 위치정보가 수집되며\n그 외의 용도로 위치정보를 수집하지 않습니다.</string>
 
     <!-- Permission options for the `camera` group -->
     <key>NSCameraUsageDescription</key>
-    <string>camera</string>
+    <string>게시물 이미지 업로드에 사용합니다.</string>
 
     <!-- Permission options for the `photos` group -->
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>photos</string>
+    <string>프로필 설정, 게시물 이미지 업로드에 사용합니다.</string>
 </dict>
 </plist>

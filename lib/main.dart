@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
@@ -39,16 +41,106 @@ late PackageInfo packageInfo;
 late Map<String, dynamic> deviceInfo;
 
 final service = Get.find<MainProvider>();
+const BasicMessageChannel<String> appLifeCycleChannel =
+    BasicMessageChannel<String>('appLifeCycle', StringCodec());
 
 Future<void> main() async {
-  // Isolate.current.addOnExitListener(RawReceivePort((pair) async {
-  //   Log.e(pair);
-  // }).sendPort);
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeService();
   await initStorage();
-  unawaited(init());
+  unawaited(initData());
   unawaited(initFirebase());
   runApp(const MyApp());
+}
+
+@pragma('vm:entry-point')
+Future<bool> onIosBackground(ServiceInstance service) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
+  return true;
+}
+
+@pragma('vm:entry-point')
+void onStart(ServiceInstance service) async {
+  DartPluginRegistrant.ensureInitialized();
+  if (service is AndroidServiceInstance) {
+    service.on('setAsForeground').listen((event) {
+      service.setAsForegroundService();
+    });
+    service.on('setAsBackground').listen((event) {
+      service.setAsBackgroundService();
+    });
+  }
+  service.on('stopService').listen((event) {
+    service.stopSelf();
+  });
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  // bring to foreground
+  Timer.periodic(const Duration(seconds: 1), (timer) async {
+    if (service is AndroidServiceInstance) {
+      if (await service.isForegroundService()) {
+        flutterLocalNotificationsPlugin.show(
+          888,
+          'COOL SERVICE',
+          'Awesome ${DateTime.now()}',
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+              'my_foreground',
+              'MY FOREGROUND SERVICE',
+              icon: 'ic_bg_service_small',
+              ongoing: true,
+            ),
+          ),
+        );
+      }
+    }
+    Log.f('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
+  });
+}
+
+Future<void> initializeService() async {
+  final service = FlutterBackgroundService();
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'my_foreground', // id
+    'AWESOME SERVICE', // title
+    description:
+        'This channel is used for important notifications.', // description
+    importance: Importance.low, // importance must be at low or higher level
+  );
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  if (Platform.isIOS || Platform.isAndroid) {
+    await flutterLocalNotificationsPlugin.initialize(
+      const InitializationSettings(
+        iOS: DarwinInitializationSettings(),
+        android: AndroidInitializationSettings('ic_bg_service_small'),
+      ),
+    );
+  }
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+  await service.configure(
+    androidConfiguration: AndroidConfiguration(
+      onStart: onStart,
+      autoStart: true,
+      isForegroundMode: true,
+      notificationChannelId: 'my_foreground',
+      initialNotificationTitle: 'AWESOME SERVICE',
+      initialNotificationContent: 'Initializing',
+      foregroundServiceNotificationId: 888,
+    ),
+    iosConfiguration: IosConfiguration(
+      autoStart: true,
+      onForeground: onStart,
+      onBackground: onIosBackground,
+    ),
+  );
 }
 
 Future<void> initStorage() async {
@@ -57,21 +149,17 @@ Future<void> initStorage() async {
   await NaverMapSdk.instance.initialize(clientId: dotenv.get('NAVER_KEY'));
 }
 
-Future<void> deviceData() async {
-  DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-  if (Platform.isAndroid) {
-    deviceInfo = readAndroidBuildData(await deviceInfoPlugin.androidInfo);
-  } else if (Platform.isIOS) {
-    deviceInfo = readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
-  } else if (kIsWeb) {
-    deviceInfo = readWebBrowserInfo(await deviceInfoPlugin.webBrowserInfo);
-  }
-}
-
-Future<void> init() async {
+Future<void> initData() async {
+  appLifeCycleChannel.setMessageHandler((message) async {
+    if (message == "lifeCycleStateWithDetached") {
+      final Map<String, dynamic> requestData = {'id': '', 'activity': 'logout'};
+      service.loginLog(requestData);
+      Log.e("앱이 종료되었습니다.");
+    }
+    return "Received";
+  });
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
   ]);
   await deviceData();
   packageInfo = await PackageInfo.fromPlatform();
