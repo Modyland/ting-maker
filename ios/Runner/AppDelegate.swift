@@ -18,7 +18,6 @@ import flutter_background_service_ios // add this
 
     override func applicationWillTerminate(_ application: UIApplication) {
         appLifeCycle.sendMessage("lifeCycleStateWithDetached")
-        sleep(3)
     }
   }
 }
