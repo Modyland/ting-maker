@@ -22,6 +22,7 @@
     <!-- Permissions options for the `system alert windows` group -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <application
         android:requestLegacyExternalStorage="true"
         android:label="ting_maker"
@@ -49,7 +50,7 @@
             android:value="2" />
         <service
             android:name="id.flutter.flutter_background_service.BackgroundService"
-            android:foregroundServiceType="shortService"
+            android:foregroundServiceType="dataSync"
         />
     </application>
     <queries>
