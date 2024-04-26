@@ -19,8 +19,8 @@ class MainProvider extends GetConnect {
   Future<Response> loginLog(Map data) =>
       httpClient.post('/Login_log/api_getdata', body: data);
 
-  Future<Response> phoneCheck(String phone) => httpClient.get(
-        '/SMS/sendSMS?id=&phone=$phone',
+  Future<Response> phoneCheck(String phone, bool check) => httpClient.get(
+        '/SMS/sendSMS?id=&phone=$phone&check=$check',
       );
   Future<Response> phoneCheck2(String phone, String code) => httpClient.get(
         '/SMS/checkSMS?phone=$phone&code=$code',

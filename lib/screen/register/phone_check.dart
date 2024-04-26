@@ -28,7 +28,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
 
   void phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
-    final res = await service.phoneCheck(_phoneCheckEditing.text);
+    final res = await service.phoneCheck(_phoneCheckEditing.text, true);
     final data = json.decode(res.bodyString!);
     if (data is Map<String, dynamic> && data.containsKey('msg')) {
       // 0 이미 가입된 휴대폰

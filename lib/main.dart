@@ -9,12 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ting_maker/controller/map_controller.dart';
 import 'package:ting_maker/controller/profile_controller.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
-import 'package:ting_maker/screen/account/find_account.phone2.dart';
-import 'package:ting_maker/screen/account/find_account_phone.dart';
-import 'package:ting_maker/screen/account/find_id_pwd.dart';
-import 'package:ting_maker/screen/account/find_id_success.dart';
+import 'package:ting_maker/screen/account/find/find_success.dart';
+import 'package:ting_maker/screen/account/find/password_change.dart';
 import 'package:ting_maker/screen/account/login.dart';
-import 'package:ting_maker/screen/account/password_change.dart';
 import 'package:ting_maker/screen/home.dart';
 import 'package:ting_maker/screen/onboarding/onboarding.dart';
 import 'package:ting_maker/screen/register/permission/permission.dart';
@@ -76,6 +73,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       final Map<String, dynamic> requestData = {'id': '', 'activity': 'logout'};
       service.loginLog(requestData);
       Log.e("LifeCycle Exit");
+    } else if (state == AppLifecycleState.paused) {
+      //멈춤
+      Log.e('Pause');
+    } else if (state == AppLifecycleState.inactive) {
+      Log.e('InActive');
+    } else if (state == AppLifecycleState.resumed) {
+      //돌아옴
+      Log.e('Resume');
     }
   }
 
@@ -180,24 +185,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               page: () => const LoginScreen(),
             ),
             GetPage(
-              name: '/find_account_phonecheck',
-              page: () => const FindAccountPhone(),
-            ),
-            GetPage(
-              name: '/find_account_phonecheck2',
-              page: () => const FindAccountPhone2(),
-            ),
-            GetPage(
-              name: '/account_success',
-              page: () => const FindAccountSuccess(),
+              name: '/find_success',
+              page: () => const FindSuccessScreen(),
             ),
             GetPage(
               name: '/password_change',
-              page: () => const PasswordChange(),
-            ),
-            GetPage(
-              name: '/find_id_pwd',
-              page: () => const FindIdPwdScreen(),
+              page: () => const PasswordChangeScreen(),
             ),
           ],
         ),
