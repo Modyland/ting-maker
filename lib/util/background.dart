@@ -125,7 +125,7 @@ Future<void> initData() async {
     if (message == "lifeCycleStateWithDetached") {
       final Map<String, dynamic> requestData = {'id': '', 'activity': 'logout'};
       service.loginLog(requestData);
-      Log.e("Exit");
+      Log.e("Message Exit");
       // Timer(const Duration(seconds: 5), () {
       //   bgService.invoke('stopService');
       // });

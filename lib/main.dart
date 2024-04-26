@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (state == AppLifecycleState.detached) {
       final Map<String, dynamic> requestData = {'id': '', 'activity': 'logout'};
       service.loginLog(requestData);
-      Log.e("Exit");
+      Log.e("LifeCycle Exit");
     }
   }
 
