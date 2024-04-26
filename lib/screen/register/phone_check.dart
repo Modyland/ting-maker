@@ -15,6 +15,7 @@ class PhoneCheckScreen extends StatefulWidget {
 }
 
 class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
+  Map<String, dynamic> registerData = Get.arguments;
   final GlobalKey<FormState> _phoneFormkey = GlobalKey<FormState>();
   final TextEditingController _phoneCheckEditing = TextEditingController();
   bool isNext = false;
@@ -28,7 +29,8 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
 
   void phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
-    final res = await service.phoneCheck(_phoneCheckEditing.text, true);
+    final res = await service.phoneCheck(
+        _phoneCheckEditing.text, Get.arguments == null ? true : false);
     final data = json.decode(res.bodyString!);
     if (data is Map<String, dynamic> && data.containsKey('msg')) {
       // 0 이미 가입된 휴대폰
@@ -49,8 +51,11 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
 
   void nextPage() {
     if (isNext && validCheck == -1) {
-      Get.toNamed('/phone_check2',
-          arguments: {'phone': _phoneCheckEditing.text});
+      final args = {'phone': _phoneCheckEditing.text};
+      if (Get.arguments != null) {
+        args['tab'] = Get.arguments['tab'];
+      }
+      Get.toNamed('/phone_check2', arguments: args);
     }
   }
 

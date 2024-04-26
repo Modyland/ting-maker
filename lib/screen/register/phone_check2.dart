@@ -82,7 +82,16 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
 
   void nextPage() {
     if (isNext && validCheck == -1) {
-      Get.toNamed('/register', arguments: {'phone': registerData['phone']});
+      if (registerData.containsKey('tab') && registerData['tab'] == 'id') {
+        Get.toNamed('/find_success',
+            arguments: {'phone': registerData['phone']});
+      } else if (registerData.containsKey('tab') &&
+          registerData['tab'] == 'pwd') {
+        Get.toNamed('/password_change',
+            arguments: {'phone': registerData['phone']});
+      } else {
+        Get.toNamed('/register', arguments: {'phone': registerData['phone']});
+      }
     }
   }
 

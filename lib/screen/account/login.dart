@@ -149,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 Get.toNamed(
-                                  '/find_account_phonecheck',
+                                  '/phone_check',
                                   arguments: {'tab': 'id'},
                                 );
                               },
@@ -168,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 Get.toNamed(
-                                  '/find_account_phonecheck',
+                                  '/phone_check',
                                   arguments: {'tab': 'pwd'},
                                 );
                               },
