@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ting_maker/controller/map_controller.dart';
 import 'package:ting_maker/controller/profile_controller.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
+import 'package:ting_maker/model/user_model.dart';
 import 'package:ting_maker/screen/account/find/find_success.dart';
 import 'package:ting_maker/screen/account/find/password_change.dart';
 import 'package:ting_maker/screen/account/login.dart';
@@ -24,13 +25,13 @@ import 'package:ting_maker/screen/register/register2.dart';
 import 'package:ting_maker/screen/register/register3.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/service/service.dart';
-import 'package:ting_maker/util/background.dart';
 import 'package:ting_maker/util/db.dart';
+import 'package:ting_maker/util/init.dart';
 import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
-const BasicMessageChannel<String> appLifeCycleChannel =
-    BasicMessageChannel<String>('appLifeCycle', StringCodec());
+// const BasicMessageChannel<String> appLifeCycleChannel =
+//     BasicMessageChannel<String>('appLifeCycle', StringCodec());
 final service = Get.find<MainProvider>();
 late SharedPreferences pref;
 late SqliteBase sqliteBase;
@@ -69,18 +70,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.detached) {
-      final Map<String, dynamic> requestData = {'id': '', 'activity': 'logout'};
-      service.loginLog(requestData);
-      Log.e("LifeCycle Exit");
-    } else if (state == AppLifecycleState.paused) {
-      //멈춤
-      Log.e('Pause');
-    } else if (state == AppLifecycleState.inactive) {
-      Log.e('InActive');
-    } else if (state == AppLifecycleState.resumed) {
-      //돌아옴
-      Log.e('Resume');
+    final isLogin = pref.getBool('isLogin') ?? false;
+    final user = pref.getString('user');
+
+    final Map<String, dynamic> requestData = {'id': '', 'activity': ''};
+    if (user != null) {
+      final userData = json.decode(user);
+      final UserModel userModel = UserModel.fromJson(userData);
+      requestData['id'] = userModel.id;
+    }
+    if (isLogin && user != null) {
+      if (state == AppLifecycleState.resumed) {
+        requestData['activity'] = 'login';
+        service.loginLog(requestData);
+        Log.e('Front');
+      }
+      if (state == AppLifecycleState.detached ||
+          state == AppLifecycleState.paused) {
+        requestData['activity'] = 'logout';
+        service.loginLog(requestData);
+        Log.e("Back");
+      }
     }
   }
 
