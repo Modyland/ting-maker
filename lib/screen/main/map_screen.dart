@@ -6,6 +6,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/map_controller.dart';
+import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/util/logger.dart';
 
 class NaverMapScreen extends StatefulWidget {
@@ -31,7 +32,6 @@ class _NaverMapScreenState extends State<NaverMapScreen>
   void initState() {
     super.initState();
     cameraChangeStream();
-    positionStream();
   }
 
   @override
@@ -43,31 +43,18 @@ class _NaverMapScreenState extends State<NaverMapScreen>
   }
 
   Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('위치 꺼놨을때');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        await Geolocator.openAppSettings();
-        return Future.error('위치 권한 거부');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      await Geolocator.openLocationSettings();
-      return Future.error('영구적으로 거부');
-    }
+    await locationPermissionCheck();
 
     final position = await Geolocator.getCurrentPosition();
 
     _customNaverMapController.setPosition = position;
+
+    _positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(),
+    ).listen((Position position) async {
+      _customNaverMapController.setPosition = position;
+      Log.f(position);
+    });
 
     return position;
   }
@@ -96,15 +83,6 @@ class _NaverMapScreenState extends State<NaverMapScreen>
   void cameraChangeStream() {
     _onCameraChangeStreamController.stream.listen((reason) {
       Log.f(reason);
-    });
-  }
-
-  void positionStream() {
-    _positionStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(),
-    ).listen((Position position) async {
-      _customNaverMapController.setPosition = position;
-      Log.f(position);
     });
   }
 
