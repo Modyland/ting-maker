@@ -20,16 +20,27 @@ CustomNaverMapController _customNaverMapController =
 
 class _NaverMapScreenState extends State<NaverMapScreen>
     with AutomaticKeepAliveClientMixin {
-  final StreamSubscription<Position> _positionStream =
-      Geolocator.getPositionStream(
-    locationSettings: const LocationSettings(),
-  ).listen((Position position) async {
-    _customNaverMapController.setPosition = position;
-    Log.f(position);
-  });
-
+  late final StreamSubscription<Position> _positionStream;
   final StreamController<NCameraUpdateReason> _onCameraChangeStreamController =
       StreamController<NCameraUpdateReason>.broadcast();
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    cameraChangeStream();
+    positionStream();
+  }
+
+  @override
+  void dispose() {
+    _positionStream.cancel();
+    _onCameraChangeStreamController.close();
+    _customNaverMapController.getMapController?.dispose();
+    super.dispose();
+  }
 
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
@@ -88,21 +99,13 @@ class _NaverMapScreenState extends State<NaverMapScreen>
     });
   }
 
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-    cameraChangeStream();
-  }
-
-  @override
-  void dispose() {
-    _positionStream.cancel();
-    _onCameraChangeStreamController.close();
-    _customNaverMapController.getMapController?.dispose();
-    super.dispose();
+  void positionStream() {
+    _positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(),
+    ).listen((Position position) async {
+      _customNaverMapController.setPosition = position;
+      Log.f(position);
+    });
   }
 
   @override

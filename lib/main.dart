@@ -26,17 +26,17 @@ import 'package:ting_maker/screen/register/register3.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/db.dart';
-import 'package:ting_maker/util/init.dart';
+import 'package:ting_maker/util/initialize.dart';
 import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 // const BasicMessageChannel<String> appLifeCycleChannel =
 //     BasicMessageChannel<String>('appLifeCycle', StringCodec());
-final service = Get.find<MainProvider>();
 late SharedPreferences pref;
 late SqliteBase sqliteBase;
 late PackageInfo packageInfo;
 late Map<String, dynamic> deviceInfo;
+final service = Get.find<MainProvider>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,14 +72,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     final isLogin = pref.getBool('isLogin') ?? false;
     final user = pref.getString('user');
-
     final Map<String, dynamic> requestData = {'id': '', 'activity': ''};
-    if (user != null) {
+    if (isLogin && user != null) {
       final userData = json.decode(user);
       final UserModel userModel = UserModel.fromJson(userData);
       requestData['id'] = userModel.id;
-    }
-    if (isLogin && user != null) {
       if (state == AppLifecycleState.resumed) {
         requestData['activity'] = 'login';
         service.loginLog(requestData);
@@ -91,6 +88,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         service.loginLog(requestData);
         Log.e("Back");
       }
+    }
+  }
+
+  String initRoute() {
+    final firstLogin = pref.getBool('firstLogin') ?? false;
+    final isLogin = pref.getBool('isLogin') ?? false;
+    final user = pref.getString('user');
+    if (firstLogin && isLogin && user != null) {
+      return '/home';
+    } else {
+      return '/';
     }
   }
 
@@ -141,22 +149,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             Get.put(NavigationProvider(), permanent: true);
             Get.put(ImageProfileController());
             Get.put(CustomNaverMapController(), permanent: true);
-            Get.lazyPut<MainProvider>(() => MainProvider(), fenix: true);
+            Get.put(MainProvider(), permanent: true);
           }),
           navigatorKey: Get.key,
           navigatorObservers: [RouterObserver()],
-          initialRoute: '/',
+          initialRoute: initRoute(),
           getPages: [
-            GetPage(
-                name: '/',
-                page: () {
-                  final isLogin = pref.getBool('isLogin') ?? false;
-                  if (isLogin) {
-                    return const MainScreen();
-                  } else {
-                    return const OnboardingScreen();
-                  }
-                }),
+            GetPage(name: '/', page: () => const OnboardingScreen()),
             GetPage(name: '/home', page: () => const MainScreen()),
             GetPage(
               name: '/service_agree',

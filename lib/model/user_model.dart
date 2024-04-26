@@ -1,11 +1,9 @@
-import 'dart:typed_data';
-
 class UserModel {
   final String id;
   final String phone;
   final String birth;
   final String gender;
-  final Uint8List? profile;
+  final String? profile;
   final String? aka;
 
   UserModel({

@@ -15,7 +15,7 @@ class PhoneCheckScreen extends StatefulWidget {
 }
 
 class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
-  Map<String, dynamic> registerData = Get.arguments;
+  Map<String, dynamic>? registerData = Get.arguments;
   final GlobalKey<FormState> _phoneFormkey = GlobalKey<FormState>();
   final TextEditingController _phoneCheckEditing = TextEditingController();
   bool isNext = false;
