@@ -37,5 +37,5 @@ Future<void> initFirebase() async {
   FirebaseApp app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  Log.t('Initialized Default App ${app.name}');
+  Log.f('Initialized Default App ${app.name}');
 }

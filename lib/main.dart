@@ -146,10 +146,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ),
           ),
           initialBinding: BindingsBuilder(() {
-            Get.put(NavigationProvider(), permanent: true);
-            Get.put(ImageProfileController());
-            Get.put(CustomNaverMapController(), permanent: true);
-            Get.put(MainProvider(), permanent: true);
+            Get.put(() => MainProvider(), permanent: true);
+            Get.put(() => NavigationProvider(), permanent: true);
+            Get.put(() => CustomNaverMapController(), permanent: true);
+            Get.lazyPut(() => ImageProfileController());
           }),
           navigatorKey: Get.key,
           navigatorObservers: [RouterObserver()],

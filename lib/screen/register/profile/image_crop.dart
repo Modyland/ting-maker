@@ -21,7 +21,7 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
   }
 
   void successCrop() {
-    _cropController.crop();
+    _cropController.cropCircle();
   }
 
   @override

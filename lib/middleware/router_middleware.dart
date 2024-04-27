@@ -5,7 +5,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/user_model.dart';
-import 'package:ting_maker/util/logger.dart';
 
 Future initLoginCheck() async {
   final isLogin = pref.getBool('isLogin') ?? false;
@@ -72,18 +71,6 @@ class RouterObserver extends GetObserver {
     if (previousRoute?.settings.name == '/login' &&
         route.settings.name == '/home') {
       await locationPermissionCheck();
-    } else {
-      Log.f('Route push: ${route.settings.name}');
     }
-  }
-
-  @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    Log.f('Route popped: ${route.settings.name}');
-  }
-
-  @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    Log.f('Route replaced: ${newRoute?.settings.name}');
   }
 }

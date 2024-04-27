@@ -1,149 +1,61 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/map_controller.dart';
-import 'package:ting_maker/middleware/router_middleware.dart';
-import 'package:ting_maker/util/logger.dart';
 
-class NaverMapScreen extends StatefulWidget {
+class NaverMapScreen extends GetView<CustomNaverMapController> {
   const NaverMapScreen({super.key});
 
   @override
-  State<NaverMapScreen> createState() => _NaverMapScreenState();
-}
-
-CustomNaverMapController _customNaverMapController =
-    Get.find<CustomNaverMapController>();
-
-class _NaverMapScreenState extends State<NaverMapScreen>
-    with AutomaticKeepAliveClientMixin {
-  late final StreamSubscription<Position> _positionStream;
-  final StreamController<NCameraUpdateReason> _onCameraChangeStreamController =
-      StreamController<NCameraUpdateReason>.broadcast();
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-    cameraChangeStream();
-  }
-
-  @override
-  void dispose() {
-    _positionStream.cancel();
-    _onCameraChangeStreamController.close();
-    _customNaverMapController.getMapController?.dispose();
-    super.dispose();
-  }
-
-  Future<Position> _determinePosition() async {
-    await locationPermissionCheck();
-
-    final position = await Geolocator.getCurrentPosition();
-
-    _customNaverMapController.setPosition = position;
-
-    _positionStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(),
-    ).listen((Position position) async {
-      _customNaverMapController.setPosition = position;
-      Log.f(position);
-    });
-
-    return position;
-  }
-
-  void test() async {
-    final position = _customNaverMapController.getPosition;
-    List<Placemark> placemark =
-        await placemarkFromCoordinates(position!.latitude, position.longitude);
-    Log.f(
-      '${placemark[0]}, ${placemark[0].subLocality}, ${placemark[0].thoroughfare}',
-    );
-    NMarker marker1 = NMarker(
-      id: '1',
-      position: NLatLng(position.latitude, position.longitude),
-    );
-    NCircleOverlay circle = NCircleOverlay(
-      id: '2',
-      center: NLatLng(position.latitude, position.longitude),
-    );
-    if (_customNaverMapController.getMapController != null) {
-      await _customNaverMapController.getMapController?.addOverlay(circle);
-      await _customNaverMapController.getMapController?.addOverlay(marker1);
-    }
-  }
-
-  void cameraChangeStream() {
-    _onCameraChangeStreamController.stream.listen((reason) {
-      Log.f(reason);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
-    return Stack(
-      children: [
-        FutureBuilder(
-          future: _determinePosition(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return NaverMap(
-                options: NaverMapViewOptions(
-                  locale: const Locale('ko'),
-                  extent: const NLatLngBounds(
-                    southWest: NLatLng(31.43, 122.37),
-                    northEast: NLatLng(44.35, 132.0),
-                  ),
-                  initialCameraPosition: NCameraPosition(
-                    target: NLatLng(
-                      snapshot.data!.latitude,
-                      snapshot.data!.longitude,
-                    ),
-                    zoom: 16,
-                    bearing: 0,
-                    tilt: 0,
-                  ),
-                  activeLayerGroups: [
-                    NLayerGroup.building,
-                    NLayerGroup.bicycle,
-                    NLayerGroup.transit,
-                  ],
-                  minZoom: 10,
-                  indoorEnable: true,
-                  logoAlign: NLogoAlign.rightTop,
+    return Obx(() {
+      final position = controller.getCurrentPosition;
+      if (position == null) {
+        return const Center(child: CircularProgressIndicator());
+      } else {
+        return Stack(
+          children: [
+            NaverMap(
+              options: NaverMapViewOptions(
+                locale: const Locale('ko'),
+                extent: const NLatLngBounds(
+                  southWest: NLatLng(31.43, 122.37),
+                  northEast: NLatLng(44.35, 132.0),
                 ),
-                forceGesture: true,
-                onMapReady: (controller) async {
-                  _customNaverMapController.setMapController = controller;
-                  // 현재 화면에 보이는 범위 가져오기
-                  _customNaverMapController.getMapController
-                      ?.getContentBounds();
-                  test();
-                },
-                onMapTapped: (point, latLng) {},
-                onSymbolTapped: (symbol) {},
-                onCameraChange: (position, reason) {
-                  _onCameraChangeStreamController.sink.add(position);
-                },
-                onCameraIdle: () {},
-                onSelectedIndoorChanged: (indoor) {},
-              );
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
-        // 내가 직접 조작할 버튼 만들어야함
-        FloatingActionButton(onPressed: () {}),
-      ],
-    );
+                initialCameraPosition: NCameraPosition(
+                  target: NLatLng(
+                    position.latitude,
+                    position.longitude,
+                  ),
+                  zoom: 16,
+                  bearing: 0,
+                  tilt: 0,
+                ),
+                activeLayerGroups: [
+                  NLayerGroup.building,
+                  NLayerGroup.bicycle,
+                  NLayerGroup.transit,
+                ],
+                minZoom: 10,
+                indoorEnable: true,
+                logoAlign: NLogoAlign.rightTop,
+              ),
+              forceGesture: true,
+              onMapReady: (nController) {
+                controller.setMapController = nController;
+              },
+              onMapTapped: (point, latLng) {},
+              onSymbolTapped: (symbol) {},
+              onCameraChange: (position, reason) {
+                controller.getCameraStream.sink.add(position);
+              },
+              onCameraIdle: () {},
+              onSelectedIndoorChanged: (indoor) {},
+            ),
+            FloatingActionButton(onPressed: () {}),
+          ],
+        );
+      }
+    });
   }
 }

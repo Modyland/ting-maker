@@ -35,7 +35,7 @@ class MainProvider extends GetConnect {
   //   return post('http://youapi/users/upload', form);
   // }
 
-  // GetSocket userMessages() {
-  //   return socket('https://yourapi/users/socket');
-  // }
+  GetSocket getSocket() {
+    return socket(dotenv.get('TEST_URL'), ping: const Duration(seconds: 5));
+  }
 }
