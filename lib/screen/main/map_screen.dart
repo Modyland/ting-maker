@@ -28,21 +28,23 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                     position.longitude,
                   ),
                   zoom: 16,
-                  bearing: 0,
-                  tilt: 0,
                 ),
                 activeLayerGroups: [
                   NLayerGroup.building,
-                  NLayerGroup.bicycle,
-                  NLayerGroup.transit,
                 ],
-                minZoom: 10,
+                minZoom: 8,
+                //zoom 10부터 축제 묶기
+                //zoom 12부터 사람 풀어서보여주기?
+                maxZoom: 17,
                 indoorEnable: true,
                 logoAlign: NLogoAlign.rightTop,
               ),
               forceGesture: true,
               onMapReady: (nController) {
                 controller.setMapController = nController;
+                controller.test();
+                controller.getSocket.emit('requestUserPositionData', 'test');
+                controller.getSocket.emit('requestTest', '1');
               },
               onMapTapped: (point, latLng) {},
               onSymbolTapped: (symbol) {},

@@ -96,9 +96,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final isLogin = pref.getBool('isLogin') ?? false;
     final user = pref.getString('user');
     if (firstLogin && isLogin && user != null) {
-      return '/home';
-    } else {
       return '/';
+    } else {
+      return '/home';
     }
   }
 
@@ -146,17 +146,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ),
           ),
           initialBinding: BindingsBuilder(() {
-            Get.put(() => MainProvider(), permanent: true);
-            Get.put(() => NavigationProvider(), permanent: true);
-            Get.put(() => CustomNaverMapController(), permanent: true);
+            Get.put(MainProvider(), permanent: true);
             Get.lazyPut(() => ImageProfileController());
+            Get.lazyPut(() => NavigationProvider(), fenix: true);
+            Get.lazyPut(() => CustomNaverMapController(), fenix: true);
           }),
           navigatorKey: Get.key,
           navigatorObservers: [RouterObserver()],
           initialRoute: initRoute(),
           getPages: [
-            GetPage(name: '/', page: () => const OnboardingScreen()),
-            GetPage(name: '/home', page: () => const MainScreen()),
+            GetPage(
+              name: '/',
+              page: () => const OnboardingScreen(),
+            ),
+            GetPage(
+              name: '/home',
+              page: () => const MainScreen(),
+            ),
             GetPage(
               name: '/service_agree',
               page: () => const ServiceAgreeScreen(),
