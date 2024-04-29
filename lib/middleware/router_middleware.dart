@@ -63,10 +63,10 @@ class RouterObserver extends GetObserver {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) async {
     if (previousRoute == null && route.settings.name == '/home') {
-      // final check = await initLoginCheck();
-      // if (!check) {
-      //   Get.offAllNamed('/login');
-      // }
+      final check = await initLoginCheck();
+      if (!check) {
+        Get.offAllNamed('/login');
+      }
     }
     if (previousRoute?.settings.name == '/login' &&
         route.settings.name == '/home') {
