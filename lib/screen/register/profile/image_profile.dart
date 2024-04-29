@@ -66,8 +66,8 @@ class _ImageProfileState extends State<ImageProfile> {
         children: [
           InkWell(
             splashColor: Colors.transparent,
-            onTap: () {
-              getImage();
+            onTap: () async {
+              await getImage();
             },
             child: CustomPaint(
               painter: BorderPainter(),
