@@ -92,13 +92,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   String initRoute() {
-    final firstLogin = pref.getBool('firstLogin') ?? false;
     final isLogin = pref.getBool('isLogin') ?? false;
     final user = pref.getString('user');
-    if (firstLogin && isLogin && user != null) {
-      return '/';
-    } else {
+    if (isLogin && user != null) {
       return '/home';
+    } else {
+      return '/';
     }
   }
 

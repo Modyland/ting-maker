@@ -25,7 +25,7 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
 
   bool isNext = false;
 
-  void goSignup() async {
+  Future goSignup() async {
     final Map<String, dynamic> requestData = {
       'kind': 'signUp',
       'id': registerData['id'],
@@ -115,8 +115,8 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      onPressed: () {
-                        isNext ? goSignup() : null;
+                      onPressed: () async {
+                        isNext ? await goSignup() : null;
                       },
                       child: Center(
                         child: Text(

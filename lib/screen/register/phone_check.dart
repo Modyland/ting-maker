@@ -27,7 +27,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
     super.dispose();
   }
 
-  void phoneCheckCallback() async {
+  Future phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
     final res = await service.phoneCheck(
         _phoneCheckEditing.text, Get.arguments == null ? true : false);
@@ -72,7 +72,8 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('\t안녕하세요!', style: registerTitleStyle),
+                  Text(Get.arguments == null ? '\t안녕하세요!' : '\t아이디 찾기',
+                      style: registerTitleStyle),
                   Text('\t휴대폰 번호를 입력해주세요.', style: registerTitleStyle),
                   const SizedBox(height: 10),
                   const Text(
@@ -118,8 +119,8 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      onPressed: () {
-                        isNext ? phoneCheckCallback() : null;
+                      onPressed: () async {
+                        isNext ? await phoneCheckCallback() : null;
                       },
                       child: Center(
                         child: Text(

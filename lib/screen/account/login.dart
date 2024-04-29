@@ -60,7 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
       validCheck = -1;
       final UserModel user = UserModel.fromJson(profile);
       await pref.setBool('isLogin', true);
-      await pref.setBool('firstLogin', true);
       final isSave = await pref.setString(
         'user',
         json.encode(user.toJson()),

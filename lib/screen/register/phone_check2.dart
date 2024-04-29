@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
+import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -56,7 +57,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
     });
   }
 
-  void phoneCheckCallback() async {
+  Future phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
     final res = await service.phoneCheck2(
       registerData['phone'],
@@ -80,13 +81,25 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
     }
   }
 
-  void nextPage() {
+  Future findIdCallback() async {
+    final Map<String, dynamic> requestData = {
+      'kind': 'findId',
+      'phone': registerData['phone'],
+    };
+    final res = await service.tingApiGetdata(requestData);
+    Log.e(res.statusCode);
+    final data = json.decode(res.bodyString!);
+  }
+
+  void nextPage() async {
     if (isNext && validCheck == -1) {
       if (registerData.containsKey('tab') && registerData['tab'] == 'id') {
+        await findIdCallback();
         Get.toNamed('/find_success',
             arguments: {'phone': registerData['phone']});
       } else if (registerData.containsKey('tab') &&
           registerData['tab'] == 'pwd') {
+        await findIdCallback();
         Get.toNamed('/password_change',
             arguments: {'phone': registerData['phone']});
       } else {
@@ -179,8 +192,8 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      onPressed: () {
-                        isNext ? phoneCheckCallback() : null;
+                      onPressed: () async {
+                        isNext ? await phoneCheckCallback() : null;
                       },
                       child: Center(
                         child: Text(

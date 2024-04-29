@@ -48,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  void isIdCheck() async {
+  Future isIdCheck() async {
     final Map<String, dynamic> requestData = {
       'kind': 'idDupe',
       'id': _idEditingController.text,
@@ -188,8 +188,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        onPressed: () {
-                          isNext ? isIdCheck() : null;
+                        onPressed: () async {
+                          isNext ? await isIdCheck() : null;
                         },
                         child: Center(
                           child: Text(
