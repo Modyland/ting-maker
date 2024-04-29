@@ -104,6 +104,11 @@ class CustomNaverMapController extends GetxController {
       id: '1',
       position: NLatLng(_position.value!.latitude, _position.value!.longitude),
     );
+    const latLng = NLatLng(37.5666, 126.979);
+    const seoulStationLatLng = NLatLng(37.555759, 126.972939);
+    final distance = latLng.distanceTo(seoulStationLatLng);
+    Log.f(distance);
+
     NCircleOverlay circle = NCircleOverlay(
       id: '2',
       center: NLatLng(_position.value!.latitude, _position.value!.longitude),
@@ -115,5 +120,12 @@ class CustomNaverMapController extends GetxController {
       await getMapController?.addOverlay(circle);
       await getMapController?.addOverlay(marker1);
     }
+    final onMarkerInfoWindow =
+        NInfoWindow.onMarker(id: marker1.info.id, text: "인포윈도우 텍스트");
+    marker1.openInfoWindow(onMarkerInfoWindow);
+    marker1.setOnTapListener((mark) {
+      mark.setPosition(NLatLng(_position.value!.latitude + 0.0000010,
+          _position.value!.longitude + 0.0000010));
+    });
   }
 }
