@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ting_maker/widget/button_style.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class ImageCropScreen extends StatefulWidget {
@@ -26,38 +27,48 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      Crop(
-        image: _cropImage,
-        controller: _cropController,
-        onCropped: (image) {
-          Get.back(result: {'crop': image});
-        },
-        withCircleUi: true,
-        baseColor: pointColor,
-        maskColor: Colors.black45,
-        progressIndicator: const Center(child: CircularProgressIndicator()),
-        cornerDotBuilder: (size, edgeAlignment) => DotControl(
-          color: pointColor,
+    return Stack(
+      children: [
+        Crop(
+          image: _cropImage,
+          controller: _cropController,
+          onCropped: (image) {
+            Get.back(result: {'crop': image});
+          },
+          withCircleUi: true,
+          baseColor: pointColor,
+          maskColor: Colors.black45,
+          progressIndicator: const Center(child: CircularProgressIndicator()),
+          cornerDotBuilder: (size, edgeAlignment) => DotControl(
+            color: pointColor,
+          ),
+          clipBehavior: Clip.hardEdge,
         ),
-        clipBehavior: Clip.hardEdge,
-      ),
-      Positioned(
-        bottom: 0,
-        left: 0,
-        child: ElevatedButton(
-          child: const Text('Cancel'),
-          onPressed: () => cancelCrop(),
+        Positioned(
+          bottom: 15,
+          left: 15,
+          child: cropButton(
+            '취소',
+            Icon(
+              Icons.arrow_back,
+              color: errColor,
+            ),
+            cancelCrop,
+          ),
         ),
-      ),
-      Positioned(
-        bottom: 0,
-        right: 0,
-        child: ElevatedButton(
-          child: const Text('Crop'),
-          onPressed: () => successCrop(),
-        ),
-      )
-    ]);
+        Positioned(
+          bottom: 15,
+          right: 15,
+          child: cropButton(
+            '등록',
+            Icon(
+              Icons.check,
+              color: okColor,
+            ),
+            successCrop,
+          ),
+        )
+      ],
+    );
   }
 }

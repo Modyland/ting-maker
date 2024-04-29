@@ -5,7 +5,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -83,25 +82,30 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
 
   Future findIdCallback() async {
     final Map<String, dynamic> requestData = {
-      'kind': 'findId',
+      'kind': 'findID',
       'phone': registerData['phone'],
     };
     final res = await service.tingApiGetdata(requestData);
-    Log.e(res.statusCode);
     final data = json.decode(res.bodyString!);
+    return data;
   }
 
   void nextPage() async {
     if (isNext && validCheck == -1) {
       if (registerData.containsKey('tab') && registerData['tab'] == 'id') {
-        await findIdCallback();
-        Get.toNamed('/find_success',
-            arguments: {'phone': registerData['phone']});
+        final res = await findIdCallback();
+        Get.toNamed('/find_success', arguments: {
+          'phone': registerData['phone'],
+          'id': res['id'],
+          'date': res['signupdate'],
+        });
       } else if (registerData.containsKey('tab') &&
           registerData['tab'] == 'pwd') {
-        await findIdCallback();
-        Get.toNamed('/password_change',
-            arguments: {'phone': registerData['phone']});
+        final res = await findIdCallback();
+        Get.toNamed('/password_change', arguments: {
+          'phone': registerData['phone'],
+          'id': res['id'],
+        });
       } else {
         Get.toNamed('/register', arguments: {'phone': registerData['phone']});
       }

@@ -72,8 +72,8 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(Get.arguments == null ? '\t안녕하세요!' : '\t아이디 찾기',
-                      style: registerTitleStyle),
+                  if (Get.arguments == null)
+                    Text('\t안녕하세요!', style: registerTitleStyle),
                   Text('\t휴대폰 번호를 입력해주세요.', style: registerTitleStyle),
                   const SizedBox(height: 10),
                   const Text(
