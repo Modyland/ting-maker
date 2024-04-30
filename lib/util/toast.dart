@@ -10,7 +10,7 @@ Future<bool?> normalToast(
     msg: msg,
     toastLength: Toast.LENGTH_SHORT,
     gravity: position ?? ToastGravity.TOP,
-    timeInSecForIosWeb: 1,
+    timeInSecForIosWeb: 2,
     backgroundColor: bg,
     textColor: Colors.white,
     fontSize: 16,

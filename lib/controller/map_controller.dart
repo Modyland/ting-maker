@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+// ignore: library_prefixes
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/util/logger.dart';
@@ -19,6 +19,8 @@ class CustomNaverMapController extends GetxController {
       Rx<StreamSubscription<Position>?>(null);
   final StreamController<NCameraUpdateReason> _cameraStream =
       StreamController<NCameraUpdateReason>.broadcast();
+
+  final Rx<String> reverseGeocoding = Rx<String>('');
 
   IO.Socket socket = IO.io(
       dotenv.get('TEST_SOCKET'),
@@ -63,6 +65,8 @@ class CustomNaverMapController extends GetxController {
   Position? get getPosition => _position.value;
   IO.Socket get getSocket => socket;
 
+  String get getReverseGeocoding => reverseGeocoding.value;
+
   set setMapController(NaverMapController? controller) =>
       _mapController.value = controller;
   set setPosition(Position position) => _position.value = position;
@@ -92,14 +96,33 @@ class CustomNaverMapController extends GetxController {
     });
   }
 
-  void test() async {
-    final locationOverlay = getMapController?.getLocationOverlay();
-    Log.f(locationOverlay?.info.type);
-    List<Placemark> placemark = await placemarkFromCoordinates(
-        _position.value!.latitude, _position.value!.longitude);
-    Log.f(
-      '${placemark[0]}, ${placemark[0].subLocality}, ${placemark[0].thoroughfare}',
+  Future<void> getGeocoding() async {
+    final GetConnect connect = GetConnect();
+    final String stringLngLat =
+        '${_position.value!.longitude},${_position.value!.latitude}';
+    final res = await connect.get(
+      'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$stringLngLat&sourcecrs=epsg:4326&output=json&orders=admcode',
+      headers: {
+        'X-NCP-APIGW-API-KEY-ID': dotenv.get('NAVER_KEY'),
+        'X-NCP-APIGW-API-KEY': dotenv.get('NAVER_SECRET')
+      },
+      contentType: 'application/json',
     );
+    if (res.statusCode == 200) {
+      if (res.body != null) {
+        final stringGeocoding =
+            '${res.body['results'][0]['region']['area2']['name']} - ${res.body['results'][0]['region']['area3']['name']}';
+        reverseGeocoding.value = stringGeocoding;
+      }
+    }
+  }
+
+  void test() async {
+    await getGeocoding();
+
+    // 위경도 좌표를 화면 좌표로 변환할 수 있어요.
+    // Future<NPoint> latLngToScreenLocation(NLatLng latLng);
+
     NMarker marker1 = NMarker(
       id: '1',
       position: NLatLng(_position.value!.latitude, _position.value!.longitude),

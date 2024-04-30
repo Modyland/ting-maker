@@ -37,9 +37,10 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                 //zoom 12부터 사람 풀어서보여주기?
                 maxZoom: 17,
                 indoorEnable: true,
+                indoorFocusRadius: 30,
+                scaleBarEnable: false,
                 logoAlign: NLogoAlign.rightTop,
               ),
-              forceGesture: true,
               onMapReady: (nController) {
                 controller.setMapController = nController;
                 controller.test();

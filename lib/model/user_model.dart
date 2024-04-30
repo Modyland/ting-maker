@@ -1,4 +1,5 @@
 class UserModel {
+  final num idx;
   final String id;
   final String phone;
   final String birth;
@@ -7,6 +8,7 @@ class UserModel {
   final String? aka;
 
   UserModel({
+    required this.idx,
     required this.id,
     required this.phone,
     required this.birth,
@@ -17,6 +19,7 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
+      idx: json['idx'],
       id: json['id'],
       phone: json['phone'],
       birth: json['birth'],
@@ -27,6 +30,7 @@ class UserModel {
   }
 
   Map<String, dynamic> toJson() => {
+        'idx': idx,
         'id': id,
         'phone': phone,
         'birth': birth,
