@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -11,8 +10,6 @@ class ServiceAgreeScreen extends StatefulWidget {
   @override
   State<ServiceAgreeScreen> createState() => _ServiceAgreeScreenState();
 }
-
-Map<Permission, PermissionStatus>? permissions;
 
 class _ServiceAgreeScreenState extends State<ServiceAgreeScreen> {
   bool allCheck = false;

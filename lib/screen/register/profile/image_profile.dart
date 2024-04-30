@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:ting_maker/main.dart';
 import 'package:ting_maker/screen/register/register3.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -45,6 +48,18 @@ class _ImageProfileState extends State<ImageProfile> {
   final ImagePicker _picker = ImagePicker();
 
   Future getImage() async {
+    Permission photoPermission =
+        (Platform.isAndroid && deviceInfo['version.sdkInt'] >= 33) ||
+                Platform.isIOS
+            ? Permission.photos
+            : Permission.storage;
+
+    bool check = await photoPermission.isDenied;
+
+    if (check) {
+      await photoPermission.request();
+    }
+
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {

@@ -5,6 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/user_model.dart';
+import 'package:ting_maker/util/toast.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 Future initLoginCheck() async {
   final isLogin = pref.getBool('isLogin') ?? false;
@@ -41,11 +43,13 @@ Future<void> locationPermissionCheck() async {
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
     await Geolocator.openLocationSettings();
+    await normalToast('디바이스 위치를 활성화 해주세요.', errColor);
     return Future.error('위치 꺼놨을때');
   }
 
   permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
+    await normalToast('앱 위치권한을 허용해주세요.', errColor);
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
       await Geolocator.openAppSettings();
@@ -55,6 +59,7 @@ Future<void> locationPermissionCheck() async {
 
   if (permission == LocationPermission.deniedForever) {
     await Geolocator.openAppSettings();
+    await normalToast('앱 위치권한을 허용해주세요.', errColor);
     return Future.error('영구적으로 거부');
   }
 }
