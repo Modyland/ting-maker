@@ -8,57 +8,64 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final position = controller.getCurrentPosition;
-      if (position == null) {
-        return const Center(child: CircularProgressIndicator());
-      } else {
-        return Stack(
-          children: [
-            NaverMap(
-              options: NaverMapViewOptions(
-                locale: const Locale('ko'),
-                extent: const NLatLngBounds(
-                  southWest: NLatLng(31.43, 122.37),
-                  northEast: NLatLng(44.35, 132.0),
-                ),
-                initialCameraPosition: NCameraPosition(
-                  target: NLatLng(
-                    position.latitude,
-                    position.longitude,
+    return Obx(
+      () {
+        final position = controller.getCurrentPosition;
+        if (position == null) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          return Stack(
+            children: [
+              NaverMap(
+                options: NaverMapViewOptions(
+                  locale: const Locale('ko'),
+                  extent: const NLatLngBounds(
+                    southWest: NLatLng(31.43, 122.37),
+                    northEast: NLatLng(44.35, 132.0),
                   ),
-                  zoom: 16,
+                  initialCameraPosition: NCameraPosition(
+                    target: NLatLng(
+                      position.latitude,
+                      position.longitude,
+                    ),
+                    zoom: 16,
+                  ),
+                  activeLayerGroups: [
+                    NLayerGroup.building,
+                  ],
+                  minZoom: 12,
+                  maxZoom: 21,
+                  indoorEnable: true,
+                  indoorFocusRadius: 30,
+                  // scaleBarEnable: false,
+                  logoAlign: NLogoAlign.rightTop,
                 ),
-                activeLayerGroups: [
-                  NLayerGroup.building,
-                ],
-                minZoom: 8,
-                //zoom 10부터 축제 묶기
-                //zoom 12부터 사람 풀어서보여주기?
-                maxZoom: 17,
-                indoorEnable: true,
-                indoorFocusRadius: 30,
-                scaleBarEnable: false,
-                logoAlign: NLogoAlign.rightTop,
+                onMapReady: (nController) {
+                  controller.setMapController = nController;
+                },
+                onMapTapped: (point, latLng) {
+                  // 지도에서 클릭한 위치 나옴
+                },
+                onSymbolTapped: (symbol) {
+                  // 지도 안에 정적인 심볼 클릭
+                },
+                onCameraChange: (position, reason) {
+                  controller.getCameraStream.sink.add(position);
+                },
+                onCameraIdle: () {
+                  controller.onCameraIdle();
+                },
+                onSelectedIndoorChanged: (indoor) {
+                  // 실내 지도 층 변경시
+                },
               ),
-              onMapReady: (nController) {
-                controller.setMapController = nController;
-                controller.test();
-                controller.getSocket.emit('requestUserPositionData', 'test');
-                controller.getSocket.emit('requestTest', '1');
-              },
-              onMapTapped: (point, latLng) {},
-              onSymbolTapped: (symbol) {},
-              onCameraChange: (position, reason) {
-                controller.getCameraStream.sink.add(position);
-              },
-              onCameraIdle: () {},
-              onSelectedIndoorChanged: (indoor) {},
-            ),
-            FloatingActionButton(onPressed: () {}),
-          ],
-        );
-      }
-    });
+              FloatingActionButton(onPressed: () {
+                controller.getCurrentPositionCamera();
+              }),
+            ],
+          );
+        }
+      },
+    );
   }
 }
