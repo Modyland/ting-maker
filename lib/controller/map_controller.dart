@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -8,17 +9,9 @@ import 'package:get/get.dart';
 // ignore: library_prefixes
 // import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:ting_maker/middleware/router_middleware.dart';
-import 'package:ting_maker/util/logger.dart';
+import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/util/toast.dart';
 import 'package:ting_maker/widget/common_style.dart';
-
-class Cluster {
-  final double latitude;
-  final double longitude;
-  Set<NMarker> markers = {};
-
-  Cluster(this.latitude, this.longitude, this.markers);
-}
 
 class CustomNaverMapController extends GetxController {
   final Rx<NaverMapController?> _mapController = Rx<NaverMapController?>(null);
@@ -74,6 +67,7 @@ class CustomNaverMapController extends GetxController {
   Position? get getCurrentPosition => _currentPosition.value;
   Position? get getPosition => _position.value;
   int? get getCurrentZoom => _currentZoom.value;
+
   // IO.Socket get getSocket => socket;
 
   String get getReverseGeocoding => reverseGeocoding.value;
@@ -108,10 +102,13 @@ class CustomNaverMapController extends GetxController {
   }
 
   void onCameraIdle() async {
-    final NCameraPosition? cameraData =
-        await getMapController?.getCameraPosition();
-    _currentZoom.value = cameraData?.zoom.round();
-    test(getCurrentZoom!);
+    final NCameraPosition cameraData =
+        await getMapController!.getCameraPosition();
+    int newZoom = cameraData.zoom.round();
+    if (getCurrentZoom != newZoom) {
+      _currentZoom.value = cameraData.zoom.round();
+      zoomChange(getCurrentZoom!);
+    }
   }
 
   void getCurrentPositionCamera() async {
@@ -144,25 +141,31 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
-  void test(int zoomLevel) async {
+  void zoomChange(int zoomLevel) async {
     await getGeocoding();
     const test1 = 0.0000115;
     const test2 = 0.0004212;
     const test3 = 0.0000320;
     const test4 = 0.0000430;
 
-    Log.f(zoomLevel);
-
+    final iconImage = await NOverlayImage.fromWidget(
+      widget: const FlutterLogo(),
+      size: const Size(24, 24),
+      context: Get.context!,
+    );
     NMarker marker1 = NMarker(
       id: '1',
-      position: NLatLng(_currentPosition.value!.latitude + test1,
-          _currentPosition.value!.longitude + test2),
+      position: NLatLng(
+        _currentPosition.value!.latitude + test1,
+        _currentPosition.value!.longitude + test2,
+      ),
     )..setOnTapListener(
         (overlay) async => await normalToast(overlay.info.id, errColor));
     NMarker marker2 = NMarker(
       id: '2',
       position: NLatLng(_currentPosition.value!.latitude + test3,
           _currentPosition.value!.longitude + test4),
+      icon: iconImage,
     );
     NMarker marker3 = NMarker(
       id: '3',
@@ -180,7 +183,7 @@ class CustomNaverMapController extends GetxController {
     if (zoomLevel == 21) {
       showMarkers(markers);
     } else {
-      Set<NMarker> clusteredMarkers = clusterMarkers(markers, zoomLevel);
+      Set<NMarker> clusteredMarkers = await clusterMarkers(markers, zoomLevel);
       showMarkers(clusteredMarkers);
     }
   }
@@ -192,7 +195,12 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
-  Set<NMarker> clusterMarkers(Set<NMarker> markers, num zoomLevel) {
+  double calculateClusterRadius(num zoomLevel) {
+    return 2 * pow(2, 21 - zoomLevel).toDouble();
+  }
+
+  Future<Set<NMarker>> clusterMarkers(
+      Set<NMarker> markers, num zoomLevel) async {
     double clusterRadius = calculateClusterRadius(zoomLevel);
     List<Cluster> clusters = [];
 
@@ -201,12 +209,11 @@ class CustomNaverMapController extends GetxController {
       for (var cluster in clusters) {
         final fLatLng =
             NLatLng(marker.position.latitude, marker.position.longitude);
-        final cLatLng = NLatLng(cluster.latitude, cluster.longitude);
-        final distanceTest = fLatLng.distanceTo(cLatLng);
-        Log.e('distance : $distanceTest');
+        final cLatLng = cluster.averageLocation;
+        final distance = fLatLng.distanceTo(cLatLng);
 
-        if (distanceTest < clusterRadius) {
-          cluster.markers.add(marker);
+        if (distance < clusterRadius) {
+          cluster.addMarker(marker);
           addedToCluster = true;
           break;
         }
@@ -222,41 +229,34 @@ class CustomNaverMapController extends GetxController {
       if (cluster.markers.length == 1) {
         clusteredMarkers.add(cluster.markers.first);
       } else {
+        final double size = (24 + cluster.count).toDouble();
+        final iconImage = await NOverlayImage.fromWidget(
+          widget: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(size / 2),
+              border: Border.all(width: 1.5, color: pointColor),
+              color: Colors.white,
+            ),
+            child: Center(
+              child: Text(
+                '+${cluster.count}',
+                style: TextStyle(color: pointColor),
+              ),
+            ),
+          ),
+          size: Size(size, size),
+          context: Get.context!,
+        );
         NMarker clusterMarker = NMarker(
           id: 'cluster_${clusters.first.markers.first.info.id}',
-          position: NLatLng(cluster.latitude, cluster.longitude),
-          iconTintColor: Colors.blue,
+          position: cluster.averageLocation,
+          icon: iconImage,
         );
         clusteredMarkers.add(clusterMarker);
       }
     }
 
     return clusteredMarkers;
-  }
-
-  double calculateClusterRadius(num zoomLevel) {
-    switch (zoomLevel) {
-      case 21:
-        return 2.0;
-      case 20:
-        return 5.0;
-      case 19:
-        return 10.0;
-      case 18:
-        return 20.0;
-      case 17:
-        return 50.0;
-      case 16:
-        return 100.0;
-      case 15:
-        return 200.0;
-      case 14:
-        return 500.0;
-      case 13:
-        return 1000.0;
-      default:
-        return 2000.0;
-    }
   }
 }
 

@@ -14,30 +14,35 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
         if (position == null) {
           return const Center(child: CircularProgressIndicator());
         } else {
+          const NLatLngBounds extentBounds = NLatLngBounds(
+            southWest: NLatLng(31.43, 122.37),
+            northEast: NLatLng(44.35, 132.0),
+          );
+          final NCameraPosition initCamera = NCameraPosition(
+            target: NLatLng(
+              position.latitude,
+              position.longitude,
+            ),
+            zoom: 16,
+          );
           return Stack(
             children: [
               NaverMap(
                 options: NaverMapViewOptions(
                   locale: const Locale('ko'),
-                  extent: const NLatLngBounds(
-                    southWest: NLatLng(31.43, 122.37),
-                    northEast: NLatLng(44.35, 132.0),
-                  ),
-                  initialCameraPosition: NCameraPosition(
-                    target: NLatLng(
-                      position.latitude,
-                      position.longitude,
-                    ),
-                    zoom: 16,
-                  ),
+                  extent: extentBounds,
+                  initialCameraPosition: initCamera,
                   activeLayerGroups: [
                     NLayerGroup.building,
                   ],
                   minZoom: 12,
                   maxZoom: 21,
+                  zoomGesturesFriction: 0.8,
+                  scrollGesturesFriction: 0.6,
+                  rotationGesturesEnable: false,
                   indoorEnable: true,
-                  indoorFocusRadius: 30,
-                  // scaleBarEnable: false,
+                  scaleBarEnable: false,
+                  locationButtonEnable: false,
                   logoAlign: NLogoAlign.rightTop,
                 ),
                 onMapReady: (nController) {
