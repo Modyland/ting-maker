@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 // import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/cluster.dart';
+import 'package:ting_maker/util/hole.dart';
 import 'package:ting_maker/util/toast.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -35,7 +36,7 @@ class CustomNaverMapController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    determinePosition();
+    initCurrentPosition();
     onCameraUpdate();
     // socketInit();
   }
@@ -67,58 +68,12 @@ class CustomNaverMapController extends GetxController {
   Position? get getCurrentPosition => _currentPosition.value;
   Position? get getPosition => _position.value;
   int? get getCurrentZoom => _currentZoom.value;
-
   // IO.Socket get getSocket => socket;
-
   String get getReverseGeocoding => reverseGeocoding.value;
 
   set setMapController(NaverMapController? controller) =>
       _mapController.value = controller;
   set setPosition(Position position) => _position.value = position;
-
-  Future<void> determinePosition() async {
-    await locationPermissionCheck();
-
-    // 현재 위치 스트림 연결
-    // _positionStream.value = Geolocator.getPositionStream(
-    //   locationSettings: const LocationSettings(),
-    // ).listen((Position position) async {
-    //   setPosition = position;
-    //   Log.f(position);
-    // });
-
-    // 현재 위치 가져오기
-    final position = await Geolocator.getCurrentPosition();
-    _currentPosition.value = position;
-  }
-
-  void onCameraUpdate() {
-    // _cameraStream.stream.listen((NCameraUpdateReason reason) async {
-    //   _cameraReason.value = reason;
-    //   Log.e((await getMapController?.getCameraPosition()));
-    // }).onError((error) {
-    //   Log.e("CameraStream Error: $error");
-    // });
-  }
-
-  void onCameraIdle() async {
-    final NCameraPosition cameraData =
-        await getMapController!.getCameraPosition();
-    int newZoom = cameraData.zoom.round();
-    if (getCurrentZoom != newZoom) {
-      _currentZoom.value = cameraData.zoom.round();
-      zoomChange(getCurrentZoom!);
-    }
-  }
-
-  void getCurrentPositionCamera() async {
-    await getMapController?.updateCamera(
-      NCameraUpdate.withParams(
-        target: NLatLng(_currentPosition.value!.latitude,
-            _currentPosition.value!.longitude),
-      ),
-    );
-  }
 
   Future<void> getGeocoding() async {
     final GetConnect connect = GetConnect();
@@ -141,18 +96,116 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
-  void zoomChange(int zoomLevel) async {
+  Future<void> initCurrentPosition() async {
+    await locationPermissionCheck();
+
+    // 현재 위치 스트림 연결
+    // _positionStream.value = Geolocator.getPositionStream(
+    //   locationSettings: const LocationSettings(),
+    // ).listen((Position position) async {
+    //   setPosition = position;
+    //   Log.f(position);
+    // });
+
+    // 현재 위치 가져오기
+    final position = await Geolocator.getCurrentPosition();
+    _currentPosition.value = position;
+  }
+
+  Future<void> onMapReady() async {
     await getGeocoding();
+    const koreaPolygon = [
+      NLatLng(37.74771472782078, 126.15127445713948),
+      NLatLng(34.20680214651542, 125.85366714997336),
+      NLatLng(33.111374218479554, 126.26715825197549),
+      NLatLng(34.71152551708532, 128.61043901231025),
+      NLatLng(36.08406945642623, 129.55016036423257),
+      NLatLng(37.071480936625235, 129.42457467298658),
+      NLatLng(37.236171268204984, 129.35593203161616),
+      NLatLng(37.285338741423544, 129.3258969543222),
+      NLatLng(37.38027525399349, 129.25960588879428),
+      NLatLng(37.5821152023267, 129.11474201720068),
+      NLatLng(37.67336004436639, 129.05721817158897),
+      NLatLng(38.617020001396575, 128.35449055377674),
+      NLatLng(38.3186348243298, 127.135561495914),
+      NLatLng(37.74771472782078, 126.15127445713948),
+    ];
+
+    final polygonOverlay = NPolygonOverlay(
+      id: 'korea',
+      coords: koreaPolygon,
+      holes: [
+        firstHole,
+        secondHole,
+      ],
+      color: Colors.black26,
+      outlineColor: pointColor,
+      outlineWidth: 1,
+    );
+
+    // 위경도 좌표를 화면 좌표로 변환할 수 있어요.
+    // Future<NPoint> latLngToScreenLocation(NLatLng latLng);
+    // const latLng = NLatLng(37.5666, 126.979);
+    // const seoulStationLatLng = NLatLng(37.555759, 126.972939);
+    // final distance = latLng.distanceTo(seoulStationLatLng);
+    // Log.f(distance);
+
+    // NCircleOverlay circle = NCircleOverlay(
+    //   id: '2',
+    //   center: NLatLng(_position.value!.latitude, _position.value!.longitude),
+    //   radius: 300,
+    //   color: Colors.black26,
+    //   outlineWidth: 2,
+    // );
+    // final onMarkerInfoWindow =
+    //     NInfoWindow.onMarker(id: marker1.info.id, text: "인포윈도우 텍스트");
+    // marker1.openInfoWindow(onMarkerInfoWindow);
+
+    await getMapController?.addOverlay(polygonOverlay);
+  }
+
+  void onCameraUpdate() {
+    // _cameraStream.stream.listen((NCameraUpdateReason reason) async {
+    //   _cameraReason.value = reason;
+    //   Log.e((await getMapController?.getCameraPosition()));
+    // }).onError((error) {
+    //   Log.e("CameraStream Error: $error");
+    // });
+  }
+
+  Future<void> onCameraIdle() async {
+    final NCameraPosition cameraData =
+        await getMapController!.getCameraPosition();
+    int newZoom = cameraData.zoom.round();
+    if (getCurrentZoom != newZoom) {
+      _currentZoom.value = cameraData.zoom.round();
+      await zoomChange(getCurrentZoom!);
+    }
+  }
+
+  Future<void> getCurrentPositionCamera() async {
+    await getMapController?.updateCamera(
+      NCameraUpdate.withParams(
+        target: NLatLng(
+          _currentPosition.value!.latitude,
+          _currentPosition.value!.longitude,
+        ),
+      ),
+    );
+  }
+
+  Future<void> zoomChange(int zoomLevel) async {
     const test1 = 0.0000115;
     const test2 = 0.0004212;
     const test3 = 0.0000320;
     const test4 = 0.0000430;
 
-    final iconImage = await NOverlayImage.fromWidget(
+    final testIcon = await NOverlayImage.fromWidget(
       widget: const FlutterLogo(),
       size: const Size(24, 24),
       context: Get.context!,
     );
+
     NMarker marker1 = NMarker(
       id: '1',
       position: NLatLng(
@@ -163,19 +216,25 @@ class CustomNaverMapController extends GetxController {
         (overlay) async => await normalToast(overlay.info.id, errColor));
     NMarker marker2 = NMarker(
       id: '2',
-      position: NLatLng(_currentPosition.value!.latitude + test3,
-          _currentPosition.value!.longitude + test4),
-      icon: iconImage,
+      position: NLatLng(
+        _currentPosition.value!.latitude + test3,
+        _currentPosition.value!.longitude + test4,
+      ),
+      icon: testIcon,
     );
     NMarker marker3 = NMarker(
       id: '3',
-      position: NLatLng(_currentPosition.value!.latitude - test1,
-          _currentPosition.value!.longitude - test2),
+      position: NLatLng(
+        _currentPosition.value!.latitude - test1,
+        _currentPosition.value!.longitude - test2,
+      ),
     );
     NMarker marker4 = NMarker(
       id: '4',
-      position: NLatLng(_currentPosition.value!.latitude - test3,
-          _currentPosition.value!.longitude - test4),
+      position: NLatLng(
+        _currentPosition.value!.latitude - test3,
+        _currentPosition.value!.longitude - test4,
+      ),
     );
 
     Set<NMarker> markers = {marker1, marker2, marker3, marker4};
@@ -190,7 +249,7 @@ class CustomNaverMapController extends GetxController {
 
   void showMarkers(Set<NMarker> markers) async {
     if (getMapController != null) {
-      await getMapController?.clearOverlays();
+      await getMapController?.clearOverlays(type: NOverlayType.marker);
       await getMapController?.addOverlayAll(markers);
     }
   }
@@ -221,7 +280,10 @@ class CustomNaverMapController extends GetxController {
 
       if (!addedToCluster) {
         clusters.add(Cluster(
-            marker.position.latitude, marker.position.longitude, {marker}));
+          marker.position.latitude,
+          marker.position.longitude,
+          {marker},
+        ));
       }
     }
     Set<NMarker> clusteredMarkers = {};
@@ -229,8 +291,8 @@ class CustomNaverMapController extends GetxController {
       if (cluster.markers.length == 1) {
         clusteredMarkers.add(cluster.markers.first);
       } else {
-        final double size = (24 + cluster.count).toDouble();
-        final iconImage = await NOverlayImage.fromWidget(
+        final double size = (26 + cluster.count).toDouble();
+        final clusterIcon = await NOverlayImage.fromWidget(
           widget: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(size / 2),
@@ -240,7 +302,7 @@ class CustomNaverMapController extends GetxController {
             child: Center(
               child: Text(
                 '+${cluster.count}',
-                style: TextStyle(color: pointColor),
+                style: TextStyle(color: pointColor, fontSize: 16),
               ),
             ),
           ),
@@ -248,9 +310,9 @@ class CustomNaverMapController extends GetxController {
           context: Get.context!,
         );
         NMarker clusterMarker = NMarker(
-          id: 'cluster_${clusters.first.markers.first.info.id}',
+          id: 'cluster_${cluster.markers.first.info.id}',
           position: cluster.averageLocation,
-          icon: iconImage,
+          icon: clusterIcon,
         );
         clusteredMarkers.add(clusterMarker);
       }
@@ -259,28 +321,3 @@ class CustomNaverMapController extends GetxController {
     return clusteredMarkers;
   }
 }
-
-
-
-
-
-
-
- // 위경도 좌표를 화면 좌표로 변환할 수 있어요.
-    // Future<NPoint> latLngToScreenLocation(NLatLng latLng);
-    // const latLng = NLatLng(37.5666, 126.979);
-    // const seoulStationLatLng = NLatLng(37.555759, 126.972939);
-    // final distance = latLng.distanceTo(seoulStationLatLng);
-    // Log.f(distance);
-
-    // NCircleOverlay circle = NCircleOverlay(
-    //   id: '2',
-    //   center: NLatLng(_position.value!.latitude, _position.value!.longitude),
-    //   radius: 300,
-    //   color: Colors.black26,
-    //   outlineWidth: 2,
-    // );
-    // final onMarkerInfoWindow =
-    //     NInfoWindow.onMarker(id: marker1.info.id, text: "인포윈도우 텍스트");
-    // marker1.openInfoWindow(onMarkerInfoWindow);
-   

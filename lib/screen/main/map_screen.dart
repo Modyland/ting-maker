@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/map_controller.dart';
+import 'package:ting_maker/util/logger.dart';
 
 class NaverMapScreen extends GetView<CustomNaverMapController> {
   const NaverMapScreen({super.key});
@@ -10,8 +11,8 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
   Widget build(BuildContext context) {
     return Obx(
       () {
-        final position = controller.getCurrentPosition;
-        if (position == null) {
+        final currentPosition = controller.getCurrentPosition;
+        if (currentPosition == null) {
           return const Center(child: CircularProgressIndicator());
         } else {
           const NLatLngBounds extentBounds = NLatLngBounds(
@@ -20,8 +21,8 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
           );
           final NCameraPosition initCamera = NCameraPosition(
             target: NLatLng(
-              position.latitude,
-              position.longitude,
+              currentPosition.latitude,
+              currentPosition.longitude,
             ),
             zoom: 16,
           );
@@ -38,18 +39,20 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   minZoom: 12,
                   maxZoom: 21,
                   zoomGesturesFriction: 0.8,
-                  scrollGesturesFriction: 0.6,
+                  scrollGesturesFriction: 0.5,
                   rotationGesturesEnable: false,
                   indoorEnable: true,
                   scaleBarEnable: false,
                   locationButtonEnable: false,
                   logoAlign: NLogoAlign.rightTop,
                 ),
-                onMapReady: (nController) {
+                onMapReady: (nController) async {
                   controller.setMapController = nController;
+                  await controller.onMapReady();
                 },
                 onMapTapped: (point, latLng) {
                   // 지도에서 클릭한 위치 나옴
+                  Log.e(latLng);
                 },
                 onSymbolTapped: (symbol) {
                   // 지도 안에 정적인 심볼 클릭
@@ -57,16 +60,18 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                 onCameraChange: (position, reason) {
                   controller.getCameraStream.sink.add(position);
                 },
-                onCameraIdle: () {
-                  controller.onCameraIdle();
+                onCameraIdle: () async {
+                  await controller.onCameraIdle();
                 },
                 onSelectedIndoorChanged: (indoor) {
                   // 실내 지도 층 변경시
                 },
               ),
-              FloatingActionButton(onPressed: () {
-                controller.getCurrentPositionCamera();
-              }),
+              FloatingActionButton(
+                onPressed: () async {
+                  await controller.getCurrentPositionCamera();
+                },
+              ),
             ],
           );
         }
