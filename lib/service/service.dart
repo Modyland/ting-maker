@@ -20,19 +20,19 @@ class MainProvider extends GetConnect {
   }
 
   Future<Response> phoneCheck(String phone, bool check) async {
-    return httpClient.get(
-      '/SMS/sendSMS?id=&phone=$phone&check=$check',
-    );
+    return httpClient.get('/SMS/sendSMS?id=&phone=$phone&check=$check');
   }
 
   Future<Response> phoneCheck2(String phone, String code) async {
-    return httpClient.get(
-      '/SMS/checkSMS?phone=$phone&code=$code',
-    );
+    return httpClient.get('/SMS/checkSMS?phone=$phone&code=$code');
   }
 
   Future<Response> tingApiGetdata(Map data) async {
     return httpClient.post('/ting/api_getdata', body: data);
+  }
+
+  Future<Response> xyLocation() async {
+    return httpClient.get('/xyLocation/xy');
   }
 
   // Future<Response> postCases(List<int> image) {

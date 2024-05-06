@@ -1,15 +1,12 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ting_maker/controller/myplace_controller.dart';
 
-class MyPlaceScreen extends StatefulWidget {
+class MyPlaceScreen extends GetView<MyPlaceController> {
   const MyPlaceScreen({super.key});
 
   @override
-  State<MyPlaceScreen> createState() => _MyPlaceScreenState();
-}
-
-class _MyPlaceScreenState extends State<MyPlaceScreen> {
-  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Scaffold();
   }
 }

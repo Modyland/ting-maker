@@ -1,5 +1,17 @@
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 
+class MainPolygon {
+  String name;
+  List<NLatLng> location;
+
+  MainPolygon(this.name, this.location) {
+    name = name;
+    location = location;
+  }
+}
+
+final Set<MainPolygon> mainPolygons = {};
+
 // 인구 해수욕장
 const firstHole = [
   NLatLng(37.97516942756443, 128.75991801561898),

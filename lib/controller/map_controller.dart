@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/util/hole.dart';
+import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/util/toast.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -18,13 +19,8 @@ class CustomNaverMapController extends GetxController {
   final Rx<NaverMapController?> _mapController = Rx<NaverMapController?>(null);
   final Rx<Position?> _currentPosition = Rx<Position?>(null);
   final Rx<int?> _currentZoom = Rx<int?>(null);
-  final Rx<Position?> _position = Rx<Position?>(null);
-  final Rxn<NCameraUpdateReason> _cameraReason = Rxn<NCameraUpdateReason>();
   final Rx<StreamSubscription<Position>?> _positionStream =
       Rx<StreamSubscription<Position>?>(null);
-  final StreamController<NCameraUpdateReason> _cameraStream =
-      StreamController<NCameraUpdateReason>.broadcast();
-
   final Rx<String> reverseGeocoding = Rx<String>('');
 
   // IO.Socket socket = IO.io(
@@ -37,14 +33,12 @@ class CustomNaverMapController extends GetxController {
   void onInit() {
     super.onInit();
     initCurrentPosition();
-    onCameraUpdate();
     // socketInit();
   }
 
   @override
   void onClose() {
     getPositionStream?.cancel();
-    getCameraStream.close();
     getMapController?.dispose();
     super.onClose();
   }
@@ -64,21 +58,20 @@ class CustomNaverMapController extends GetxController {
 
   NaverMapController? get getMapController => _mapController.value;
   StreamSubscription<Position>? get getPositionStream => _positionStream.value;
-  StreamController<NCameraUpdateReason> get getCameraStream => _cameraStream;
+
   Position? get getCurrentPosition => _currentPosition.value;
-  Position? get getPosition => _position.value;
   int? get getCurrentZoom => _currentZoom.value;
-  // IO.Socket get getSocket => socket;
   String get getReverseGeocoding => reverseGeocoding.value;
+
+  // IO.Socket get getSocket => socket;
 
   set setMapController(NaverMapController? controller) =>
       _mapController.value = controller;
-  set setPosition(Position position) => _position.value = position;
 
   Future<void> getGeocoding() async {
     final GetConnect connect = GetConnect();
     final String stringLngLat =
-        '${_currentPosition.value!.longitude},${_currentPosition.value!.latitude}';
+        '${getCurrentPosition!.longitude},${getCurrentPosition!.latitude}';
     final res = await connect.get(
       'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$stringLngLat&sourcecrs=epsg:4326&output=json&orders=admcode',
       headers: {
@@ -96,24 +89,45 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
+  Future<void> getPolygonData() async {
+    // try {
+    //   final res = await service.xyLocation();
+    //   final data = res.body as List<dynamic>;
+
+    //   for (var element in data) {
+    //     final pName = element['kor_name'];
+    //     List<NLatLng> locationList = [];
+    //     for (var location in element['location']) {
+    //       locationList
+    //           .add(NLatLng(location['latitude'], location['longitude']));
+    //     }
+    //     final mainPolygon = MainPolygon(pName, locationList);
+    //     Log.e(mainPolygon);
+    //     mainPolygons.add(mainPolygon);
+    //   }
+    // } catch (err) {
+    //   rethrow;
+    // }
+  }
+
   Future<void> initCurrentPosition() async {
     await locationPermissionCheck();
-
-    // 현재 위치 스트림 연결
-    // _positionStream.value = Geolocator.getPositionStream(
-    //   locationSettings: const LocationSettings(),
-    // ).listen((Position position) async {
-    //   setPosition = position;
-    //   Log.f(position);
-    // });
+    await getPolygonData();
 
     // 현재 위치 가져오기
     final position = await Geolocator.getCurrentPosition();
     _currentPosition.value = position;
+
+    // 현재 위치 스트림 연결
+    _positionStream.value = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(),
+    ).listen((Position position) {
+      _currentPosition.value = position;
+      Log.f(getCurrentPosition);
+    });
   }
 
-  Future<void> onMapReady() async {
-    await getGeocoding();
+  Future<void> initPolygon() async {
     const koreaPolygon = [
       NLatLng(37.74771472782078, 126.15127445713948),
       NLatLng(34.20680214651542, 125.85366714997336),
@@ -142,35 +156,15 @@ class CustomNaverMapController extends GetxController {
       outlineColor: pointColor,
       outlineWidth: 1,
     );
-
-    // 위경도 좌표를 화면 좌표로 변환할 수 있어요.
-    // Future<NPoint> latLngToScreenLocation(NLatLng latLng);
-    // const latLng = NLatLng(37.5666, 126.979);
-    // const seoulStationLatLng = NLatLng(37.555759, 126.972939);
-    // final distance = latLng.distanceTo(seoulStationLatLng);
-    // Log.f(distance);
-
-    // NCircleOverlay circle = NCircleOverlay(
-    //   id: '2',
-    //   center: NLatLng(_position.value!.latitude, _position.value!.longitude),
-    //   radius: 300,
-    //   color: Colors.black26,
-    //   outlineWidth: 2,
-    // );
-    // final onMarkerInfoWindow =
-    //     NInfoWindow.onMarker(id: marker1.info.id, text: "인포윈도우 텍스트");
-    // marker1.openInfoWindow(onMarkerInfoWindow);
-
-    await getMapController?.addOverlay(polygonOverlay);
+    await getMapController?.addOverlayAll({polygonOverlay});
   }
 
-  void onCameraUpdate() {
-    // _cameraStream.stream.listen((NCameraUpdateReason reason) async {
-    //   _cameraReason.value = reason;
-    //   Log.e((await getMapController?.getCameraPosition()));
-    // }).onError((error) {
-    //   Log.e("CameraStream Error: $error");
-    // });
+  Future<void> onMapReady() async {
+    await getGeocoding();
+    await initPolygon();
+    if (_currentZoom.value != null) {
+      await zoomChange(getCurrentZoom!);
+    }
   }
 
   Future<void> onCameraIdle() async {
@@ -187,8 +181,8 @@ class CustomNaverMapController extends GetxController {
     await getMapController?.updateCamera(
       NCameraUpdate.withParams(
         target: NLatLng(
-          _currentPosition.value!.latitude,
-          _currentPosition.value!.longitude,
+          getCurrentPosition!.latitude,
+          getCurrentPosition!.longitude,
         ),
       ),
     );
@@ -209,31 +203,31 @@ class CustomNaverMapController extends GetxController {
     NMarker marker1 = NMarker(
       id: '1',
       position: NLatLng(
-        _currentPosition.value!.latitude + test1,
-        _currentPosition.value!.longitude + test2,
+        getCurrentPosition!.latitude + test1,
+        getCurrentPosition!.longitude + test2,
       ),
     )..setOnTapListener(
         (overlay) async => await normalToast(overlay.info.id, errColor));
     NMarker marker2 = NMarker(
       id: '2',
       position: NLatLng(
-        _currentPosition.value!.latitude + test3,
-        _currentPosition.value!.longitude + test4,
+        getCurrentPosition!.latitude + test3,
+        getCurrentPosition!.longitude + test4,
       ),
       icon: testIcon,
     );
     NMarker marker3 = NMarker(
       id: '3',
       position: NLatLng(
-        _currentPosition.value!.latitude - test1,
-        _currentPosition.value!.longitude - test2,
+        getCurrentPosition!.latitude - test1,
+        getCurrentPosition!.longitude - test2,
       ),
     );
     NMarker marker4 = NMarker(
       id: '4',
       position: NLatLng(
-        _currentPosition.value!.latitude - test3,
-        _currentPosition.value!.longitude - test4,
+        getCurrentPosition!.latitude - test3,
+        getCurrentPosition!.longitude - test4,
       ),
     );
 

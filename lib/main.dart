@@ -6,7 +6,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ting_maker/controller/chatting_controller.dart';
+import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/controller/map_controller.dart';
+import 'package:ting_maker/controller/myinfo_controller.dart';
+import 'package:ting_maker/controller/myplace_controller.dart';
 import 'package:ting_maker/controller/profile_controller.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/user_model.dart';
@@ -95,9 +99,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final isLogin = pref.getBool('isLogin') ?? false;
     final user = pref.getString('user');
     if (isLogin && user != null) {
-      return '/home';
-    } else {
       return '/';
+    } else {
+      return '/home';
     }
   }
 
@@ -145,10 +149,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ),
           ),
           initialBinding: BindingsBuilder(() {
-            Get.put(MainProvider(), permanent: true);
+            Get.put(MainProvider());
+            Get.lazyPut(() => NavigationProvider());
             Get.lazyPut(() => ImageProfileController());
-            Get.lazyPut(() => NavigationProvider(), fenix: true);
-            Get.lazyPut(() => CustomNaverMapController(), fenix: true);
+            Get.lazyPut(() => CustomNaverMapController());
+            Get.lazyPut(() => CommunityController());
+            Get.lazyPut(() => MyInfoController());
+            Get.lazyPut(() => MyPlaceController());
+            Get.lazyPut(() => ChattingController());
           }),
           navigatorKey: Get.key,
           navigatorObservers: [RouterObserver()],

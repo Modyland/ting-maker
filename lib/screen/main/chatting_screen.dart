@@ -1,15 +1,12 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ting_maker/controller/chatting_controller.dart';
 
-class ChattingScreen extends StatefulWidget {
+class ChattingScreen extends GetView<ChattingController> {
   const ChattingScreen({super.key});
 
   @override
-  State<ChattingScreen> createState() => _ChattingScreenState();
-}
-
-class _ChattingScreenState extends State<ChattingScreen> {
-  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Scaffold();
   }
 }

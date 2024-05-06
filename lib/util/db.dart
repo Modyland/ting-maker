@@ -16,7 +16,7 @@ class SqliteBase {
   Future initDb() async {
     var dbPath = await getDatabasesPath();
 
-    String path = join(dbPath, 'tkita_v2.db');
+    String path = join(dbPath, 'ting-maker.db');
 
     return await openDatabase(
       path,

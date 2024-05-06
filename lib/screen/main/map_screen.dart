@@ -57,9 +57,6 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                 onSymbolTapped: (symbol) {
                   // 지도 안에 정적인 심볼 클릭
                 },
-                onCameraChange: (position, reason) {
-                  controller.getCameraStream.sink.add(position);
-                },
                 onCameraIdle: () async {
                   await controller.onCameraIdle();
                 },

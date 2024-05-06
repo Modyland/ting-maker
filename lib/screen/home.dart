@@ -18,8 +18,9 @@ class MainScreen extends GetView<NavigationProvider> {
       canPop: false,
       onPopInvoked: (didPop) {},
       child: Scaffold(
-          appBar: commonAppbar(isBack: false),
-          body: Obx(() {
+        appBar: commonAppbar(isBack: false),
+        body: Obx(
+          () {
             switch (Navigation.values[controller.currentIndex.value]) {
               case Navigation.naverMap:
                 return const NaverMapScreen();
@@ -32,40 +33,43 @@ class MainScreen extends GetView<NavigationProvider> {
               case Navigation.info:
                 return const MyInfoScreen();
             }
-          }),
-          bottomNavigationBar: Obx(
-            () => BottomNavigationBar(
-                currentIndex: controller.currentIndex.value,
-                elevation: 0,
-                type: BottomNavigationBarType.fixed,
-                showSelectedLabels: true,
-                showUnselectedLabels: true,
-                selectedItemColor: Colors.black,
-                unselectedItemColor: grey300,
-                onTap: controller.changeIndex,
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: '홈',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: '동네',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: '내 근처',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: '채팅',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: '내정보',
-                  ),
-                ]),
-          )),
+          },
+        ),
+        bottomNavigationBar: Obx(
+          () => BottomNavigationBar(
+            currentIndex: controller.currentIndex.value,
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            selectedItemColor: Colors.black,
+            unselectedItemColor: grey300,
+            onTap: controller.changeIndex,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: '홈',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: '동네',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: '내 근처',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: '채팅',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: '내정보',
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

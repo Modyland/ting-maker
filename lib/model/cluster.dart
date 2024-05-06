@@ -1,11 +1,5 @@
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 
-class ClusterUser {
-  String id;
-
-  ClusterUser(this.id);
-}
-
 class Cluster {
   int count = 0;
   double latitudeSum = 0;
