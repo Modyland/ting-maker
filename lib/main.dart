@@ -99,9 +99,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final isLogin = pref.getBool('isLogin') ?? false;
     final user = pref.getString('user');
     if (isLogin && user != null) {
-      return '/';
-    } else {
       return '/home';
+    } else {
+      return '/';
     }
   }
 

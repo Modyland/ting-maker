@@ -6,12 +6,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:ting_maker/main.dart';
 // ignore: library_prefixes
 // import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/util/hole.dart';
-import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/util/toast.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -90,29 +90,27 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<void> getPolygonData() async {
-    // try {
-    //   final res = await service.xyLocation();
-    //   final data = res.body as List<dynamic>;
+    try {
+      final res = await service.xyLocation();
+      final data = res.body as List<dynamic>;
 
-    //   for (var element in data) {
-    //     final pName = element['kor_name'];
-    //     List<NLatLng> locationList = [];
-    //     for (var location in element['location']) {
-    //       locationList
-    //           .add(NLatLng(location['latitude'], location['longitude']));
-    //     }
-    //     final mainPolygon = MainPolygon(pName, locationList);
-    //     Log.e(mainPolygon);
-    //     mainPolygons.add(mainPolygon);
-    //   }
-    // } catch (err) {
-    //   rethrow;
-    // }
+      for (var element in data) {
+        final pName = element['kor_nm'];
+        List<NLatLng> locationList = [];
+        for (var location in element['location']) {
+          locationList
+              .add(NLatLng(location['latitude'], location['longitude']));
+        }
+        final mainPolygon = MainPolygon(pName, locationList);
+        mainPolygons.add(mainPolygon);
+      }
+    } catch (err) {
+      rethrow;
+    }
   }
 
   Future<void> initCurrentPosition() async {
     await locationPermissionCheck();
-    await getPolygonData();
 
     // 현재 위치 가져오기
     final position = await Geolocator.getCurrentPosition();
@@ -123,11 +121,13 @@ class CustomNaverMapController extends GetxController {
       locationSettings: const LocationSettings(),
     ).listen((Position position) {
       _currentPosition.value = position;
-      Log.f(getCurrentPosition);
     });
   }
 
   Future<void> initPolygon() async {
+    if (mainPolygons.isEmpty) {
+      // await getPolygonData();
+    }
     const List<Map> supportList = [
       {
         'name': '양양',
@@ -138,15 +138,13 @@ class CustomNaverMapController extends GetxController {
     for (var poly in mainPolygons) {
       bool support = false;
       Iterable<NLatLng>? supportHole;
-
       for (var supportItem in supportList) {
-        if (supportItem['name'] == poly.name) {
+        if ((supportItem['name'] as String).contains(poly.name)) {
           supportHole = supportItem['holes'];
           support = true;
           break;
         }
       }
-
       final over = NPolygonOverlay(
         id: poly.name,
         coords: poly.location,
@@ -161,8 +159,12 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<void> onMapReady() async {
-    await getGeocoding();
+    // await getGeocoding();
     await initPolygon();
+    Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      print(1);
+    });
+
     if (_currentZoom.value != null) {
       await zoomChange(getCurrentZoom!);
     }
