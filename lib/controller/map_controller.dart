@@ -128,35 +128,36 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<void> initPolygon() async {
-    const koreaPolygon = [
-      NLatLng(37.74771472782078, 126.15127445713948),
-      NLatLng(34.20680214651542, 125.85366714997336),
-      NLatLng(33.111374218479554, 126.26715825197549),
-      NLatLng(34.71152551708532, 128.61043901231025),
-      NLatLng(36.08406945642623, 129.55016036423257),
-      NLatLng(37.071480936625235, 129.42457467298658),
-      NLatLng(37.236171268204984, 129.35593203161616),
-      NLatLng(37.285338741423544, 129.3258969543222),
-      NLatLng(37.38027525399349, 129.25960588879428),
-      NLatLng(37.5821152023267, 129.11474201720068),
-      NLatLng(37.67336004436639, 129.05721817158897),
-      NLatLng(38.617020001396575, 128.35449055377674),
-      NLatLng(38.3186348243298, 127.135561495914),
-      NLatLng(37.74771472782078, 126.15127445713948),
+    const List<Map> supportList = [
+      {
+        'name': '양양',
+        'holes': [firstHole, secondHole],
+      },
     ];
+    Set<NPolygonOverlay> overlays = {};
+    for (var poly in mainPolygons) {
+      bool support = false;
+      Iterable<NLatLng>? supportHole;
 
-    final polygonOverlay = NPolygonOverlay(
-      id: 'korea',
-      coords: koreaPolygon,
-      holes: [
-        firstHole,
-        secondHole,
-      ],
-      color: Colors.black26,
-      outlineColor: pointColor,
-      outlineWidth: 1,
-    );
-    await getMapController?.addOverlayAll({polygonOverlay});
+      for (var supportItem in supportList) {
+        if (supportItem['name'] == poly.name) {
+          supportHole = supportItem['holes'];
+          support = true;
+          break;
+        }
+      }
+
+      final over = NPolygonOverlay(
+        id: poly.name,
+        coords: poly.location,
+        color: Colors.black26,
+        outlineColor: pointColor,
+        outlineWidth: 1,
+        holes: support ? [supportHole!] : [],
+      );
+      overlays.add(over);
+    }
+    await getMapController?.addOverlayAll(overlays);
   }
 
   Future<void> onMapReady() async {
