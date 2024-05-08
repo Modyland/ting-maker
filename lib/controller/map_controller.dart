@@ -15,6 +15,7 @@ import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/model/user_model.dart';
 import 'package:ting_maker/util/hole.dart';
 import 'package:ting_maker/util/logger.dart';
+import 'package:ting_maker/widget/cluster_custom.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class CustomNaverMapController extends GetxController {
@@ -350,20 +351,25 @@ class CustomNaverMapController extends GetxController {
       } else {
         final double size = (26 + cluster.count).toDouble();
         final clusterIcon = await NOverlayImage.fromWidget(
-          widget: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(size / 2),
-              border: Border.all(width: 1.5, color: pointColor),
-              color: Colors.white,
-            ),
-            child: Center(
-              child: Text(
-                '+${cluster.count}',
-                style: TextStyle(color: pointColor, fontSize: 16),
+          widget: SizedBox(
+            width: size,
+            height: size + 3,
+            child: CustomPaint(
+              painter: BubblePointerPainter(
+                borderColor: pointColor,
+                backgroundColor: Colors.white,
+                borderWidth: 2,
+              ),
+              child: Center(
+                child: Text(
+                  '+${cluster.count}',
+                  style:
+                      TextStyle(color: pointColor, fontSize: 16, height: 0.9),
+                ),
               ),
             ),
           ),
-          size: Size(size, size),
+          size: Size(size, size + 3),
           context: Get.context!,
         );
         NMarker clusterMarker = NMarker(

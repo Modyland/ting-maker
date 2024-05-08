@@ -36,9 +36,9 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   activeLayerGroups: [
                     NLayerGroup.building,
                   ],
-                  // minZoom: 12,
+                  minZoom: 12,
                   maxZoom: 21,
-                  zoomGesturesFriction: 0.8,
+                  zoomGesturesFriction: 0.5,
                   scrollGesturesFriction: 0.5,
                   rotationGesturesEnable: false,
                   indoorEnable: true,
