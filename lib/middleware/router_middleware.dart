@@ -43,13 +43,13 @@ Future<void> locationPermissionCheck() async {
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
     await Geolocator.openLocationSettings();
-    await normalToast('디바이스 위치를 활성화 해주세요.', pointColor);
-    return Future.error('위치 꺼놨을때');
+    await normalToast('디바이스 위치를 활성화 해주세요.', pointColor, time: 3);
+    return Future.error('위치 사용 안함');
   }
 
   permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
-    await normalToast('앱 위치권한을 허용해주세요.', pointColor);
+    await normalToast('앱 위치권한을 허용해주세요.', pointColor, time: 3);
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
       await Geolocator.openAppSettings();
@@ -59,7 +59,7 @@ Future<void> locationPermissionCheck() async {
 
   if (permission == LocationPermission.deniedForever) {
     await Geolocator.openAppSettings();
-    await normalToast('앱 위치권한을 허용해주세요.', pointColor);
+    await normalToast('앱 위치권한을 허용해주세요.', pointColor, time: 3);
     return Future.error('영구적으로 거부');
   }
 }

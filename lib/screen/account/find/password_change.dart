@@ -58,7 +58,7 @@ class _PasswordChangeScreenState extends State<PasswordChangeScreen> {
     final data = json.decode(res.bodyString!);
     if (data) {
       validCheck = -1;
-      await normalToast('비밀번호가 변경되었습니다.', pointColor);
+      await normalToast('비밀번호가 변경되었습니다.', pointColor, time: 3);
       Get.offAllNamed('/login');
     }
   }

@@ -48,13 +48,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  Future isIdCheck() async {
+  Future<void> isIdCheck() async {
     final Map<String, dynamic> requestData = {
       'kind': 'idDupe',
       'id': _idEditingController.text,
     };
     final res = await service.tingApiGetdata(requestData);
-    final data = json.decode(res.body);
+    final data = json.decode(res.bodyString!);
     if (data is Map<String, dynamic> && data.containsKey('msg')) {
       //0 아이디 중복
       if (data['msg'] == 0) {

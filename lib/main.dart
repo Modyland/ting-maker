@@ -11,7 +11,6 @@ import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/controller/map_controller.dart';
 import 'package:ting_maker/controller/myinfo_controller.dart';
 import 'package:ting_maker/controller/myplace_controller.dart';
-import 'package:ting_maker/controller/profile_controller.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/user_model.dart';
 import 'package:ting_maker/screen/account/find/find_success.dart';
@@ -151,7 +150,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           initialBinding: BindingsBuilder(() {
             Get.put(MainProvider());
             Get.lazyPut(() => NavigationProvider());
-            Get.lazyPut(() => ImageProfileController());
             Get.lazyPut(() => CustomNaverMapController());
             Get.lazyPut(() => CommunityController());
             Get.lazyPut(() => MyInfoController());

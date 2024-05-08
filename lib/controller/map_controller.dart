@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -6,67 +7,137 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/main.dart';
 // ignore: library_prefixes
-// import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:ting_maker/main.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/cluster.dart';
+import 'package:ting_maker/model/user_model.dart';
 import 'package:ting_maker/util/hole.dart';
-import 'package:ting_maker/util/toast.dart';
+import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class CustomNaverMapController extends GetxController {
   final Rx<NaverMapController?> _mapController = Rx<NaverMapController?>(null);
   final Rx<Position?> _currentPosition = Rx<Position?>(null);
+  final Rx<Position?> _updatePosition = Rx<Position?>(null);
   final Rx<int?> _currentZoom = Rx<int?>(null);
   final Rx<StreamSubscription<Position>?> _positionStream =
       Rx<StreamSubscription<Position>?>(null);
-  final Rx<String> reverseGeocoding = Rx<String>('');
+  final Rx<String> reverseGeocoding = ''.obs;
+  final Rx<String> socketId = ''.obs;
+  Timer? _timer;
 
-  // IO.Socket socket = IO.io(
-  //     dotenv.get('TEST_SOCKET'),
-  //     IO.OptionBuilder()
-  //         .setTransports(['websocket'])
-  //         .disableAutoConnect()
-  //         .build());
+  IO.Socket socket = IO.io(
+      dotenv.get('TEST_SOCKET'),
+      IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .build());
   @override
   void onInit() {
     super.onInit();
     initCurrentPosition();
-    // socketInit();
+    socketInit();
   }
 
   @override
   void onClose() {
     getPositionStream?.cancel();
     getMapController?.dispose();
+    stopPositionTimer();
     super.onClose();
   }
 
-  // void socketInit() {
-  //   socket.onConnect((_) {
-  //     Log.f('connect');
-  //   });
-  //   socket.onDisconnect((_) {
-  //     Log.e('disconnect');
-  //   });
-  //   socket.on('test', (data) {
-  //     Log.e(data);
-  //   });
-  //   socket.connect();
-  // }
+  void socketInit() {
+    socket.onConnect((_) {
+      Log.f('connect');
+    });
+    socket.onDisconnect((_) {
+      Log.e('disconnect');
+    });
+    socket.on('join', (data) {
+      Log.e(data);
+      socketId(data);
+    });
+    socket.on('UserPositionData', (data) {
+      Log.e(data);
+    });
+
+    socket.connect();
+  }
 
   NaverMapController? get getMapController => _mapController.value;
   StreamSubscription<Position>? get getPositionStream => _positionStream.value;
 
   Position? get getCurrentPosition => _currentPosition.value;
+  Position? get getUpdatePosition => _updatePosition.value;
   int? get getCurrentZoom => _currentZoom.value;
   String get getReverseGeocoding => reverseGeocoding.value;
 
-  // IO.Socket get getSocket => socket;
-
   set setMapController(NaverMapController? controller) =>
       _mapController.value = controller;
+
+  Map<String, dynamic> requestUserData() {
+    final user = pref.getString('user');
+    final userData = json.decode(user!);
+    final UserModel userModel = UserModel.fromJson(userData);
+    final Map<String, dynamic> userPositionData = {
+      'clientId': socketId.value,
+      'aka': userModel.aka,
+      'userIdx': userModel.idx,
+      'userId': userModel.id,
+      'position': {}
+    };
+    return userPositionData;
+  }
+
+  void startPositionTimer() {
+    final req = requestUserData();
+
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      req['position'] = {
+        'latitude': getCurrentPosition?.latitude,
+        'longitude': getCurrentPosition?.longitude
+      };
+      socket.emit('requestUserPositionData', req);
+    });
+  }
+
+  void stopPositionTimer() {
+    _timer?.cancel();
+  }
+
+  void startPositionStream() {
+    // 현재 위치 스트림 연결
+    _positionStream.value = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(),
+    ).listen((Position position) {
+      _currentPosition(position);
+      final nowLatLng = NLatLng(position.latitude, position.longitude);
+      final prevLatLng =
+          NLatLng(getUpdatePosition!.latitude, getUpdatePosition!.longitude);
+      final distance = prevLatLng.distanceTo(nowLatLng);
+      if (distance > 2) {
+        positionUpdate(position);
+      }
+    });
+  }
+
+  void stopPositionStream() async {
+    await getPositionStream?.cancel();
+  }
+
+  void positionUpdate(Position position) {
+    final req = requestUserData();
+    _updatePosition(position);
+    req['position'] = {
+      'latitude': position.latitude,
+      'longitude': position.longitude
+    };
+    socket.emit('requestUpdate ', req);
+  }
 
   Future<void> getGeocoding() async {
     final GetConnect connect = GetConnect();
@@ -84,7 +155,7 @@ class CustomNaverMapController extends GetxController {
       if (res.body != null) {
         final stringGeocoding =
             '${res.body['results'][0]['region']['area2']['name']} - ${res.body['results'][0]['region']['area3']['name']}';
-        reverseGeocoding.value = stringGeocoding;
+        reverseGeocoding(stringGeocoding);
       }
     }
   }
@@ -114,19 +185,13 @@ class CustomNaverMapController extends GetxController {
 
     // 현재 위치 가져오기
     final position = await Geolocator.getCurrentPosition();
-    _currentPosition.value = position;
-
-    // 현재 위치 스트림 연결
-    _positionStream.value = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(),
-    ).listen((Position position) {
-      _currentPosition.value = position;
-    });
+    _currentPosition(position);
+    _updatePosition(position);
   }
 
   Future<void> initPolygon() async {
     if (mainPolygons.isEmpty) {
-      // await getPolygonData();
+      await getPolygonData();
     }
     const List<Map> supportList = [
       {
@@ -159,13 +224,11 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<void> onMapReady() async {
-    // await getGeocoding();
-    await initPolygon();
-    Timer timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      print(1);
-    });
-
-    if (_currentZoom.value != null) {
+    await getGeocoding();
+    // await initPolygon();
+    startPositionTimer();
+    startPositionStream();
+    if (getCurrentZoom != null) {
       await zoomChange(getCurrentZoom!);
     }
   }
@@ -175,7 +238,7 @@ class CustomNaverMapController extends GetxController {
         await getMapController!.getCameraPosition();
     int newZoom = cameraData.zoom.round();
     if (getCurrentZoom != newZoom) {
-      _currentZoom.value = cameraData.zoom.round();
+      _currentZoom(cameraData.zoom.round());
       await zoomChange(getCurrentZoom!);
     }
   }
@@ -209,8 +272,9 @@ class CustomNaverMapController extends GetxController {
         getCurrentPosition!.latitude + test1,
         getCurrentPosition!.longitude + test2,
       ),
-    )..setOnTapListener(
-        (overlay) async => await normalToast(overlay.info.id, errColor));
+    )..setOnTapListener((overlay) async {
+        //클릭이벤트
+      });
     NMarker marker2 = NMarker(
       id: '2',
       position: NLatLng(
@@ -236,12 +300,8 @@ class CustomNaverMapController extends GetxController {
 
     Set<NMarker> markers = {marker1, marker2, marker3, marker4};
 
-    if (zoomLevel == 21) {
-      showMarkers(markers);
-    } else {
-      Set<NMarker> clusteredMarkers = await clusterMarkers(markers, zoomLevel);
-      showMarkers(clusteredMarkers);
-    }
+    Set<NMarker> clusteredMarkers = await clusterMarkers(markers, zoomLevel);
+    showMarkers(clusteredMarkers);
   }
 
   void showMarkers(Set<NMarker> markers) async {

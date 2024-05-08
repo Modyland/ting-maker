@@ -27,10 +27,10 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
     super.dispose();
   }
 
-  Future phoneCheckCallback() async {
+  Future<void> phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
     final res = await service.phoneCheck(
-        _phoneCheckEditing.text, Get.arguments == null ? true : false);
+        _phoneCheckEditing.text, registerData == null ? true : false);
     final data = json.decode(res.bodyString!);
     if (data is Map<String, dynamic> && data.containsKey('msg')) {
       // 0 이미 가입된 휴대폰
@@ -52,7 +52,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
   void nextPage() {
     if (isNext && validCheck == -1) {
       final args = {'phone': _phoneCheckEditing.text};
-      if (Get.arguments != null) {
+      if (registerData != null) {
         args['tab'] = Get.arguments['tab'];
       }
       Get.toNamed('/phone_check2', arguments: args);

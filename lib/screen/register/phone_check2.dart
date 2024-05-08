@@ -56,7 +56,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
     });
   }
 
-  Future phoneCheckCallback() async {
+  Future<void> phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
     final res = await service.phoneCheck2(
       registerData['phone'],

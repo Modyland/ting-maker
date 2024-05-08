@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:ting_maker/controller/profile_controller.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/screen/register/profile/image_profile.dart';
+import 'package:ting_maker/util/toast.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -16,7 +17,7 @@ class RegisterScreen3 extends StatefulWidget {
 }
 
 final ImageProfileController imageProfileController =
-    Get.find<ImageProfileController>();
+    Get.put(ImageProfileController());
 
 class _RegisterScreen3State extends State<RegisterScreen3> {
   Map<String, dynamic> registerData = Get.arguments;
@@ -25,7 +26,7 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
 
   bool isNext = false;
 
-  Future goSignup() async {
+  Future<void> goSignup() async {
     final Map<String, dynamic> requestData = {
       'kind': 'signUp',
       'id': registerData['id'],
@@ -42,6 +43,7 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
     final data = json.decode(res.bodyString!);
     if (data) {
       imageProfileController.dispose();
+      await normalToast('회원가입이 완료되었습니다.', pointColor, time: 3);
       Get.offAllNamed('/login');
     }
   }
