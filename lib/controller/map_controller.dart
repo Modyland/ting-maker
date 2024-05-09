@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,22 +10,24 @@ import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
-import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/model/user_model.dart';
-import 'package:ting_maker/util/hole.dart';
 import 'package:ting_maker/util/logger.dart';
-import 'package:ting_maker/widget/cluster_custom.dart';
-import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/util/map_util.dart';
 
 class CustomNaverMapController extends GetxController {
   final Rx<NaverMapController?> _mapController = Rx<NaverMapController?>(null);
-  final Rx<Position?> _currentPosition = Rx<Position?>(null);
-  final Rx<Position?> _updatePosition = Rx<Position?>(null);
-  final Rx<int?> _currentZoom = Rx<int?>(null);
+
   final Rx<StreamSubscription<Position>?> _positionStream =
       Rx<StreamSubscription<Position>?>(null);
+  final Rx<Position?> _currentPosition = Rx<Position?>(null);
+  final Rx<Position?> _updatePosition = Rx<Position?>(null);
+
+  final Rx<double?> _currentZoom = Rx<double?>(null);
+  final Rx<bool> _cameraState = true.obs;
+
   final Rx<String> reverseGeocoding = ''.obs;
   final Rx<String> socketId = ''.obs;
+
   Timer? _timer;
 
   IO.Socket socket = IO.io(
@@ -35,6 +36,7 @@ class CustomNaverMapController extends GetxController {
           .setTransports(['websocket'])
           .disableAutoConnect()
           .build());
+
   @override
   void onInit() {
     super.onInit();
@@ -44,9 +46,9 @@ class CustomNaverMapController extends GetxController {
 
   @override
   void onClose() {
-    getPositionStream?.cancel();
+    stopCameraTimer();
+    stopPositionStream();
     getMapController?.dispose();
-    stopPositionTimer();
     super.onClose();
   }
 
@@ -58,7 +60,6 @@ class CustomNaverMapController extends GetxController {
       Log.e('disconnect');
     });
     socket.on('join', (data) {
-      Log.e(data);
       socketId(data);
     });
     socket.on('UserPositionData', (data) {
@@ -73,41 +74,23 @@ class CustomNaverMapController extends GetxController {
 
   Position? get getCurrentPosition => _currentPosition.value;
   Position? get getUpdatePosition => _updatePosition.value;
-  int? get getCurrentZoom => _currentZoom.value;
+
+  double? get getCurrentZoom => _currentZoom.value;
+  bool get getCameraState => _cameraState.value;
+
   String get getReverseGeocoding => reverseGeocoding.value;
 
   set setMapController(NaverMapController? controller) =>
-      _mapController.value = controller;
+      _mapController(controller);
 
-  Map<String, dynamic> requestUserData() {
-    final user = pref.getString('user');
-    final userData = json.decode(user!);
-    final UserModel userModel = UserModel.fromJson(userData);
-    final Map<String, dynamic> userPositionData = {
-      'clientId': socketId.value,
-      'aka': userModel.aka,
-      'userIdx': userModel.idx,
-      'userId': userModel.id,
-      'position': {}
-    };
-    return userPositionData;
-  }
+  set setCameraState(bool state) => _cameraState(state);
 
-  void startPositionTimer() {
-    final req = requestUserData();
-
+  void startCameraTimer() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      req['position'] = {
-        'latitude': getCurrentPosition?.latitude,
-        'longitude': getCurrentPosition?.longitude
-      };
-      socket.emit('requestUserPositionData', req);
+    _timer = Timer.periodic(const Duration(seconds: 4), (timer) async {
+      final cameraData = await nowCameraData();
+      cameraStopSendData(cameraData, cameraData.zoom);
     });
-  }
-
-  void stopPositionTimer() {
-    _timer?.cancel();
   }
 
   void startPositionStream() {
@@ -126,8 +109,37 @@ class CustomNaverMapController extends GetxController {
     });
   }
 
+  void stopCameraTimer() {
+    _timer?.cancel();
+  }
+
   void stopPositionStream() async {
     await getPositionStream?.cancel();
+  }
+
+  Map<String, dynamic> requestUserData() {
+    final user = pref.getString('user');
+    final userData = json.decode(user!);
+    final UserModel userModel = UserModel.fromJson(userData);
+    final Map<String, dynamic> userPositionData = {
+      'clientId': socketId.value,
+      'aka': userModel.aka,
+      'userIdx': userModel.idx,
+      'userId': userModel.id,
+      'position': {}
+    };
+    return userPositionData;
+  }
+
+  void cameraStopSendData(NCameraPosition cameraData, double zoomLevel) {
+    final req = {
+      'latitude': cameraData.target.latitude,
+      'longitude': cameraData.target.longitude,
+      'zoomLevel': zoomLevel
+    };
+    if (getCameraState) {
+      socket.emit('requestUserPositionData', req);
+    }
   }
 
   void positionUpdate(Position position) {
@@ -161,26 +173,6 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
-  Future<void> getPolygonData() async {
-    try {
-      final res = await service.xyLocation();
-      final data = res.body as List<dynamic>;
-
-      for (var element in data) {
-        final pName = element['kor_nm'];
-        List<NLatLng> locationList = [];
-        for (var location in element['location']) {
-          locationList
-              .add(NLatLng(location['latitude'], location['longitude']));
-        }
-        final mainPolygon = MainPolygon(pName, locationList);
-        mainPolygons.add(mainPolygon);
-      }
-    } catch (err) {
-      rethrow;
-    }
-  }
-
   Future<void> initCurrentPosition() async {
     await locationPermissionCheck();
 
@@ -190,61 +182,34 @@ class CustomNaverMapController extends GetxController {
     _updatePosition(position);
   }
 
-  Future<void> initPolygon() async {
-    if (mainPolygons.isEmpty) {
-      await getPolygonData();
-    }
-    const List<Map> supportList = [
-      {
-        'name': '양양',
-        'holes': [firstHole, secondHole],
-      },
-    ];
-    Set<NPolygonOverlay> overlays = {};
-    for (var poly in mainPolygons) {
-      bool support = false;
-      Iterable<NLatLng>? supportHole;
-      for (var supportItem in supportList) {
-        if ((supportItem['name'] as String).contains(poly.name)) {
-          supportHole = supportItem['holes'];
-          support = true;
-          break;
-        }
-      }
-      final over = NPolygonOverlay(
-        id: poly.name,
-        coords: poly.location,
-        color: Colors.black26,
-        outlineColor: pointColor,
-        outlineWidth: 1,
-        holes: support ? [supportHole!] : [],
-      );
-      overlays.add(over);
-    }
-    await getMapController?.addOverlayAll(overlays);
+  Future<NCameraPosition> nowCameraData() async {
+    final cameraData = await getMapController!.getCameraPosition();
+    return cameraData;
   }
 
   Future<void> onMapReady() async {
+    // final overlays = await initPolygon();
+    // await getMapController?.addOverlayAll(overlays);
     await getGeocoding();
-    // await initPolygon();
-    startPositionTimer();
+    startCameraTimer();
     startPositionStream();
-    if (getCurrentZoom != null) {
-      await zoomChange(getCurrentZoom!);
-    }
+    final cameraData = await nowCameraData();
+    final newZoom = cameraData.zoom;
+    await zoomChange(newZoom);
   }
 
   Future<void> onCameraIdle() async {
-    final NCameraPosition cameraData =
-        await getMapController!.getCameraPosition();
-    int newZoom = cameraData.zoom.round();
+    setCameraState = true;
+    final cameraData = await nowCameraData();
+    final newZoom = cameraData.zoom;
+    cameraStopSendData(cameraData, newZoom);
     if (getCurrentZoom != newZoom) {
-      _currentZoom(cameraData.zoom.round());
-      await zoomChange(getCurrentZoom!);
+      _currentZoom(newZoom);
+      await zoomChange(newZoom);
     }
   }
 
-  Future<void> getCurrentPositionCamera() async {
+  Future<void> moveCurrentPositionCamera() async {
     await getMapController?.updateCamera(
       NCameraUpdate.withParams(
         target: NLatLng(
@@ -255,7 +220,7 @@ class CustomNaverMapController extends GetxController {
     );
   }
 
-  Future<void> zoomChange(int zoomLevel) async {
+  Future<void> zoomChange(double zoomLevel) async {
     const test1 = 0.0000115;
     const test2 = 0.0004212;
     const test3 = 0.0000320;
@@ -310,77 +275,5 @@ class CustomNaverMapController extends GetxController {
       await getMapController?.clearOverlays(type: NOverlayType.marker);
       await getMapController?.addOverlayAll(markers);
     }
-  }
-
-  double calculateClusterRadius(num zoomLevel) {
-    return 2 * pow(2, 21 - zoomLevel).toDouble();
-  }
-
-  Future<Set<NMarker>> clusterMarkers(
-      Set<NMarker> markers, num zoomLevel) async {
-    double clusterRadius = calculateClusterRadius(zoomLevel);
-    List<Cluster> clusters = [];
-
-    for (var marker in markers) {
-      bool addedToCluster = false;
-      for (var cluster in clusters) {
-        final fLatLng =
-            NLatLng(marker.position.latitude, marker.position.longitude);
-        final cLatLng = cluster.averageLocation;
-        final distance = fLatLng.distanceTo(cLatLng);
-
-        if (distance < clusterRadius) {
-          cluster.addMarker(marker);
-          addedToCluster = true;
-          break;
-        }
-      }
-
-      if (!addedToCluster) {
-        clusters.add(Cluster(
-          marker.position.latitude,
-          marker.position.longitude,
-          {marker},
-        ));
-      }
-    }
-    Set<NMarker> clusteredMarkers = {};
-    for (var cluster in clusters) {
-      if (cluster.markers.length == 1) {
-        clusteredMarkers.add(cluster.markers.first);
-      } else {
-        final double size = (26 + cluster.count).toDouble();
-        final clusterIcon = await NOverlayImage.fromWidget(
-          widget: SizedBox(
-            width: size,
-            height: size + 3,
-            child: CustomPaint(
-              painter: BubblePointerPainter(
-                borderColor: pointColor,
-                backgroundColor: Colors.white,
-                borderWidth: 2,
-              ),
-              child: Center(
-                child: Text(
-                  '+${cluster.count}',
-                  style:
-                      TextStyle(color: pointColor, fontSize: 16, height: 0.9),
-                ),
-              ),
-            ),
-          ),
-          size: Size(size, size + 3),
-          context: Get.context!,
-        );
-        NMarker clusterMarker = NMarker(
-          id: 'cluster_${cluster.markers.first.info.id}',
-          position: cluster.averageLocation,
-          icon: clusterIcon,
-        );
-        clusteredMarkers.add(clusterMarker);
-      }
-    }
-
-    return clusteredMarkers;
   }
 }

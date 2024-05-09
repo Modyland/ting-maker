@@ -36,13 +36,13 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   activeLayerGroups: [
                     NLayerGroup.building,
                   ],
-                  minZoom: 12,
+                  minZoom: 11,
                   maxZoom: 21,
                   zoomGesturesFriction: 0.5,
                   scrollGesturesFriction: 0.5,
                   rotationGesturesEnable: false,
                   indoorEnable: true,
-                  scaleBarEnable: false,
+                  // scaleBarEnable: false,
                   locationButtonEnable: false,
                   logoAlign: NLogoAlign.rightTop,
                 ),
@@ -57,6 +57,9 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                 onSymbolTapped: (symbol) {
                   // 지도 안에 정적인 심볼 클릭
                 },
+                onCameraChange: (reason, animated) {
+                  controller.setCameraState = false;
+                },
                 onCameraIdle: () async {
                   await controller.onCameraIdle();
                 },
@@ -66,7 +69,7 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
               ),
               FloatingActionButton(
                 onPressed: () async {
-                  await controller.getCurrentPositionCamera();
+                  await controller.moveCurrentPositionCamera();
                 },
               ),
             ],

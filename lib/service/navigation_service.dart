@@ -13,7 +13,7 @@ class NavigationProvider extends GetxService {
   void changeIndex(int idx) {
     currentIndex(idx);
     if (currentIndex.value != Navigation.naverMap.index) {
-      _naverMapController.stopPositionTimer();
+      _naverMapController.stopCameraTimer();
       _naverMapController.stopPositionStream();
     }
   }
