@@ -4,32 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/model/user_model.dart';
+import 'package:ting_maker/model/person.dart';
 import 'package:ting_maker/util/toast.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 Future initLoginCheck() async {
-  final isLogin = pref.getBool('isLogin') ?? false;
-  final user = pref.getString('user');
-  if (isLogin && user != null) {
+  final isLogin = utilBox.get('isLogin') ?? false;
+  final person = personBox.get('person');
+  if (isLogin && person != null) {
     final Map<String, dynamic> requestData = {
       'kind': 'login',
       'id': '',
       'guard': 1
     };
-    final userData = json.decode(user);
-    final UserModel userModel = UserModel.fromJson(userData);
-    requestData['id'] = userModel.id;
+    requestData['id'] = person.id;
     final res = await service.tingApiGetdata(requestData);
     final data = json.decode(res.bodyString!);
     if (data is Map<String, dynamic> && data.containsKey('profile')) {
       final profile = json.decode(data['profile']);
-      final UserModel user = UserModel.fromJson(profile);
-      final isSave = await pref.setString(
-        'user',
-        json.encode(user.toJson()),
-      );
-      return isSave;
+      final Person person = Person.fromJson(profile);
+      await personBox.put('person', person);
+      return true;
     } else {
       return false;
     }
@@ -42,24 +37,24 @@ Future<void> locationPermissionCheck() async {
 
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
+    await normalToast('디바이스 위치를 활성화 해주세요.', pointColor);
     await Geolocator.openLocationSettings();
-    await normalToast('디바이스 위치를 활성화 해주세요.', pointColor, time: 3);
     return Future.error('위치 사용 안함');
   }
 
   permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
-    await normalToast('앱 위치권한을 허용해주세요.', pointColor, time: 3);
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
+      await normalToast('앱 위치권한을 허용해주세요.', pointColor);
       await Geolocator.openAppSettings();
       return Future.error('위치 권한 거부');
     }
   }
 
   if (permission == LocationPermission.deniedForever) {
+    await normalToast('앱 위치권한을 허용해주세요.', pointColor);
     await Geolocator.openAppSettings();
-    await normalToast('앱 위치권한을 허용해주세요.', pointColor, time: 3);
     return Future.error('영구적으로 거부');
   }
 }

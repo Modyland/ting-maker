@@ -1,18 +1,17 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ting_maker/controller/chatting_controller.dart';
 import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/controller/map_controller.dart';
 import 'package:ting_maker/controller/myinfo_controller.dart';
 import 'package:ting_maker/controller/myplace_controller.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
-import 'package:ting_maker/model/user_model.dart';
+import 'package:ting_maker/model/person.dart';
 import 'package:ting_maker/screen/account/find/find_success.dart';
 import 'package:ting_maker/screen/account/find/password_change.dart';
 import 'package:ting_maker/screen/account/login.dart';
@@ -35,11 +34,12 @@ import 'package:ting_maker/widget/common_style.dart';
 
 // const BasicMessageChannel<String> appLifeCycleChannel =
 //     BasicMessageChannel<String>('appLifeCycle', StringCodec());
-late SharedPreferences pref;
 late SqliteBase sqliteBase;
 late PackageInfo packageInfo;
 late Map<String, dynamic> deviceInfo;
 final service = Get.find<MainProvider>();
+var personBox = Hive.box<Person>('person');
+var utilBox = Hive.box('util');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,13 +73,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    final isLogin = pref.getBool('isLogin') ?? false;
-    final user = pref.getString('user');
+    final isLogin = utilBox.get('isLogin') ?? false;
+    final person = personBox.get('person');
     final Map<String, dynamic> requestData = {'id': '', 'activity': ''};
-    if (isLogin && user != null) {
-      final userData = json.decode(user);
-      final UserModel userModel = UserModel.fromJson(userData);
-      requestData['id'] = userModel.id;
+    if (isLogin && person != null) {
+      requestData['id'] = person.id;
       if (state == AppLifecycleState.resumed) {
         requestData['activity'] = 'login';
         service.loginLog(requestData);
@@ -95,9 +93,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   String initRoute() {
-    final isLogin = pref.getBool('isLogin') ?? false;
-    final user = pref.getString('user');
-    if (isLogin && user != null) {
+    final isLogin = utilBox.get('isLogin') ?? false;
+    final person = personBox.get('person');
+    if (isLogin && person != null) {
       return '/home';
     } else {
       return '/';

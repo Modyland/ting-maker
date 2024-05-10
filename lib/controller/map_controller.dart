@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
-import 'package:ting_maker/model/user_model.dart';
 import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/util/map_util.dart';
 
@@ -118,14 +116,12 @@ class CustomNaverMapController extends GetxController {
   }
 
   Map<String, dynamic> requestUserData() {
-    final user = pref.getString('user');
-    final userData = json.decode(user!);
-    final UserModel userModel = UserModel.fromJson(userData);
+    final person = personBox.get('person');
     final Map<String, dynamic> userPositionData = {
       'clientId': socketId.value,
-      'aka': userModel.aka,
-      'userIdx': userModel.idx,
-      'userId': userModel.id,
+      'aka': person?.aka,
+      'userIdx': person?.idx,
+      'userId': person?.id,
       'position': {}
     };
     return userPositionData;
@@ -152,27 +148,6 @@ class CustomNaverMapController extends GetxController {
     socket.emit('requestUpdate ', req);
   }
 
-  Future<void> getGeocoding() async {
-    final GetConnect connect = GetConnect();
-    final String stringLngLat =
-        '${getCurrentPosition!.longitude},${getCurrentPosition!.latitude}';
-    final res = await connect.get(
-      'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=$stringLngLat&sourcecrs=epsg:4326&output=json&orders=admcode',
-      headers: {
-        'X-NCP-APIGW-API-KEY-ID': dotenv.get('NAVER_KEY'),
-        'X-NCP-APIGW-API-KEY': dotenv.get('NAVER_SECRET')
-      },
-      contentType: 'application/json',
-    );
-    if (res.statusCode == 200) {
-      if (res.body != null) {
-        final stringGeocoding =
-            '${res.body['results'][0]['region']['area2']['name']} - ${res.body['results'][0]['region']['area3']['name']}';
-        reverseGeocoding(stringGeocoding);
-      }
-    }
-  }
-
   Future<void> initCurrentPosition() async {
     await locationPermissionCheck();
 
@@ -190,7 +165,11 @@ class CustomNaverMapController extends GetxController {
   Future<void> onMapReady() async {
     // final overlays = await initPolygon();
     // await getMapController?.addOverlayAll(overlays);
-    await getGeocoding();
+    final nGeocoding = await getGeocoding(position: getCurrentPosition);
+    if (nGeocoding != null) {
+      reverseGeocoding(nGeocoding);
+      Log.e(getReverseGeocoding);
+    }
     startCameraTimer();
     startPositionStream();
     final cameraData = await nowCameraData();

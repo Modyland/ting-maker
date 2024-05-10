@@ -38,13 +38,13 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   ],
                   minZoom: 11,
                   maxZoom: 21,
-                  zoomGesturesFriction: 0.5,
-                  scrollGesturesFriction: 0.5,
+                  zoomGesturesFriction: 0.3,
+                  scrollGesturesFriction: 0.3,
                   rotationGesturesEnable: false,
                   indoorEnable: true,
-                  // scaleBarEnable: false,
+                  scaleBarEnable: false,
                   locationButtonEnable: false,
-                  logoAlign: NLogoAlign.rightTop,
+                  logoAlign: NLogoAlign.leftBottom,
                 ),
                 onMapReady: (nController) async {
                   controller.setMapController = nController;

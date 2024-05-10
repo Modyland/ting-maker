@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/model/user_model.dart';
+import 'package:ting_maker/model/person.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -58,15 +58,10 @@ class _LoginScreenState extends State<LoginScreen> {
     } else if (data is Map<String, dynamic> && data.containsKey('profile')) {
       final profile = json.decode(data['profile']);
       validCheck = -1;
-      final UserModel user = UserModel.fromJson(profile);
-      await pref.setBool('isLogin', true);
-      final isSave = await pref.setString(
-        'user',
-        json.encode(user.toJson()),
-      );
-      if (isSave) {
-        nextPage();
-      }
+      final Person person = Person.fromJson(profile);
+      await utilBox.put('isLogin', true);
+      await personBox.put('person', person);
+      nextPage();
     }
   }
 
