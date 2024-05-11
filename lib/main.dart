@@ -104,11 +104,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: SafeArea(
+    return SafeArea(
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         child: GetMaterialApp(
           builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context),
@@ -131,18 +129,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             useMaterial3: false,
             brightness: Brightness.light,
             scaffoldBackgroundColor: Colors.white,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.white,
+              shadowColor: Colors.white,
+            ),
+            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+              backgroundColor: Colors.white,
+              selectedItemColor: Colors.black,
+              elevation: 10,
+            ),
             bottomSheetTheme: const BottomSheetThemeData(
               backgroundColor: Colors.white,
             ),
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-            ),
             textSelectionTheme: TextSelectionThemeData(
-              cursorColor: grey500,
-              selectionColor: grey400,
-              selectionHandleColor: grey400,
+              cursorColor: grey400,
+              selectionColor: grey300,
+              selectionHandleColor: grey300,
             ),
           ),
           initialBinding: BindingsBuilder(() {

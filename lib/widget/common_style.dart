@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 
 Color pointColor = const Color(0XFF00BFFE);
+Color grey100 = const Color(0XFFEFF1F4);
+Color grey200 = const Color(0XFFDBDED3);
 Color grey300 = const Color(0XFFBCC0C6);
 Color grey400 = const Color(0XFF9FA3AB);
 Color grey500 = const Color(0XFF717680);

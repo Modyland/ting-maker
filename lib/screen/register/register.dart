@@ -85,11 +85,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       appBar: commonAppbar(),
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+              padding: const EdgeInsets.fromLTRB(12, 20, 12, 8),
               child: Form(
                 key: _accountFormkey,
                 child: Column(

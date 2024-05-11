@@ -117,6 +117,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
     return Scaffold(
       appBar: commonAppbar(),
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,

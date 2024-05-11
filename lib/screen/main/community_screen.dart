@@ -7,6 +7,26 @@ class CommunityScreen extends GetView<CommunityController> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Obx(
+      () {
+        return CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                children: [
+                  controller.tabBar(),
+                  const SizedBox(height: 25),
+                  controller.getTab == 'id'
+                      ? const Text('id')
+                      : const Text('pwd')
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

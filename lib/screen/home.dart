@@ -6,7 +6,6 @@ import 'package:ting_maker/screen/main/map_screen.dart';
 import 'package:ting_maker/screen/main/myinfo_screen.dart';
 import 'package:ting_maker/screen/main/myplace_screen.dart';
 import 'package:ting_maker/service/navigation_service.dart';
-import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 class MainScreen extends GetView<NavigationProvider> {
@@ -18,7 +17,13 @@ class MainScreen extends GetView<NavigationProvider> {
       canPop: false,
       onPopInvoked: (didPop) {},
       child: Scaffold(
-        appBar: commonAppbar(isBack: false),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: Obx(
+            () => controller
+                .selectAppBar(Navigation.values[controller.currentIndex.value]),
+          ),
+        ),
         body: Obx(
           () {
             switch (Navigation.values[controller.currentIndex.value]) {
@@ -38,11 +43,9 @@ class MainScreen extends GetView<NavigationProvider> {
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(
             currentIndex: controller.currentIndex.value,
-            elevation: 0,
             type: BottomNavigationBarType.fixed,
             showSelectedLabels: true,
             showUnselectedLabels: true,
-            selectedItemColor: Colors.black,
             unselectedItemColor: grey300,
             onTap: controller.changeIndex,
             items: const [
