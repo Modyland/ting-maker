@@ -6,7 +6,6 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/model/main_polygon.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
@@ -35,59 +34,67 @@ Future<String?> getGeocoding({Position? position}) async {
   return null;
 }
 
-Future<void> getPolygonData() async {
-  try {
-    final res = await service.xyLocation();
-    final data = res.body as List<dynamic>;
+// Future<void> getPolygonData() async {
+//   try {
+//     final res = await service.xyLocation();
+//     final data = res.body as List<dynamic>;
 
-    for (var element in data) {
-      final pName = element['kor_nm'];
-      List<NLatLng> locationList = [];
-      for (var location in element['location']) {
-        locationList.add(NLatLng(location['latitude'], location['longitude']));
-      }
-      final mainPolygon = MainPolygon(gisCode: pName, location: locationList);
-      await polygonBox.add(mainPolygon);
-    }
-  } catch (err) {
-    rethrow;
-  }
-}
+//     for (var element in data) {
+//       final mainPolygon = MainPolygon(
+//           gisCode: element['gis_cd'], location: element['location']);
+//       if (mainPolygon.location.first['latitude'] !=
+//           mainPolygon.location.last['latitude']) {
+//         print(mainPolygon.gisCode);
+//       }
+//       await polygonBox.add(mainPolygon);
+//     }
+//   } catch (err) {
+//     rethrow;
+//   }
+// }
 
-Future<Set<NPolygonOverlay>> initPolygon() async {
-  if (polygonBox.isEmpty) {
-    await getPolygonData();
-  }
-  final polygons = polygonBox.values;
-  const List<Map> supportList = [
-    {
-      'name': '양양',
-      'holes': [firstHole, secondHole],
-    },
-  ];
-  Set<NPolygonOverlay> overlays = {};
-  for (var poly in polygons) {
-    bool support = false;
-    Iterable<NLatLng>? supportHole;
-    for (var supportItem in supportList) {
-      if ((supportItem['name'] as String).contains(poly.gisCode)) {
-        supportHole = supportItem['holes'];
-        support = true;
-        break;
-      }
-    }
-    final over = NPolygonOverlay(
-      id: poly.gisCode,
-      coords: poly.location,
-      color: Colors.black26,
-      outlineColor: pointColor,
-      outlineWidth: 1,
-      holes: support ? [supportHole!] : [],
-    );
-    overlays.add(over);
-  }
-  return overlays;
-}
+// Future<Set<NPolygonOverlay>> initPolygon() async {
+//   final res = await service.xyLocationCount();
+//   final data = res.body as String;
+//   final count = utilBox.get('count');
+//   if (count != data || polygonBox.isEmpty) {
+//     await utilBox.put('count', data);
+//     await getPolygonData();
+//   }
+
+//   final polygons = polygonBox.values;
+
+//   Set<NPolygonOverlay> overlays = {};
+//   for (var poly in polygons) {
+//     List<NLatLng> coords = [];
+//     for (var p in poly.location) {
+//       coords.add(NLatLng(p['latitude'], p['longitude']));
+//     }
+//     bool support = false;
+//     Iterable<NLatLng>? supportHole;
+//     for (var supportItem in supportList) {
+//       if (supportItem['gisCode'] == poly.gisCode) {
+//         supportHole = supportItem['holes'];
+//         support = true;
+//         break;
+//       }
+//     }
+//     if (coords.first.latitude != coords.last.latitude) {
+//       print(poly.gisCode);
+//     }
+//     final over = NPolygonOverlay(
+//       id: '${poly.gisCode}',
+//       coords: coords,
+//       color: Colors.black26,
+//       outlineColor: pointColor,
+//       outlineWidth: 1,
+//       holes: support ? [supportHole!] : [],
+//     );
+//     overlays.add(over);
+//     coords.clear();
+//   }
+//   return overlays;
+// }
 
 Future<Set<NMarker>> clusterMarkers(
     Set<NMarker> markers, double zoomLevel) async {
@@ -159,6 +166,13 @@ Future<Set<NMarker>> clusterMarkers(
 double calculateClusterRadius(double zoomLevel) {
   return 1.5 * pow(2, 21 - zoomLevel).toDouble();
 }
+
+const List<Map> supportList = [
+  {
+    'gisCode': 32610,
+    'holes': [firstHole, secondHole],
+  },
+];
 
 // 인구 해수욕장
 const firstHole = [

@@ -31,10 +31,6 @@ class MainProvider extends GetConnect {
     return httpClient.post('/ting/api_getdata', body: data);
   }
 
-  Future<Response> xyLocation() async {
-    return httpClient.get('/xyLocation/xy');
-  }
-
   // Future<Response> postCases(List<int> image) {
   //   final form = FormData({
   //     'file': MultipartFile(image, filename: 'avatar.png'),

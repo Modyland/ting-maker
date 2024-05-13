@@ -17,8 +17,8 @@ class MainPolygonAdapter extends TypeAdapter<MainPolygon> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return MainPolygon(
-      gisCode: fields[0] as String,
-      location: (fields[1] as List).cast<NLatLng>(),
+      gisCode: fields[0] as int,
+      location: (fields[1] as List).cast<dynamic>(),
     );
   }
 

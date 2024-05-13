@@ -1,4 +1,3 @@
-import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:hive/hive.dart';
 
 part 'main_polygon.g.dart';
@@ -6,9 +5,9 @@ part 'main_polygon.g.dart';
 @HiveType(typeId: 2)
 class MainPolygon {
   @HiveField(0)
-  String gisCode;
+  int gisCode;
   @HiveField(1)
-  List<NLatLng> location;
+  List<dynamic> location;
 
   MainPolygon({
     required this.gisCode,
