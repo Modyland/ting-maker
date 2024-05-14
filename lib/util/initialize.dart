@@ -16,25 +16,14 @@ import 'package:ting_maker/util/device_info.dart';
 import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/util/map_util.dart';
 
-Future<GeoJsonFeatureCollection> featuresFromAssetGeoJson(
+Future<void> featuresFromAssetGeoJson(
   String assetPath, {
   String? nameProperty,
-  bool verbose = true,
+  bool verbose = false,
 }) async {
-  var count = 0;
   final featureCollection = GeoJsonFeatureCollection();
   final geojson = GeoJson();
   geojson.endSignal.listen((_) => geojson.dispose());
-  geojson.processedPolygons.listen(
-    (event) {
-      print(event.geoSeries.first.toLatLng());
-    },
-  );
-  geojson.processedMultiPolygons.listen(
-    (event) {
-      print(event.polygons.first.geoSeries.first.toLatLng());
-    },
-  );
   try {
     final String geoJsonString = await rootBundle.loadString(assetPath);
     await geojson.parse(
@@ -46,30 +35,42 @@ Future<GeoJsonFeatureCollection> featuresFromAssetGeoJson(
     rethrow;
   }
   for (var f in geojson.features) {
-    count = count + 1;
     featureCollection.collection.add(f);
   }
-  print(count);
-  return featureCollection;
+  for (var c in featureCollection.collection) {
+    if (c.type == GeoJsonFeatureType.multipolygon) {
+      for (int i = 0; i < c.geometry.polygons.length; i++) {
+        print(i);
+        for (var multi in c.geometry.polygons[i]) {
+          print(multi.toLatLng());
+          print(c.properties);
+        }
+      }
+    }
+    // else if (c.type == GeoJsonFeatureType.polygon) {
+    //   print(c.geometry.geoSeries.first.toLatLng());
+    //   print(c.properties);
+    // }
+  }
 }
 
 Future<void> initializeService() async {
   await initStorage();
-  await featuresFromAssetGeoJson('assets/geojson/korea.geojson');
+  await featuresFromAssetGeoJson('assets/geojson/korea_converted.geojson');
   unawaited(initData());
   unawaited(initFirebase());
 }
 
 Future<void> initStorage() async {
+  Hive.registerAdapter(PersonAdapter());
+  Hive.registerAdapter(MainPolygonAdapter());
   await dotenv.load();
   await Hive.initFlutter();
   await NaverMapSdk.instance.initialize(clientId: dotenv.get('NAVER_KEY'));
-  Hive.registerAdapter(PersonAdapter());
-  Hive.registerAdapter(MainPolygonAdapter());
-  sqliteBase = SqliteBase();
   await Hive.openBox<Person>('person');
   await Hive.openBox<MainPolygon>('polygons');
   await Hive.openBox('util');
+  sqliteBase = SqliteBase();
 }
 
 Future<void> initData() async {
