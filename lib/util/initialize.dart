@@ -39,10 +39,9 @@ Future<void> featuresFromAssetGeoJson(
   }
   for (var c in featureCollection.collection) {
     if (c.type == GeoJsonFeatureType.multipolygon) {
-      for (int i = 0; i < c.geometry.polygons.length; i++) {
-        print(i);
-        for (var multi in c.geometry.polygons[i]) {
-          print(multi.toLatLng());
+      for (var p in c.geometry.polygons) {
+        for (var m in p.geoSeries) {
+          print(m.toLatLng());
           print(c.properties);
         }
       }
