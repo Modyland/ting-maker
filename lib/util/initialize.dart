@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
@@ -9,14 +11,32 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ting_maker/firebase_options.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/model/main_polygon.dart';
 import 'package:ting_maker/model/person.dart';
+import 'package:ting_maker/model/polygons.dart';
 import 'package:ting_maker/util/db.dart';
 import 'package:ting_maker/util/device_info.dart';
 import 'package:ting_maker/util/logger.dart';
-import 'package:ting_maker/util/map_util.dart';
 
-Future<void> featuresFromAssetGeoJson(
+Set<Polygon> polygons = {};
+
+Future<void> initializeService() async {
+  await initStorage();
+  await initGeoJson('assets/geojson/korea_converted.geojson');
+  unawaited(initData());
+  unawaited(initFirebase());
+}
+
+Future<void> initStorage() async {
+  Hive.registerAdapter(PersonAdapter());
+  await dotenv.load();
+  await Hive.initFlutter();
+  await NaverMapSdk.instance.initialize(clientId: dotenv.get('NAVER_KEY'));
+  await Hive.openBox<Person>('person');
+  await Hive.openBox('util');
+  sqliteBase = SqliteBase();
+}
+
+Future<void> initGeoJson(
   String assetPath, {
   String? nameProperty,
   bool verbose = false,
@@ -39,42 +59,45 @@ Future<void> featuresFromAssetGeoJson(
   }
   for (var c in featureCollection.collection) {
     if (c.type == GeoJsonFeatureType.multipolygon) {
-      for (var p in c.geometry.polygons) {
+      int idx = 1;
+      final sigCode = c.properties?['SIG_CD'];
+      final korName = c.properties?['SIG_KOR_NM'];
+      final multiPolygons = c.geometry as GeoJsonMultiPolygon;
+      for (var p in multiPolygons.polygons) {
         for (var m in p.geoSeries) {
-          print(m.toLatLng());
-          print(c.properties);
+          final key = '${sigCode}_$idx';
+          final location = m.toLatLng();
+          final poly = Polygon(
+            key: key,
+            sigCode: sigCode,
+            korName: korName,
+            location: location,
+          );
+          polygons.add(poly);
+          idx++;
         }
       }
+    } else if (c.type == GeoJsonFeatureType.polygon) {
+      final polygon = c.geometry as GeoJsonPolygon;
+      final sigCode = c.properties?['SIG_CD'];
+      final korName = c.properties?['SIG_KOR_NM'];
+      final key = '$sigCode';
+      final location = polygon.geoSeries.first.toLatLng();
+      final poly = Polygon(
+        key: key,
+        sigCode: sigCode,
+        korName: korName,
+        location: location,
+      );
+      polygons.add(poly);
     }
-    // else if (c.type == GeoJsonFeatureType.polygon) {
-    //   print(c.geometry.geoSeries.first.toLatLng());
-    //   print(c.properties);
-    // }
   }
-}
-
-Future<void> initializeService() async {
-  await initStorage();
-  await featuresFromAssetGeoJson('assets/geojson/korea_converted.geojson');
-  unawaited(initData());
-  unawaited(initFirebase());
-}
-
-Future<void> initStorage() async {
-  Hive.registerAdapter(PersonAdapter());
-  Hive.registerAdapter(MainPolygonAdapter());
-  await dotenv.load();
-  await Hive.initFlutter();
-  await NaverMapSdk.instance.initialize(clientId: dotenv.get('NAVER_KEY'));
-  await Hive.openBox<Person>('person');
-  await Hive.openBox<MainPolygon>('polygons');
-  await Hive.openBox('util');
-  sqliteBase = SqliteBase();
+  // for (var t in polygons) {
+  //   print('${t.key} - ${t.sigCode} - ${t.korName}');
+  // }
 }
 
 Future<void> initData() async {
-  await polygonBox.clear();
-  await utilBox.clear();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
@@ -84,7 +107,19 @@ Future<void> initData() async {
 
 Future<void> initFirebase() async {
   FirebaseApp app = await Firebase.initializeApp(
+    name: 'tingproject11',
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+    // save token to server
+  });
+  if (Platform.isIOS) {
+    String? fcmToken = await FirebaseMessaging.instance.getAPNSToken();
+    Log.e(fcmToken);
+  } else {
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    Log.e(fcmToken);
+  }
+
   Log.f('Initialized Default App ${app.name}');
 }

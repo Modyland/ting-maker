@@ -5,13 +5,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:ting_maker/model/cluster.dart';
-import 'package:ting_maker/model/main_polygon.dart';
+import 'package:ting_maker/util/initialize.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
 import 'package:ting_maker/widget/common_style.dart';
-
-var polygonBox = Hive.box<MainPolygon>('polygons');
 
 Future<String?> getGeocoding({Position? position}) async {
   final GetConnect connect = GetConnect();
@@ -34,67 +31,32 @@ Future<String?> getGeocoding({Position? position}) async {
   return null;
 }
 
-// Future<void> getPolygonData() async {
-//   try {
-//     final res = await service.xyLocation();
-//     final data = res.body as List<dynamic>;
-
-//     for (var element in data) {
-//       final mainPolygon = MainPolygon(
-//           gisCode: element['gis_cd'], location: element['location']);
-//       if (mainPolygon.location.first['latitude'] !=
-//           mainPolygon.location.last['latitude']) {
-//         print(mainPolygon.gisCode);
-//       }
-//       await polygonBox.add(mainPolygon);
-//     }
-//   } catch (err) {
-//     rethrow;
-//   }
-// }
-
-// Future<Set<NPolygonOverlay>> initPolygon() async {
-//   final res = await service.xyLocationCount();
-//   final data = res.body as String;
-//   final count = utilBox.get('count');
-//   if (count != data || polygonBox.isEmpty) {
-//     await utilBox.put('count', data);
-//     await getPolygonData();
-//   }
-
-//   final polygons = polygonBox.values;
-
-//   Set<NPolygonOverlay> overlays = {};
-//   for (var poly in polygons) {
-//     List<NLatLng> coords = [];
-//     for (var p in poly.location) {
-//       coords.add(NLatLng(p['latitude'], p['longitude']));
-//     }
-//     bool support = false;
-//     Iterable<NLatLng>? supportHole;
-//     for (var supportItem in supportList) {
-//       if (supportItem['gisCode'] == poly.gisCode) {
-//         supportHole = supportItem['holes'];
-//         support = true;
-//         break;
-//       }
-//     }
-//     if (coords.first.latitude != coords.last.latitude) {
-//       print(poly.gisCode);
-//     }
-//     final over = NPolygonOverlay(
-//       id: '${poly.gisCode}',
-//       coords: coords,
-//       color: Colors.black26,
-//       outlineColor: pointColor,
-//       outlineWidth: 1,
-//       holes: support ? [supportHole!] : [],
-//     );
-//     overlays.add(over);
-//     coords.clear();
-//   }
-//   return overlays;
-// }
+Future<Set<NPolygonOverlay>> initPolygon() async {
+  Set<NPolygonOverlay> overlays = {};
+  for (var poly in polygons) {
+    List<NLatLng> coords = [];
+    List<List<NLatLng>> holes = [];
+    for (var p in poly.location) {
+      coords.add(NLatLng(p.latitude, p.longitude));
+    }
+    for (var supportItem in supportList) {
+      if (supportItem['sigCode'] == poly.sigCode) {
+        holes = supportItem['holes'];
+        break;
+      }
+    }
+    NPolygonOverlay overlay = NPolygonOverlay(
+      id: poly.key,
+      coords: coords,
+      color: Colors.black26,
+      outlineColor: pointColor,
+      outlineWidth: 1,
+      holes: holes.isNotEmpty ? holes : [],
+    );
+    overlays.add(overlay);
+  }
+  return overlays;
+}
 
 Future<Set<NMarker>> clusterMarkers(
     Set<NMarker> markers, double zoomLevel) async {
@@ -169,7 +131,7 @@ double calculateClusterRadius(double zoomLevel) {
 
 const List<Map> supportList = [
   {
-    'gisCode': 32610,
+    'sigCode': '51830',
     'holes': [firstHole, secondHole],
   },
 ];

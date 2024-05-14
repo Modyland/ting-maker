@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/map_controller.dart';
-import 'package:ting_maker/util/keep_alive.dart';
 import 'package:ting_maker/util/logger.dart';
 
-class NaverMapScreen extends GetViewKeepAlive<CustomNaverMapController> {
+class NaverMapScreen extends GetView<CustomNaverMapController> {
   const NaverMapScreen({super.key});
 
   @override

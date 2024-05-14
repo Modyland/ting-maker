@@ -96,9 +96,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final isLogin = utilBox.get('isLogin') ?? false;
     final person = personBox.get('person');
     if (isLogin && person != null) {
-      return '/home';
-    } else {
       return '/';
+    } else {
+      return '/home';
     }
   }
 

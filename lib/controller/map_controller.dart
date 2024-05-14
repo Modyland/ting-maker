@@ -163,18 +163,22 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<void> onMapReady() async {
-    // final overlays = await initPolygon();
-    // await getMapController?.addOverlayAll(overlays);
-    final nGeocoding = await getGeocoding(position: getCurrentPosition);
-    if (nGeocoding != null) {
-      reverseGeocoding(nGeocoding);
-      Log.e(getReverseGeocoding);
+    try {
+      final overlays = await initPolygon();
+      await getMapController?.addOverlayAll(overlays);
+      // final nGeocoding = await getGeocoding(position: getCurrentPosition);
+      // if (nGeocoding != null) {
+      //   reverseGeocoding(nGeocoding);
+      //   Log.e(getReverseGeocoding);
+      // }
+      startCameraTimer();
+      startPositionStream();
+      final cameraData = await nowCameraData();
+      final newZoom = cameraData.zoom;
+      await zoomChange(newZoom);
+    } catch (err) {
+      Log.e('지도 뜨기전에 나감');
     }
-    startCameraTimer();
-    startPositionStream();
-    final cameraData = await nowCameraData();
-    final newZoom = cameraData.zoom;
-    await zoomChange(newZoom);
   }
 
   Future<void> onCameraIdle() async {
@@ -251,8 +255,12 @@ class CustomNaverMapController extends GetxController {
 
   void showMarkers(Set<NMarker> markers) async {
     if (getMapController != null) {
-      await getMapController?.clearOverlays(type: NOverlayType.marker);
-      await getMapController?.addOverlayAll(markers);
+      try {
+        await getMapController?.clearOverlays(type: NOverlayType.marker);
+        await getMapController?.addOverlayAll(markers);
+      } catch (err) {
+        Log.e('지도 뜨기전에 나감');
+      }
     }
   }
 }
