@@ -5,8 +5,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/cluster.dart';
-import 'package:ting_maker/util/initialize.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -97,7 +97,7 @@ Future<Set<NMarker>> clusterMarkers(
           width: size,
           height: size + 3,
           child: CustomPaint(
-            painter: BubblePointerPainter(
+            painter: ClusterPainter(
               borderColor: pointColor,
               backgroundColor: Colors.white,
               borderWidth: 2,

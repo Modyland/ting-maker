@@ -98,7 +98,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return '휴대폰 번호를 입력하세요';
-                        } else if (!phoneNumberRegex.hasMatch(value)) {
+                        } else if (!MyRegExp.phoneNumberRegex.hasMatch(value)) {
                           return '휴대폰 번호 형식이 일치하지 않습니다.';
                         } else if (validCheck == 0) {
                           return '이미 가입된 휴대폰 번호 입니다.';

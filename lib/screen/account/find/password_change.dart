@@ -31,10 +31,10 @@ class _PasswordChangeScreenState extends State<PasswordChangeScreen> {
   int validCheck = -1;
 
   void passwordValidCheck(String value) {
-    validators['length'] = eightRegex.hasMatch(value);
-    validators['english'] = enRegex.hasMatch(value);
-    validators['number'] = numRegex.hasMatch(value);
-    validators['special'] = specialRegex.hasMatch(value);
+    validators['length'] = MyRegExp.eightRegex.hasMatch(value);
+    validators['english'] = MyRegExp.enRegex.hasMatch(value);
+    validators['number'] = MyRegExp.numRegex.hasMatch(value);
+    validators['special'] = MyRegExp.specialRegex.hasMatch(value);
     setState(() {
       isNext = validators.values.every((v) => v ?? false) &&
           _idEditingController.text.isNotEmpty;

@@ -7,10 +7,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 // ignore: library_prefixes
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:ting_maker/function/map_func.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/util/logger.dart';
-import 'package:ting_maker/util/map_util.dart';
 
 class CustomNaverMapController extends GetxController {
   final Rx<NaverMapController?> _mapController = Rx<NaverMapController?>(null);

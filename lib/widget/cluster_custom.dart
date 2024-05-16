@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class BubblePointerPainter extends CustomPainter {
+class ClusterPainter extends CustomPainter {
   final Color borderColor;
   final Color backgroundColor;
   final double borderWidth;
 
-  BubblePointerPainter({
+  ClusterPainter({
     required this.borderColor,
     required this.backgroundColor,
     required this.borderWidth,

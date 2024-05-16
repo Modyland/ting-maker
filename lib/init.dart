@@ -9,15 +9,13 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geojson/geojson.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:ting_maker/database/db.dart';
 import 'package:ting_maker/firebase_options.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/person.dart';
 import 'package:ting_maker/model/polygons.dart';
-import 'package:ting_maker/util/db.dart';
-import 'package:ting_maker/util/device_info.dart';
+import 'package:ting_maker/util/device.dart';
 import 'package:ting_maker/util/logger.dart';
-
-Set<Polygon> polygons = {};
 
 Future<void> initializeService() async {
   await initStorage();
@@ -27,10 +25,10 @@ Future<void> initializeService() async {
 }
 
 Future<void> initStorage() async {
-  Hive.registerAdapter(PersonAdapter());
   await dotenv.load();
-  await Hive.initFlutter();
   await NaverMapSdk.instance.initialize(clientId: dotenv.get('NAVER_KEY'));
+  Hive.registerAdapter(PersonAdapter());
+  await Hive.initFlutter();
   await Hive.openBox<Person>('person');
   await Hive.openBox('util');
   sqliteBase = SqliteBase();
@@ -92,16 +90,13 @@ Future<void> initGeoJson(
       polygons.add(poly);
     }
   }
-  // for (var t in polygons) {
-  //   print('${t.key} - ${t.sigCode} - ${t.korName}');
-  // }
 }
 
 Future<void> initData() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  await deviceData();
+  deviceInfo = await deviceData();
   packageInfo = await PackageInfo.fromPlatform();
 }
 
