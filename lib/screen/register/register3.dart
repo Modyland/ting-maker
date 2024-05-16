@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:ting_maker/controller/profile_controller.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/screen/register/profile/image_profile.dart';
-import 'package:ting_maker/util/toast.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -43,7 +42,7 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
     final data = json.decode(res.bodyString!);
     if (data) {
       imageProfileController.dispose();
-      await normalToast('회원가입이 완료되었습니다.', pointColor, time: 3);
+      // await normalToast('회원가입이 완료되었습니다.', pointColor, time: 3);
       Get.offAllNamed('/login');
     }
   }

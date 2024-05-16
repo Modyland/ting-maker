@@ -6,10 +6,9 @@ import 'package:ting_maker/screen/main/map_screen.dart';
 import 'package:ting_maker/screen/main/myinfo_screen.dart';
 import 'package:ting_maker/screen/main/myplace_screen.dart';
 import 'package:ting_maker/service/navigation_service.dart';
-import 'package:ting_maker/util/keep_alive.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
-class MainScreen extends GetViewKeepAlive<NavigationProvider> {
+class MainScreen extends GetView<NavigationProvider> {
   const MainScreen({super.key});
 
   @override
@@ -26,20 +25,16 @@ class MainScreen extends GetViewKeepAlive<NavigationProvider> {
           ),
         ),
         body: Obx(
-          () {
-            switch (Navigation.values[controller.currentIndex.value]) {
-              case Navigation.naverMap:
-                return const NaverMapScreen();
-              case Navigation.community:
-                return const CommunityScreen();
-              case Navigation.place:
-                return const MyPlaceScreen();
-              case Navigation.chatting:
-                return const ChattingScreen();
-              case Navigation.info:
-                return const MyInfoScreen();
-            }
-          },
+          () => IndexedStack(
+            index: controller.currentIndex.value,
+            children: const [
+              NaverMapScreen(),
+              CommunityScreen(),
+              MyPlaceScreen(),
+              ChattingScreen(),
+              MyInfoScreen(),
+            ],
+          ),
         ),
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(

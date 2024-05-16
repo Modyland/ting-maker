@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/util/toast.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -17,7 +16,7 @@ class _FindSuccessScreenState extends State<FindSuccessScreen> {
   Map<String, dynamic> registerData = Get.arguments;
 
   void idConfirm() async {
-    await normalToast('아이디 : ${registerData['id']}', pointColor, time: 3);
+    // await normalToast('아이디 : ${registerData['id']}', pointColor, time: 3);
     Get.toNamed('/login');
   }
 
