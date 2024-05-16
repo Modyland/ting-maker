@@ -50,18 +50,18 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   controller.setMapController = nController;
                   await controller.onMapReady();
                 },
+                onCameraChange: (reason, animated) {
+                  controller.setCameraState = false;
+                },
+                onCameraIdle: () async {
+                  await controller.onCameraIdle();
+                },
                 onMapTapped: (point, latLng) {
                   // 지도에서 클릭한 위치 나옴
                   Log.e(latLng);
                 },
                 onSymbolTapped: (symbol) {
                   // 지도 안에 정적인 심볼 클릭
-                },
-                onCameraChange: (reason, animated) {
-                  controller.setCameraState = false;
-                },
-                onCameraIdle: () async {
-                  await controller.onCameraIdle();
                 },
                 onSelectedIndoorChanged: (indoor) {
                   // 실내 지도 층 변경시
