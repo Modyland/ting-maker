@@ -166,11 +166,11 @@ class CustomNaverMapController extends GetxController {
     try {
       final overlays = await initPolygon();
       await getMapController?.addOverlayAll(overlays);
-      // final nGeocoding = await getGeocoding(position: getCurrentPosition);
-      // if (nGeocoding != null) {
-      //   reverseGeocoding(nGeocoding);
-      //   Log.e(getReverseGeocoding);
-      // }
+      final nGeocoding = await getGeocoding(position: getCurrentPosition);
+      if (nGeocoding != null) {
+        reverseGeocoding(nGeocoding);
+        Log.e(getReverseGeocoding);
+      }
       startCameraTimer();
       startPositionStream();
       final cameraData = await nowCameraData();

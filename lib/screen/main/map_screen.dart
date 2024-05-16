@@ -19,18 +19,18 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
             southWest: NLatLng(31.43, 122.37),
             northEast: NLatLng(44.35, 132.0),
           );
-          final NCameraPosition initCamera = NCameraPosition(
+          const NCameraPosition initCamera = NCameraPosition(
             target: NLatLng(
-              currentPosition.latitude,
-              currentPosition.longitude,
+              37.96932296568894,
+              128.76042546743838,
             ),
             zoom: 16,
           );
           return Stack(
             children: [
               NaverMap(
-                options: NaverMapViewOptions(
-                  locale: const Locale('ko'),
+                options: const NaverMapViewOptions(
+                  locale: Locale('ko'),
                   extent: extentBounds,
                   initialCameraPosition: initCamera,
                   activeLayerGroups: [
