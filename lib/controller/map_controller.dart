@@ -37,6 +37,16 @@ class CustomNaverMapController extends GetxController {
     super.onInit();
     initCurrentPosition();
     socketInit();
+    // 매번 값이 변경될 때 마다 호출 (반응 상태일때만 가능)
+    // ever(_currentPosition, (_) => print("매번 호출"));
+    // 한번만 호출
+    // once(_currentPosition, (_) => print("한번만 호출"));
+    // 이벤트가 끝났을때 실행
+    // debounce(_currentPosition, (_) => print("마지막 변경에 한번만 호출"),
+    // time: const Duration(seconds: 1));
+    // 변경되고 있는 동안 설정한 초마다 실행
+    // interval(_currentPosition, (_) => print("변경되고 있는 동안 1초마다 호출"),
+    // time: const Duration(seconds: 1));
   }
 
   @override

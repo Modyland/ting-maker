@@ -19,6 +19,11 @@ import 'package:ting_maker/screen/account/find/find_success.dart';
 import 'package:ting_maker/screen/account/find/password_change.dart';
 import 'package:ting_maker/screen/account/login.dart';
 import 'package:ting_maker/screen/home.dart';
+import 'package:ting_maker/screen/main/chatting_screen.dart';
+import 'package:ting_maker/screen/main/community_screen.dart';
+import 'package:ting_maker/screen/main/map_screen.dart';
+import 'package:ting_maker/screen/main/myinfo_screen.dart';
+import 'package:ting_maker/screen/main/myplace_screen.dart';
 import 'package:ting_maker/screen/onboarding/onboarding.dart';
 import 'package:ting_maker/screen/register/permission/permission.dart';
 import 'package:ting_maker/screen/register/permission/service_agree.dart';
@@ -171,6 +176,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             GetPage(
               name: '/home',
               page: () => const MainScreen(),
+              children: [
+                GetPage(
+                  name: '/map',
+                  page: () => const NaverMapScreen(),
+                ),
+                GetPage(
+                  name: '/community',
+                  page: () => const CommunityScreen(),
+                ),
+                GetPage(
+                  name: '/myplace',
+                  page: () => const MyPlaceScreen(),
+                ),
+                GetPage(
+                  name: '/chatting',
+                  page: () => const ChattingScreen(),
+                ),
+                GetPage(
+                  name: '/myinfo',
+                  page: () => const MyInfoScreen(),
+                ),
+              ],
             ),
             GetPage(
               name: '/service_agree',
