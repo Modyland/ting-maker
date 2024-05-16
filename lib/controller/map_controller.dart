@@ -14,15 +14,12 @@ import 'package:ting_maker/util/map_util.dart';
 
 class CustomNaverMapController extends GetxController {
   final Rx<NaverMapController?> _mapController = Rx<NaverMapController?>(null);
-
   final Rx<StreamSubscription<Position>?> _positionStream =
       Rx<StreamSubscription<Position>?>(null);
   final Rx<Position?> _currentPosition = Rx<Position?>(null);
   final Rx<Position?> _updatePosition = Rx<Position?>(null);
-
   final Rx<double?> _currentZoom = Rx<double?>(null);
   final Rx<bool> _cameraState = true.obs;
-
   final Rx<String> reverseGeocoding = ''.obs;
   final Rx<String> socketId = ''.obs;
 
@@ -69,21 +66,30 @@ class CustomNaverMapController extends GetxController {
 
   NaverMapController? get getMapController => _mapController.value;
   StreamSubscription<Position>? get getPositionStream => _positionStream.value;
-
   Position? get getCurrentPosition => _currentPosition.value;
   Position? get getUpdatePosition => _updatePosition.value;
-
   double? get getCurrentZoom => _currentZoom.value;
   bool get getCameraState => _cameraState.value;
-
   String get getReverseGeocoding => reverseGeocoding.value;
 
   set setMapController(NaverMapController? controller) =>
       _mapController(controller);
-
   set setCameraState(bool state) => _cameraState(state);
 
+  Map<String, dynamic> requestUserData() {
+    final person = personBox.get('person');
+    final Map<String, dynamic> userPositionData = {
+      'clientId': socketId.value,
+      'aka': person?.aka,
+      'userIdx': person?.idx,
+      'userId': person?.id,
+      'position': {}
+    };
+    return userPositionData;
+  }
+
   void startCameraTimer() {
+    // 카메라 스트림 연결
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 4), (timer) async {
       final cameraData = await nowCameraData();
@@ -108,23 +114,13 @@ class CustomNaverMapController extends GetxController {
   }
 
   void stopCameraTimer() {
+    Log.i('카메라 스트림 종료');
     _timer?.cancel();
   }
 
   void stopPositionStream() async {
+    Log.i('포지션 스트림 종료');
     await getPositionStream?.cancel();
-  }
-
-  Map<String, dynamic> requestUserData() {
-    final person = personBox.get('person');
-    final Map<String, dynamic> userPositionData = {
-      'clientId': socketId.value,
-      'aka': person?.aka,
-      'userIdx': person?.idx,
-      'userId': person?.id,
-      'position': {}
-    };
-    return userPositionData;
   }
 
   void cameraStopSendData(NCameraPosition cameraData, double zoomLevel) {
@@ -149,35 +145,34 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<void> initCurrentPosition() async {
-    await locationPermissionCheck();
-
     // 현재 위치 가져오기
+    await locationPermissionCheck();
     final position = await Geolocator.getCurrentPosition();
     _currentPosition(position);
     _updatePosition(position);
   }
 
   Future<NCameraPosition> nowCameraData() async {
+    // 현재 카메라 데이터
     final cameraData = await getMapController!.getCameraPosition();
     return cameraData;
   }
 
   Future<void> onMapReady() async {
     try {
+      startCameraTimer();
+      startPositionStream();
       final overlays = await initPolygon();
+      final cameraData = await nowCameraData();
       await getMapController?.addOverlayAll(overlays);
+      await zoomChange(cameraData.zoom);
       // final nGeocoding = await getGeocoding(position: getCurrentPosition);
       // if (nGeocoding != null) {
       //   reverseGeocoding(nGeocoding);
       //   Log.e(getReverseGeocoding);
       // }
-      startCameraTimer();
-      startPositionStream();
-      final cameraData = await nowCameraData();
-      final newZoom = cameraData.zoom;
-      await zoomChange(newZoom);
     } catch (err) {
-      Log.e('지도 뜨기전에 나감');
+      Log.e('지도 뜨기전에 나감 : $err');
     }
   }
 
@@ -190,17 +185,6 @@ class CustomNaverMapController extends GetxController {
       _currentZoom(newZoom);
       await zoomChange(newZoom);
     }
-  }
-
-  Future<void> moveCurrentPositionCamera() async {
-    await getMapController?.updateCamera(
-      NCameraUpdate.withParams(
-        target: NLatLng(
-          getCurrentPosition!.latitude,
-          getCurrentPosition!.longitude,
-        ),
-      ),
-    );
   }
 
   Future<void> zoomChange(double zoomLevel) async {
@@ -259,8 +243,19 @@ class CustomNaverMapController extends GetxController {
         await getMapController?.clearOverlays(type: NOverlayType.marker);
         await getMapController?.addOverlayAll(markers);
       } catch (err) {
-        Log.e('지도 뜨기전에 나감');
+        Log.e('지도 뜨기전에 나감 : $err');
       }
     }
+  }
+
+  Future<void> moveCurrentPositionCamera() async {
+    await getMapController?.updateCamera(
+      NCameraUpdate.withParams(
+        target: NLatLng(
+          getCurrentPosition!.latitude,
+          getCurrentPosition!.longitude,
+        ),
+      ),
+    );
   }
 }

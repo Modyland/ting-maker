@@ -25,20 +25,16 @@ class MainScreen extends GetView<NavigationProvider> {
           ),
         ),
         body: Obx(
-          () {
-            switch (Navigation.values[controller.currentIndex.value]) {
-              case Navigation.naverMap:
-                return const NaverMapScreen();
-              case Navigation.community:
-                return const CommunityScreen();
-              case Navigation.place:
-                return const MyPlaceScreen();
-              case Navigation.chatting:
-                return const ChattingScreen();
-              case Navigation.info:
-                return const MyInfoScreen();
-            }
-          },
+          () => IndexedStack(
+            index: controller.currentIndex.value,
+            children: const [
+              NaverMapScreen(),
+              CommunityScreen(),
+              MyPlaceScreen(),
+              ChattingScreen(),
+              MyInfoScreen(),
+            ],
+          ),
         ),
         bottomNavigationBar: Obx(
           () => BottomNavigationBar(
