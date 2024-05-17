@@ -14,7 +14,6 @@ import 'package:ting_maker/database/db.dart';
 import 'package:ting_maker/init.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/person.dart';
-import 'package:ting_maker/model/polygons.dart';
 import 'package:ting_maker/screen/account/find/find_success.dart';
 import 'package:ting_maker/screen/account/find/password_change.dart';
 import 'package:ting_maker/screen/account/login.dart';
@@ -39,11 +38,10 @@ import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 // const BasicMessageChannel<String> appLifeCycleChannel =
-//     BasicMessageChannel<String>('appLifeCycle', StringCodec());
+// BasicMessageChannel<String>('appLifeCycle', StringCodec());
 late SqliteBase sqliteBase;
 late PackageInfo packageInfo;
 late Map<String, dynamic> deviceInfo;
-late Set<Polygon> polygons;
 
 final service = Get.find<MainProvider>();
 var personBox = Hive.box<Person>('person');

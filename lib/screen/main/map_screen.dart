@@ -12,6 +12,11 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
     return Obx(
       () {
         final currentPosition = controller.getCurrentPosition;
+        // 인구해변
+        const initTarget = NLatLng(
+          37.9699574603738,
+          128.7609243929731,
+        );
         if (currentPosition == null) {
           return const Center(child: CircularProgressIndicator());
         } else {
@@ -19,18 +24,15 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
             southWest: NLatLng(31.43, 122.37),
             northEast: NLatLng(44.35, 132.0),
           );
-          const NCameraPosition initCamera = NCameraPosition(
-            target: NLatLng(
-              37.96932296568894,
-              128.76042546743838,
-            ),
+          NCameraPosition initCamera = const NCameraPosition(
+            target: initTarget,
             zoom: 16,
           );
           return Stack(
             children: [
               NaverMap(
-                options: const NaverMapViewOptions(
-                  locale: Locale('ko'),
+                options: NaverMapViewOptions(
+                  locale: const Locale('ko'),
                   extent: extentBounds,
                   initialCameraPosition: initCamera,
                   activeLayerGroups: [
@@ -42,7 +44,7 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   scrollGesturesFriction: 0.3,
                   rotationGesturesEnable: false,
                   indoorEnable: true,
-                  scaleBarEnable: false,
+                  // scaleBarEnable: false,
                   locationButtonEnable: false,
                   logoAlign: NLogoAlign.leftBottom,
                 ),

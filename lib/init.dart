@@ -6,20 +6,76 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:geojson/geojson.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ting_maker/database/db.dart';
 import 'package:ting_maker/firebase_options.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/person.dart';
-import 'package:ting_maker/model/polygons.dart';
 import 'package:ting_maker/util/device.dart';
 import 'package:ting_maker/util/logger.dart';
 
+// Future<void> initGeoJson(
+//   String assetPath, {
+//   String? nameProperty,
+//   bool verbose = false,
+// }) async {
+//   final featureCollection = GeoJsonFeatureCollection();
+//   final geojson = GeoJson();
+//   geojson.endSignal.listen((_) => geojson.dispose());
+//   try {
+//     final String geoJsonString = await rootBundle.loadString(assetPath);
+//     await geojson.parse(
+//       geoJsonString,
+//       nameProperty: nameProperty,
+//       verbose: verbose,
+//     );
+//   } catch (e) {
+//     rethrow;
+//   }
+//   for (var f in geojson.features) {
+//     featureCollection.collection.add(f);
+//   }
+//   for (var c in featureCollection.collection) {
+//     if (c.type == GeoJsonFeatureType.multipolygon) {
+//       int idx = 1;
+//       final sigCode = c.properties?['SIG_CD'];
+//       final korName = c.properties?['SIG_KOR_NM'];
+//       final multiPolygons = c.geometry as GeoJsonMultiPolygon;
+//       for (var p in multiPolygons.polygons) {
+//         for (var m in p.geoSeries) {
+//           final key = '${sigCode}_$idx';
+//           final location = m.toLatLng();
+//           final poly = Polygon(
+//             key: key,
+//             sigCode: sigCode,
+//             korName: korName,
+//             location: location,
+//           );
+//           polygons.add(poly);
+//           idx++;
+//         }
+//       }
+//     } else if (c.type == GeoJsonFeatureType.polygon) {
+//       final polygon = c.geometry as GeoJsonPolygon;
+//       final sigCode = c.properties?['SIG_CD'];
+//       final korName = c.properties?['SIG_KOR_NM'];
+//       final key = '$sigCode';
+//       final location = polygon.geoSeries.first.toLatLng();
+//       final poly = Polygon(
+//         key: key,
+//         sigCode: sigCode,
+//         korName: korName,
+//         location: location,
+//       );
+//       polygons.add(poly);
+//     }
+//   }
+// }
+
 Future<void> initializeService() async {
+  // await initGeoJson('assets/geojson/korea_converted.geojson');
   await initStorage();
-  await initGeoJson('assets/geojson/korea_converted.geojson');
   unawaited(initData());
   unawaited(initFirebase());
 }
@@ -32,64 +88,6 @@ Future<void> initStorage() async {
   await Hive.openBox<Person>('person');
   await Hive.openBox('util');
   sqliteBase = SqliteBase();
-}
-
-Future<void> initGeoJson(
-  String assetPath, {
-  String? nameProperty,
-  bool verbose = false,
-}) async {
-  final featureCollection = GeoJsonFeatureCollection();
-  final geojson = GeoJson();
-  geojson.endSignal.listen((_) => geojson.dispose());
-  try {
-    final String geoJsonString = await rootBundle.loadString(assetPath);
-    await geojson.parse(
-      geoJsonString,
-      nameProperty: nameProperty,
-      verbose: verbose,
-    );
-  } catch (e) {
-    rethrow;
-  }
-  for (var f in geojson.features) {
-    featureCollection.collection.add(f);
-  }
-  for (var c in featureCollection.collection) {
-    if (c.type == GeoJsonFeatureType.multipolygon) {
-      int idx = 1;
-      final sigCode = c.properties?['SIG_CD'];
-      final korName = c.properties?['SIG_KOR_NM'];
-      final multiPolygons = c.geometry as GeoJsonMultiPolygon;
-      for (var p in multiPolygons.polygons) {
-        for (var m in p.geoSeries) {
-          final key = '${sigCode}_$idx';
-          final location = m.toLatLng();
-          final poly = Polygon(
-            key: key,
-            sigCode: sigCode,
-            korName: korName,
-            location: location,
-          );
-          polygons.add(poly);
-          idx++;
-        }
-      }
-    } else if (c.type == GeoJsonFeatureType.polygon) {
-      final polygon = c.geometry as GeoJsonPolygon;
-      final sigCode = c.properties?['SIG_CD'];
-      final korName = c.properties?['SIG_KOR_NM'];
-      final key = '$sigCode';
-      final location = polygon.geoSeries.first.toLatLng();
-      final poly = Polygon(
-        key: key,
-        sigCode: sigCode,
-        korName: korName,
-        location: location,
-      );
-      polygons.add(poly);
-    }
-  }
 }
 
 Future<void> initData() async {

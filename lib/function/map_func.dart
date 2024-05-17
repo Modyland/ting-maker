@@ -5,10 +5,36 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
 import 'package:ting_maker/widget/common_style.dart';
+
+// Future<Set<NPolygonOverlay>> initPolygon() async {
+//   Set<NPolygonOverlay> overlays = {};
+//   for (var poly in polygons) {
+//     List<NLatLng> coords = [];
+//     List<List<NLatLng>> holes = [];
+//     for (var p in poly.location) {
+//       coords.add(NLatLng(p.latitude, p.longitude));
+//     }
+//     for (var supportItem in supportList) {
+//       if (supportItem['sigCode'] == poly.key) {
+//         holes = supportItem['holes'];
+//         break;
+//       }
+//     }
+//     NPolygonOverlay overlay = NPolygonOverlay(
+//       id: poly.key,
+//       coords: coords,
+//       color: Colors.black26,
+//       outlineColor: pointColor,
+//       outlineWidth: 2,
+//       holes: holes.isNotEmpty ? holes : [],
+//     );
+//     overlays.add(overlay);
+//   }
+//   return overlays;
+// }
 
 Future<String?> getGeocoding({Position? position}) async {
   final GetConnect connect = GetConnect();
@@ -32,29 +58,15 @@ Future<String?> getGeocoding({Position? position}) async {
 }
 
 Future<Set<NPolygonOverlay>> initPolygon() async {
-  Set<NPolygonOverlay> overlays = {};
-  for (var poly in polygons) {
-    List<NLatLng> coords = [];
-    List<List<NLatLng>> holes = [];
-    for (var p in poly.location) {
-      coords.add(NLatLng(p.latitude, p.longitude));
-    }
-    for (var supportItem in supportList) {
-      if (supportItem['sigCode'] == poly.key) {
-        holes = supportItem['holes'];
-        break;
-      }
-    }
-    NPolygonOverlay overlay = NPolygonOverlay(
-      id: poly.key,
-      coords: coords,
-      color: Colors.black26,
-      outlineColor: pointColor,
-      outlineWidth: 2,
-      holes: holes.isNotEmpty ? holes : [],
-    );
-    overlays.add(overlay);
-  }
+  NPolygonOverlay overlay = NPolygonOverlay(
+    id: 'korea',
+    coords: koreaOverlay,
+    color: Colors.black26,
+    outlineColor: pointColor,
+    outlineWidth: 2,
+    holes: [firstHole, secondHole],
+  );
+  Set<NPolygonOverlay> overlays = {overlay};
   return overlays;
 }
 
@@ -129,11 +141,12 @@ double calculateClusterRadius(double zoomLevel) {
   return 1.5 * pow(2, 21 - zoomLevel).toDouble();
 }
 
-const List<Map> supportList = [
-  {
-    'sigCode': '51830_2',
-    'holes': [firstHole, secondHole],
-  },
+const koreaOverlay = [
+  NLatLng(39.650663372158114, 121.95238022118342),
+  NLatLng(39.650663372158114, 132.1747214835342),
+  NLatLng(31.50282244262745, 132.1747214835342),
+  NLatLng(31.50282244262745, 31.50282244262745),
+  NLatLng(39.650663372158114, 121.95238022118342),
 ];
 
 // 인구해변
