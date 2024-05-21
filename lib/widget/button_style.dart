@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 ElevatedButton cropButton(String text, Icon icon, VoidCallback callback) {
   return ElevatedButton(
     style: const ButtonStyle(
-      backgroundColor: MaterialStatePropertyAll(Colors.white),
-      padding: MaterialStatePropertyAll(
+      backgroundColor: WidgetStatePropertyAll(Colors.white),
+      padding: WidgetStatePropertyAll(
         EdgeInsets.fromLTRB(12, 8, 12, 8),
       ),
     ),

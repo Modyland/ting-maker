@@ -9,10 +9,6 @@ class MainProvider extends GetConnect {
       ..baseUrl = dotenv.get('TEST_URL')
       ..defaultContentType = 'application/json'
       ..timeout = const Duration(seconds: 10);
-    // ..addRequestModifier<dynamic>((request) {
-    //   request.headers['Authorization'] = 'token value';
-    //   return request;
-    // });
   }
 
   Future<Response> loginLog(Map data) async {
@@ -30,12 +26,4 @@ class MainProvider extends GetConnect {
   Future<Response> tingApiGetdata(Map data) async {
     return httpClient.post('/ting/api_getdata', body: data);
   }
-
-  // Future<Response> postCases(List<int> image) {
-  //   final form = FormData({
-  //     'file': MultipartFile(image, filename: 'avatar.png'),
-  //     'otherFile': MultipartFile(image, filename: 'cover.png'),
-  //   });
-  //   return post('http://youapi/users/upload', form);
-  // }
 }

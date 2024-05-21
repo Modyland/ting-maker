@@ -18,7 +18,7 @@ class CommunityController extends GetxController
   TabBar tabBar() {
     return TabBar(
       controller: tabController,
-      overlayColor: const MaterialStatePropertyAll(
+      overlayColor: const WidgetStatePropertyAll(
         Colors.transparent,
       ),
       indicatorColor: pointColor,

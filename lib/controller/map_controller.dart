@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
@@ -10,6 +11,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:ting_maker/function/map_func.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
+import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
@@ -27,34 +29,28 @@ class CustomNaverMapController extends GetxController {
   final StreamController<List<dynamic>> _usersController =
       StreamController.broadcast();
   final Rx<List<dynamic>> _users = Rx<List<dynamic>>([]);
+  final Rx<List<Map<String, dynamic>>> _usersImage =
+      Rx<List<Map<String, dynamic>>>([]);
 
   final Rx<String> reverseGeocoding = ''.obs;
   final Rx<String> socketId = ''.obs;
 
-  // void startCameraTimer() {
-  //   // 카메라 스트림 연결
-  //   _timer = Timer.periodic(const Duration(seconds: 4), (timer) async {
-  //     if (navigationProvider.currentIndex.value == Navigation.naverMap.index) {
-  //       final cameraData = await nowCameraData();
-  //       cameraStopSendData(cameraData, cameraData.zoom);
-  //     }
-  //   });
-  // }
+  NaverMapController? get getMapController => _mapController.value;
+  Position? get getCurrentPosition => _currentPosition.value;
+  Position? get getUpdatePosition => _updatePosition.value;
+  double? get getCurrentZoom => _currentZoom.value;
+  bool get getCameraState => _cameraState.value;
+  List<dynamic> get getUsers => _users.value;
+  List<Map<String, dynamic>> get getUsersImage => _usersImage.value;
 
-  // void stopCameraTimer() {
-  //   Log.i('카메라 스트림 종료');
-  //   _timer?.cancel();
-  // }
+  StreamSubscription<Position>? get getPositionStream => _positionStream.value;
+  Stream<List<dynamic>> get usersStream => _usersController.stream;
 
-  // 매번 값이 변경될 때 마다 호출 (반응 상태일때만 가능)
-  // 한번만 호출
-  // once(_currentPosition, (_) => print("한번만 호출"));
-  // 이벤트가 끝났을때 실행
-  // debounce(_currentPosition, (_) => print("마지막 변경에 한번만 호출"),
-  // time: const Duration(seconds: 1));
-  // 변경되고 있는 동안 설정한 초마다 실행
-  // interval(_currentPosition, (_) => print("변경되고 있는 동안 1초마다 호출"),
-  // time: const Duration(seconds: 1));
+  String get getReverseGeocoding => reverseGeocoding.value;
+
+  set setMapController(NaverMapController? controller) =>
+      _mapController(controller);
+  set setCameraState(bool state) => _cameraState(state);
 
   IO.Socket socket = IO.io(
       dotenv.get('TEST_SOCKET'),
@@ -78,42 +74,6 @@ class CustomNaverMapController extends GetxController {
     super.onClose();
   }
 
-  void socketInit() {
-    socket.onConnect((_) {
-      Log.f('connect');
-    });
-    socket.onDisconnect((_) {
-      Log.e('disconnect');
-    });
-    socket.on('join', (data) {
-      socketId(data);
-    });
-    socket.on('UserPositionData', (data) async {
-      if (_users.value.isEmpty) {
-        _users(data);
-      } else {
-        await checkUsers(data);
-      }
-    });
-    socket.connect();
-  }
-
-  NaverMapController? get getMapController => _mapController.value;
-  Position? get getCurrentPosition => _currentPosition.value;
-  Position? get getUpdatePosition => _updatePosition.value;
-  double? get getCurrentZoom => _currentZoom.value;
-  bool get getCameraState => _cameraState.value;
-  List<dynamic> get getUsers => _users.value;
-
-  StreamSubscription<Position>? get getPositionStream => _positionStream.value;
-  Stream<List<dynamic>> get usersStream => _usersController.stream;
-
-  String get getReverseGeocoding => reverseGeocoding.value;
-
-  set setMapController(NaverMapController? controller) =>
-      _mapController(controller);
-  set setCameraState(bool state) => _cameraState(state);
-
   Map<String, dynamic> requestUserData() {
     final person = personBox.get('person');
     final Map<String, dynamic> userPositionData = {
@@ -126,14 +86,67 @@ class CustomNaverMapController extends GetxController {
     return userPositionData;
   }
 
-  Future<void> checkUsers(List<dynamic> data) async {
-    _users.value.retainWhere((item) => data.contains(item));
+  void socketInit() {
+    socket.onConnect((_) {
+      Log.f('connect');
+    });
+    socket.onDisconnect((_) {
+      Log.e('disconnect');
+    });
+    socket.on('join', (data) {
+      socketId(data);
+    });
+    socket.on('UserPositionData', (data) async {
+      await checkUsers(data);
+    });
+    socket.connect();
+  }
 
-    final newData = data.where((item) => !_users.value.contains(item)).toList();
-    if (newData.isNotEmpty) {
-      _users.value.addAll(newData);
-      _usersController.sink.add(_users.value);
+  Future<void> checkUsers(List<dynamic> data) async {
+    final currentUsers = getUsers.toSet();
+    final newData = data.toSet();
+    Log.e(currentUsers);
+    Log.e(newData);
+    Log.e(currentUsers.isEmpty && newData.isNotEmpty);
+    final retainedUsers = currentUsers.intersection(newData);
+    final addedUsers = newData.difference(currentUsers);
+
+    if (currentUsers.isEmpty && newData.isNotEmpty) {
+      for (var user in newData) {
+        final idx = '${user['userIdx']}';
+        ImageProvider<Object> newUserImage = await fetchUserImage(idx);
+        _usersImage.value
+            .add({'idx': user['userIdx'], 'profile': newUserImage});
+      }
+    } else {
+      if (addedUsers.isNotEmpty) {
+        getUsers
+          ..clear()
+          ..addAll(retainedUsers)
+          ..addAll(addedUsers);
+        _usersController.sink.add(getUsers);
+        for (var user in addedUsers) {
+          final idx = '${user['userIdx']}';
+          ImageProvider<Object> newUserImage = await fetchUserImage(idx);
+          _usersImage.value
+              .add({'idx': user['userIdx'], 'profile': newUserImage});
+        }
+      } else {
+        _users.value.retainWhere((item) => retainedUsers.contains(item));
+      }
     }
+  }
+
+  Future<ImageProvider<Object>> fetchUserImage(String userIdx) async {
+    String imageUrl =
+        "http://db.medsyslab.co.kr:4500/ting/mapProfiles?idx=$userIdx";
+    return ExtendedImage.network(
+      imageUrl,
+      cache: true,
+      cacheKey: userIdx,
+      cacheMaxAge: const Duration(days: 3),
+      enableMemoryCache: true,
+    ).image;
   }
 
   void startPositionStream() {
@@ -224,11 +237,10 @@ class CustomNaverMapController extends GetxController {
   }
 
   Timer? _throttleTimer;
-
   Future<void> onCameraIdle() async {
-    if (_throttleTimer?.isActive ?? false) return;
+    _throttleTimer?.cancel();
 
-    _throttleTimer = Timer(const Duration(milliseconds: 500), () async {
+    _throttleTimer = Timer(const Duration(milliseconds: 400), () async {
       if (getMapController != null &&
           navigationProvider.currentIndex.value == Navigation.naverMap.index) {
         Log.f('카메라 데이터');
@@ -241,57 +253,136 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<void> zoomChange(double zoomLevel) async {
-    Set<NMarker> markers = {};
+    try {
+      Set<NMarker> markers = {};
+      List<Future<NMarker>> markerFutures =
+          getUsers.map((u) => createMarker(u)).toList();
+      markers.addAll(await Future.wait(markerFutures));
 
-    //   final testIcon = await NOverlayImage.fromWidget(
-    //   widget: const FlutterLogo(),
-    //   size: const Size(24, 24),
-    //   context: Get.context!,
-    // );
+      final Set<NMarker> clusteredMarkers =
+          await clusterMarkers(markers, zoomLevel);
+      await showMarkers(clusteredMarkers);
+    } catch (err) {
+      Log.e('줌 체인지 에러 : $err');
+    }
+  }
 
-    for (var u in getUsers) {
-      final double size = 24.toDouble();
-      final userIcon = await NOverlayImage.fromWidget(
-        widget: SizedBox(
-          width: size,
-          height: size + 3,
-          child: CustomPaint(
-            painter: ClusterPainter(
-              borderColor: pointColor,
-              backgroundColor: Colors.white,
-              borderWidth: 2,
-            ),
-            child: Center(
-              child: Text(
-                '+${u['aka']}',
-                style: TextStyle(color: pointColor, fontSize: 16, height: 0.9),
+  Future<NMarker> createMarker(dynamic user) async {
+    const double size = 36;
+    final Map<String, dynamic> userImage = getUsersImage.firstWhere(
+      (img) => img['idx'] == user['userIdx'],
+    );
+    print(userImage);
+
+    final userIcon = await NOverlayImage.fromWidget(
+      widget: SizedBox(
+        width: size,
+        height: size + 3,
+        child: CustomPaint(
+          painter: ClusterPainter(
+            borderColor: pointColor,
+            backgroundColor: Colors.white,
+            borderWidth: 2,
+            image: userImage['profile'],
+          ),
+        ),
+      ),
+      size: const Size(size, size + 3),
+      context: Get.context!,
+    );
+    return NMarker(
+      id: '${user['userIdx']}',
+      icon: userIcon,
+      position: NLatLng(
+        user['position']['latitude'],
+        user['position']['longitude'],
+      ),
+    )..setOnTapListener((overlay) async {
+        Log.t(overlay);
+      });
+  }
+
+  Future<Set<NMarker>> clusterMarkers(
+    Set<NMarker> markers,
+    double zoomLevel,
+  ) async {
+    num clusterRadius = calculateClusterRadius(zoomLevel);
+    List<Cluster> clusters = [];
+
+    Map<NLatLng, NMarker> latLngToMarker = {
+      for (var marker in markers)
+        NLatLng(marker.position.latitude, marker.position.longitude): marker
+    };
+
+    for (var entry in latLngToMarker.entries) {
+      bool addedToCluster = false;
+      for (var cluster in clusters) {
+        final distance = entry.key.distanceTo(cluster.averageLocation);
+
+        if (distance < clusterRadius) {
+          cluster.addMarker(entry.value);
+          addedToCluster = true;
+          break;
+        }
+      }
+
+      if (!addedToCluster) {
+        clusters.add(Cluster(
+          entry.key.latitude,
+          entry.key.longitude,
+          {entry.value},
+        ));
+      }
+    }
+
+    return await createClusterMarkers(clusters);
+  }
+
+  Future<Set<NMarker>> createClusterMarkers(List<Cluster> clusters) async {
+    Set<NMarker> clusteredMarkers = {};
+    Map<double, NOverlayImage> sizeToImageCache = {};
+
+    for (var cluster in clusters) {
+      if (cluster.markers.length == 1) {
+        clusteredMarkers.add(cluster.markers.first);
+      } else {
+        final double size = (36 + cluster.count).toDouble();
+        NOverlayImage clusterIcon =
+            sizeToImageCache[size] ??= await NOverlayImage.fromWidget(
+          widget: SizedBox(
+            width: size,
+            height: size + 3,
+            child: CustomPaint(
+              painter: ClusterPainter(
+                borderColor: pointColor,
+                backgroundColor: Colors.white,
+                borderWidth: 2,
+              ),
+              child: Center(
+                child: Text(
+                  '+${cluster.count}',
+                  style:
+                      TextStyle(color: pointColor, fontSize: 16, height: 0.9),
+                ),
               ),
             ),
           ),
-        ),
-        size: Size(size, size + 3),
-        context: Get.context!,
-      );
-      NMarker marker = NMarker(
-        id: '${u['userIdx']}',
-        icon: userIcon,
-        position: NLatLng(
-          u['position']['latitude'],
-          u['position']['longitude'],
-        ),
-      )..setOnTapListener((overlay) async {
-          Log.t(overlay);
-        });
-      markers.add(marker);
+          size: Size(size, size + 3),
+          context: Get.context!,
+        );
+        NMarker clusterMarker = NMarker(
+          id: 'cluster_${cluster.markers.first.info.id}',
+          position: cluster.averageLocation,
+          icon: clusterIcon,
+        );
+        clusteredMarkers.add(clusterMarker);
+      }
     }
 
-    Log.e(markers);
-
-    Set<NMarker> clusteredMarkers = await clusterMarkers(markers, zoomLevel);
-    showMarkers(clusteredMarkers);
+    return clusteredMarkers;
   }
 
-  void showMarkers(Set<NMarker> markers) async {
+  Future<void> showMarkers(Set<NMarker> markers) async {
     if (getMapController != null) {
       try {
         await getMapController?.clearOverlays(type: NOverlayType.marker);

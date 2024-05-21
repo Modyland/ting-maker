@@ -5,8 +5,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/model/cluster.dart';
-import 'package:ting_maker/widget/cluster_custom.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
 // Future<Set<NPolygonOverlay>> initPolygon() async {
@@ -68,73 +66,6 @@ Future<Set<NPolygonOverlay>> initPolygon() async {
   );
   Set<NPolygonOverlay> overlays = {overlay};
   return overlays;
-}
-
-Future<Set<NMarker>> clusterMarkers(
-    Set<NMarker> markers, double zoomLevel) async {
-  num clusterRadius = calculateClusterRadius(zoomLevel);
-  List<Cluster> clusters = [];
-
-  for (var marker in markers) {
-    bool addedToCluster = false;
-    for (var cluster in clusters) {
-      final fLatLng =
-          NLatLng(marker.position.latitude, marker.position.longitude);
-      final cLatLng = cluster.averageLocation;
-      final distance = fLatLng.distanceTo(cLatLng);
-
-      if (distance < clusterRadius) {
-        cluster.addMarker(marker);
-        addedToCluster = true;
-        break;
-      }
-    }
-
-    if (!addedToCluster) {
-      clusters.add(Cluster(
-        marker.position.latitude,
-        marker.position.longitude,
-        {marker},
-      ));
-    }
-  }
-  Set<NMarker> clusteredMarkers = {};
-  for (var cluster in clusters) {
-    if (cluster.markers.length == 1) {
-      clusteredMarkers.add(cluster.markers.first);
-    } else {
-      final double size = (26 + cluster.count).toDouble();
-      final clusterIcon = await NOverlayImage.fromWidget(
-        widget: SizedBox(
-          width: size,
-          height: size + 3,
-          child: CustomPaint(
-            painter: ClusterPainter(
-              borderColor: pointColor,
-              backgroundColor: Colors.white,
-              borderWidth: 2,
-            ),
-            child: Center(
-              child: Text(
-                '+${cluster.count}',
-                style: TextStyle(color: pointColor, fontSize: 16, height: 0.9),
-              ),
-            ),
-          ),
-        ),
-        size: Size(size, size + 3),
-        context: Get.context!,
-      );
-      NMarker clusterMarker = NMarker(
-        id: 'cluster_${cluster.markers.first.info.id}',
-        position: cluster.averageLocation,
-        icon: clusterIcon,
-      );
-      clusteredMarkers.add(clusterMarker);
-    }
-  }
-
-  return clusteredMarkers;
 }
 
 double calculateClusterRadius(double zoomLevel) {
