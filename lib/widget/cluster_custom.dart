@@ -4,45 +4,40 @@ class ClusterPainter extends CustomPainter {
   final Color borderColor;
   final Color backgroundColor;
   final double borderWidth;
-  final ImageProvider<Object>? image;
+  final ImageInfo? imageInfo;
 
   ClusterPainter({
     required this.borderColor,
     required this.backgroundColor,
     required this.borderWidth,
-    this.image,
+    this.imageInfo,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final circleRadius = size.width / 2;
 
-    if (image != null) {
-      final ImageStream stream = image!.resolve(ImageConfiguration.empty);
-      final listener = ImageStreamListener((ImageInfo info, bool _) {
-        canvas.save();
-        canvas.clipPath(Path()
-          ..addOval(Rect.fromCircle(
-            center: Offset(circleRadius, circleRadius),
-            radius: circleRadius - borderWidth,
-          )));
+    if (imageInfo != null) {
+      canvas.save();
+      canvas.clipPath(Path()
+        ..addOval(Rect.fromCircle(
+          center: Offset(circleRadius, circleRadius),
+          radius: circleRadius - borderWidth,
+        )));
 
-        // 이미지 그리기
-        paintImage(
-          canvas: canvas,
-          image: info.image,
-          rect: Rect.fromCircle(
-            center: Offset(circleRadius, circleRadius),
-            radius: circleRadius - borderWidth,
-          ),
-          fit: BoxFit.cover,
-        );
+      // 이미지 그리기
+      paintImage(
+        canvas: canvas,
+        image: imageInfo!.image,
+        rect: Rect.fromCircle(
+          center: Offset(circleRadius, circleRadius),
+          radius: circleRadius - borderWidth,
+        ),
+        fit: BoxFit.cover,
+      );
 
-        // 클리핑 해제
-        canvas.restore();
-      });
-      stream.addListener(listener);
-      stream.removeListener(listener);
+      // 클리핑 해제
+      canvas.restore();
     } else {
       // 이미지가 없을 경우 기존 배경색으로 채우기
       final paint = Paint()

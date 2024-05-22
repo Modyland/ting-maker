@@ -53,7 +53,7 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   await controller.onMapReady();
                 },
                 onCameraChange: (reason, animated) {
-                  controller.setCameraState = false;
+                  // 카메라가 움직일때
                 },
                 onCameraIdle: () async {
                   await controller.onCameraIdle();
@@ -71,7 +71,7 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
               ),
               FloatingActionButton(
                 onPressed: () async {
-                  await controller.moveCurrentPositionCamera();
+                  await controller.mapRefresh();
                 },
               ),
             ],

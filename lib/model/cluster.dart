@@ -5,22 +5,21 @@ class Cluster {
   double latitudeSum = 0;
   double longitudeSum = 0;
   Set<NMarker> markers;
+  List<String> userIdxs;
 
-  Cluster(
-    double latitude,
-    double longitude,
-    this.markers,
-  ) {
+  Cluster(double latitude, double longitude, this.markers, this.userIdxs) {
     count = markers.length;
+    userIdxs = userIdxs;
     latitudeSum = latitude;
     longitudeSum = longitude;
   }
 
-  void addMarker(NMarker marker) {
+  void addMarker(NMarker marker, String userIdx) {
     count++;
     latitudeSum += marker.position.latitude;
     longitudeSum += marker.position.longitude;
     markers.add(marker);
+    userIdxs.add(userIdx);
   }
 
   NLatLng get averageLocation {
