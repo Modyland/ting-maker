@@ -137,14 +137,13 @@ class CustomNaverMapController extends GetxController {
   Future<void> checkUsers(List<dynamic> data) async {
     if (getUsers.isEmpty) {
       for (var d in data) {
-        final userImage = await fetchUserImage(d['userIdx']);
-        final ImageStream stream = userImage.resolve(ImageConfiguration.empty);
+        final imageStream = await fetchUserImage(d['userIdx']);
         ImageStreamListener? listener;
         listener = ImageStreamListener((ImageInfo info, bool _) {
           d['profile'] = info;
-          stream.removeListener(listener!);
+          imageStream.removeListener(listener!);
         });
-        stream.addListener(listener);
+        imageStream.addListener(listener);
         _users.value.add(d);
       }
     } else {
@@ -160,14 +159,13 @@ class CustomNaverMapController extends GetxController {
           .toList();
 
       for (var user in addedUsers) {
-        final userImage = await fetchUserImage(user['userIdx']);
-        final ImageStream stream = userImage.resolve(ImageConfiguration.empty);
+        final imageStream = await fetchUserImage(user['userIdx']);
         ImageStreamListener? listener;
         listener = ImageStreamListener((ImageInfo info, bool _) {
           user['profile'] = info;
-          stream.removeListener(listener!);
+          imageStream.removeListener(listener!);
         });
-        stream.addListener(listener);
+        imageStream.addListener(listener);
       }
 
       _users.value = retainedUsers.union(addedUsers.toSet()).toList();
@@ -176,7 +174,7 @@ class CustomNaverMapController extends GetxController {
     zoomChange(zoom);
   }
 
-  Future<ImageProvider<Object>> fetchUserImage(int userIdx) async {
+  Future<ImageStream> fetchUserImage(int userIdx) async {
     String imageUrl =
         "http://db.medsyslab.co.kr:4500/ting/mapProfiles?idx=$userIdx";
     return ExtendedImage.network(
@@ -185,7 +183,7 @@ class CustomNaverMapController extends GetxController {
       cacheKey: userIdx.toString(),
       cacheMaxAge: const Duration(days: 3),
       enableMemoryCache: true,
-    ).image;
+    ).image.resolve(ImageConfiguration.empty);
   }
 
   Future<void> initCurrentPosition() async {
@@ -223,19 +221,27 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
-  Timer? _throttleTimer;
-  Future<void> onCameraIdle() async {
-    _throttleTimer?.cancel();
+  // Timer? _throttleTimer;
 
-    _throttleTimer = Timer(const Duration(milliseconds: 300), () async {
-      if (getMapController != null &&
-          navigationProvider.currentIndex.value == Navigation.naverMap.index) {
-        Log.f('카메라 데이터');
-        Log.t(DateTime.now().toLocal().toString());
-        final region = await nowCameraRegion();
-        cameraStopSendData(region);
-      }
-    });
+  void onCameraIdle() async {
+    if (getMapController != null &&
+        navigationProvider.currentIndex.value == Navigation.naverMap.index) {
+      Log.f('카메라 멈췄다!');
+
+      final region = await nowCameraRegion();
+      cameraStopSendData(region);
+    }
+    // _throttleTimer?.cancel();
+
+    // _throttleTimer = Timer(const Duration(milliseconds: 300), () async {
+    //   if (getMapController != null &&
+    //       navigationProvider.currentIndex.value == Navigation.naverMap.index) {
+    //     Log.f('카메라 멈췄다!');
+
+    //     final region = await nowCameraRegion();
+    //     cameraStopSendData(region);
+    //   }
+    // });
   }
 
   Future<void> zoomChange(double zoomLevel) async {
@@ -245,9 +251,7 @@ class CustomNaverMapController extends GetxController {
         List<Future<NMarker>> markerFutures =
             getUsers.map((u) => createMarker(u)).toList();
         markers.addAll(await Future.wait(markerFutures));
-        final Set<NMarker> clusteredMarkers =
-            await clusterMarkers(markers, zoomLevel);
-        await showMarkers(clusteredMarkers);
+        await clusterMarkers(markers, zoomLevel);
       }
     } catch (err) {
       Log.e('줌 체인지 에러 : $err');
@@ -285,7 +289,7 @@ class CustomNaverMapController extends GetxController {
       });
   }
 
-  Future<Set<NMarker>> clusterMarkers(
+  Future<void> clusterMarkers(
     Set<NMarker> markers,
     double zoomLevel,
   ) async {
@@ -318,10 +322,10 @@ class CustomNaverMapController extends GetxController {
         }
       }
     }
-    return await createClusterMarkers(clusters);
+    await createClusterMarkers(clusters);
   }
 
-  Future<Set<NMarker>> createClusterMarkers(List<Cluster> clusters) async {
+  Future<void> createClusterMarkers(List<Cluster> clusters) async {
     Set<NMarker> clusteredMarkers = {};
 
     if (clusters.isNotEmpty) {
@@ -363,17 +367,15 @@ class CustomNaverMapController extends GetxController {
         }
       }
     }
-
-    return clusteredMarkers;
+    await showMarkers(clusteredMarkers);
   }
 
   Future<void> showMarkers(Set<NMarker> markers) async {
     if (getMapController != null && markers.isNotEmpty) {
       try {
         await getMapController?.clearOverlays(type: NOverlayType.marker);
-        await getMapController?.addOverlayAll(markers).then((value) {
-          Log.e(DateTime.now().toLocal().toString());
-        });
+        await getMapController?.addOverlayAll(markers);
+        // Log.e(DateTime.now().toLocal().toString());
       } catch (err) {
         Log.e('지도 뜨기전에 나감 : $err');
       }

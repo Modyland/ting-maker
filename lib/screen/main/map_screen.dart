@@ -40,8 +40,8 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   ],
                   minZoom: 11,
                   maxZoom: 21,
-                  zoomGesturesFriction: 0.3,
-                  scrollGesturesFriction: 0.3,
+                  zoomGesturesFriction: 0.2,
+                  scrollGesturesFriction: 0.2,
                   rotationGesturesEnable: false,
                   indoorEnable: true,
                   // scaleBarEnable: false,
@@ -53,10 +53,10 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   await controller.onMapReady();
                 },
                 onCameraChange: (reason, animated) {
-                  // 카메라가 움직일때
+                  // 카메라 움직일때
                 },
-                onCameraIdle: () async {
-                  await controller.onCameraIdle();
+                onCameraIdle: () {
+                  controller.onCameraIdle();
                 },
                 onMapTapped: (point, latLng) {
                   // 지도에서 클릭한 위치 나옴

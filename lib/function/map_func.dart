@@ -61,7 +61,7 @@ Future<Set<NPolygonOverlay>> initPolygon() async {
     coords: koreaOverlay,
     color: Colors.black26,
     outlineColor: pointColor,
-    outlineWidth: 2,
+    outlineWidth: 4,
     holes: [firstHole, secondHole],
   );
   Set<NPolygonOverlay> overlays = {overlay};
