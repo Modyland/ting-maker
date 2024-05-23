@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/person.dart';
+import 'package:ting_maker/widget/snackbar/no_title_snackbar.dart';
 
 Future initLoginCheck() async {
   final isLogin = utilBox.get('isLogin') ?? false;
@@ -35,7 +36,7 @@ Future<void> locationPermissionCheck() async {
 
   serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
-    // await normalToast('디바이스 위치를 활성화 해주세요.', pointColor);
+    titleSnackbar('위치', '위치서비스를 사용해 주세요.');
     await Geolocator.openLocationSettings();
     return Future.error('위치 사용 안함');
   }
@@ -44,14 +45,14 @@ Future<void> locationPermissionCheck() async {
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
-      // await normalToast('앱 위치권한을 허용해주세요.', pointColor);
+      titleSnackbar('위치 권한', '위치 권한을 허용해주세요.');
       await Geolocator.openAppSettings();
       return Future.error('위치 권한 거부');
     }
   }
 
   if (permission == LocationPermission.deniedForever) {
-    // await normalToast('앱 위치권한을 허용해주세요.', pointColor);
+    titleSnackbar('위치 권한', '앱 위치권한을 허용해주세요.');
     await Geolocator.openAppSettings();
     return Future.error('영구적으로 거부');
   }
@@ -61,10 +62,10 @@ class RouterObserver extends GetObserver {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) async {
     if (previousRoute == null && route.settings.name == '/home') {
-      // final check = await initLoginCheck();
-      // if (!check) {
-      //   Get.offAllNamed('/login');
-      // }
+      final check = await initLoginCheck();
+      if (!check) {
+        Get.offAllNamed('/login');
+      }
     }
     if (previousRoute?.settings.name == '/login' &&
         route.settings.name == '/home') {

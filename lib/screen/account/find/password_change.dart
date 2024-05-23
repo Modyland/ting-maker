@@ -7,6 +7,7 @@ import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/widget/snackbar/no_title_snackbar.dart';
 
 class PasswordChangeScreen extends StatefulWidget {
   const PasswordChangeScreen({super.key});
@@ -57,7 +58,7 @@ class _PasswordChangeScreenState extends State<PasswordChangeScreen> {
     final data = json.decode(res.bodyString!);
     if (data) {
       validCheck = -1;
-      // await normalToast('비밀번호가 변경되었습니다.', pointColor, time: 3);
+      noTitleSnackbar('비밀번호가 변경되었습니다.');
       Get.offAllNamed('/login');
     }
   }

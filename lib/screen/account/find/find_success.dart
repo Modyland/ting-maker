@@ -15,8 +15,7 @@ class FindSuccessScreen extends StatefulWidget {
 class _FindSuccessScreenState extends State<FindSuccessScreen> {
   Map<String, dynamic> registerData = Get.arguments;
 
-  void idConfirm() async {
-    // await normalToast('아이디 : ${registerData['id']}', pointColor, time: 3);
+  void idConfirm() {
     Get.toNamed('/login');
   }
 

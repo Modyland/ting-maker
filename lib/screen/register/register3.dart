@@ -7,6 +7,7 @@ import 'package:ting_maker/main.dart';
 import 'package:ting_maker/screen/register/profile/image_profile.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/widget/snackbar/no_title_snackbar.dart';
 
 class RegisterScreen3 extends StatefulWidget {
   const RegisterScreen3({super.key});
@@ -42,7 +43,7 @@ class _RegisterScreen3State extends State<RegisterScreen3> {
     final data = json.decode(res.bodyString!);
     if (data) {
       imageProfileController.dispose();
-      // await normalToast('회원가입이 완료되었습니다.', pointColor, time: 3);
+      titleSnackbar('회원가입', '회원가입이 완료되었습니다.');
       Get.offAllNamed('/login');
     }
   }
