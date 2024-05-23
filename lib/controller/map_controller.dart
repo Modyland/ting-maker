@@ -17,6 +17,7 @@ import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
 import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/widget/dialog/profile_dialog.dart';
 
 class CustomNaverMapController extends GetxController {
   final NavigationProvider navigationProvider = Get.find<NavigationProvider>();
@@ -284,9 +285,11 @@ class CustomNaverMapController extends GetxController {
         user['position']['lat'],
         user['position']['lng'],
       ),
-    )..setOnTapListener((overlay) async {
-        Log.t('${user['userIdx']}');
-      });
+    )..setOnTapListener(
+        (overlay) async {
+          await showProfileDialog(user['userIdx']);
+        },
+      );
   }
 
   Future<void> clusterMarkers(
@@ -360,9 +363,48 @@ class CustomNaverMapController extends GetxController {
             id: 'cluster_${cluster.markers.first.info.id}',
             position: cluster.averageLocation,
             icon: clusterIcon,
-          )..setOnTapListener((overlay) async {
-              Log.t(cluster.userIdxs);
-            });
+          )..setOnTapListener(
+              (overlay) async {
+                await Get.bottomSheet(
+                  Container(
+                    height: MyApp.height * 0.4,
+                    padding: const EdgeInsets.all(20),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      ),
+                    ),
+                    child: ListView.builder(
+                      itemCount: cluster.idxs.length,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final userIdx = cluster.idxs[index];
+                        final user = getUsers.firstWhere(
+                            (u) => u['userIdx'].toString() == userIdx);
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: ExtendedNetworkImageProvider(
+                              "http://db.medsyslab.co.kr:4500/ting/mapProfiles?idx=$userIdx",
+                            ),
+                          ),
+                          title: Text(
+                            '${user['aka']}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          onTap: () async {
+                            await showProfileDialog(userIdx);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  ignoreSafeArea: true,
+                  backgroundColor: Colors.transparent,
+                );
+              },
+            );
           clusteredMarkers.add(clusterMarker);
         }
       }

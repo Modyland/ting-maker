@@ -40,8 +40,8 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   ],
                   minZoom: 11,
                   maxZoom: 21,
-                  zoomGesturesFriction: 0.2,
-                  scrollGesturesFriction: 0.2,
+                  zoomGesturesFriction: 0.3,
+                  scrollGesturesFriction: 0.3,
                   rotationGesturesEnable: false,
                   indoorEnable: true,
                   // scaleBarEnable: false,
@@ -69,10 +69,14 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   // 실내 지도 층 변경시
                 },
               ),
-              FloatingActionButton(
-                onPressed: () async {
-                  await controller.mapRefresh();
-                },
+              Positioned(
+                bottom: 10,
+                right: 10,
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    await controller.moveCurrentPositionCamera();
+                  },
+                ),
               ),
             ],
           );
