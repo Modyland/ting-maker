@@ -14,9 +14,9 @@ AppBar commonAppbar() {
   );
 }
 
-AppBar mapAppbar(
+AppBar homeAppbar(
   Navigation navigation,
-  String place, {
+  Widget child, {
   double? ele,
 }) {
   switch (navigation) {
@@ -29,30 +29,20 @@ AppBar mapAppbar(
           height: kToolbarHeight,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(place),
-              ],
-            ),
+            child: child,
           ),
         ),
       );
     case Navigation.community:
       return AppBar(
-        elevation: ele ?? 3,
-        scrolledUnderElevation: ele ?? 3,
+        elevation: ele ?? 1,
+        scrolledUnderElevation: ele ?? 1,
         flexibleSpace: SizedBox(
           width: double.infinity,
           height: kToolbarHeight,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(place),
-              ],
-            ),
+            child: child,
           ),
         ),
       );
@@ -65,12 +55,7 @@ AppBar mapAppbar(
           height: kToolbarHeight,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(place),
-              ],
-            ),
+            child: child,
           ),
         ),
       );
@@ -83,12 +68,7 @@ AppBar mapAppbar(
           height: kToolbarHeight,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(place),
-              ],
-            ),
+            child: child,
           ),
         ),
       );
@@ -101,12 +81,7 @@ AppBar mapAppbar(
           height: kToolbarHeight,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(place),
-              ],
-            ),
+            child: child,
           ),
         ),
       );

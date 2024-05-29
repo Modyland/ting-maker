@@ -22,15 +22,16 @@ class PersonAdapter extends TypeAdapter<Person> {
       phone: fields[2] as String,
       birth: fields[3] as String,
       gender: fields[4] as String,
-      profile: fields[5] as String?,
-      aka: fields[6] as String?,
+      visible: fields[5] as int,
+      profile: fields[6] as String?,
+      aka: fields[7] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Person obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.idx)
       ..writeByte(1)
@@ -42,8 +43,10 @@ class PersonAdapter extends TypeAdapter<Person> {
       ..writeByte(4)
       ..write(obj.gender)
       ..writeByte(5)
-      ..write(obj.profile)
+      ..write(obj.visible)
       ..writeByte(6)
+      ..write(obj.profile)
+      ..writeByte(7)
       ..write(obj.aka);
   }
 

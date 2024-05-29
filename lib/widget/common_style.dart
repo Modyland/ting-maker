@@ -37,7 +37,7 @@ BoxDecoration enableButton = BoxDecoration(
   borderRadius: BorderRadius.circular(10),
   color: pointColor,
   border: Border.all(
-    color: Colors.black38,
+    color: Colors.blueAccent.withOpacity(0.3),
     width: 1,
   ),
 );

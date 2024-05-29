@@ -1,3 +1,5 @@
+//지금은 사용안함
+
 class Polygon {
   String key;
   String sigCode;

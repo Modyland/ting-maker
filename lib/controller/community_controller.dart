@@ -1,20 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/widget/sheet/community_sheet.dart';
+
+enum PageState { noticePage, classPage }
+
+enum TabState { all, schedule, my }
 
 class CommunityController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  RxString nowTab = 'id'.obs;
+  static CommunityController get to => Get.find();
+  final limitCount = 10;
+  final PagingController<int, dynamic> _pagingController =
+      PagingController(firstPageKey: 0);
+  Rx<TabState> nowTab = TabState.all.obs;
+  Rx<PageState> pageState = PageState.noticePage.obs;
+
+  final List<Map<String, String>> classList = [
+    {'id': '1'},
+    {'id': '2'},
+    {'id': '3'},
+    {'id': '4'},
+    {'id': '5'},
+    {'id': '6'},
+    {'id': '7'},
+    {'id': '8'},
+    {'id': '9'},
+    {'id': '10'},
+  ];
+
+  final List<Map<String, String>> subjectList = [
+    {'id': '주제'},
+    {'id': '인기글'},
+    {'id': '모르겠다'},
+    {'id': '질문'},
+    {'id': '잘못된정보'},
+    {'id': '기타'},
+    {'id': '라이브'},
+    {'id': '자유게시판'},
+    {'id': '몇글자'},
+    {'id': '테스트용'},
+  ];
+
+  final List<Map<String, String>> postList = [
+    {'id': '주제'},
+    {'id': '인기글'},
+    {'id': '모르겠다'},
+    {'id': '질문'},
+    {'id': '잘못된정보'},
+    {'id': '기타'},
+    {'id': '라이브'},
+    {'id': '자유게시판'},
+    {'id': '몇글자'},
+    {'id': '테스트용'},
+  ];
 
   late TabController tabController = TabController(
-    length: 2,
+    length: 3,
     vsync: this,
-    initialIndex: nowTab.value == 'id' ? 0 : 1,
+    initialIndex: 0,
     animationDuration: const Duration(milliseconds: 300),
   );
 
-  String get getTab => nowTab.value;
-
+  PagingController<int, dynamic> get getPagingController => _pagingController;
+  TabState get getTab => nowTab.value;
+  bool get isClassPage =>
+      NavigationProvider.to.currentIndex.value == Navigation.community.index &&
+      pageState.value == PageState.classPage;
   TabBar tabBar() {
     return TabBar(
       controller: tabController,
@@ -34,8 +88,9 @@ class CommunityController extends GetxController
         fontSize: 14,
       ),
       tabs: const [
-        Tab(text: "아이디 찾기"),
-        Tab(text: "비밀번호 재설정"),
+        Tab(text: "전체 모임"),
+        Tab(text: "모임 일정"),
+        Tab(text: "내 모임"),
       ],
     );
   }
@@ -44,19 +99,60 @@ class CommunityController extends GetxController
   void onInit() {
     super.onInit();
     tabController.addListener(handleTabChange);
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
   }
 
   @override
   void onClose() {
-    //
+    _pagingController.dispose();
     super.onClose();
+  }
+
+  void initialPage() {
+    pageState.value = PageState.noticePage;
   }
 
   void handleTabChange() {
     if (tabController.index == 0) {
-      nowTab('id');
+      nowTab.value = TabState.all;
     } else if (tabController.index == 1) {
-      nowTab('pwd');
+      nowTab.value = TabState.schedule;
+    } else if (tabController.index == 2) {
+      nowTab.value = TabState.my;
     }
+  }
+
+  void goingClassPage(String id) {
+    if (id == '1') {
+      pageState.value = PageState.classPage;
+    } else {
+      return;
+    }
+  }
+
+  void goingSubjectPage(String id) async {
+    if (id == '주제') {
+      await showSubjectSheet(
+          subjectList.where((e) => e['id'] != '주제').toList());
+    } else {
+      return;
+    }
+  }
+
+  Future<void> _fetchPage(int pageKey) async {
+    // try {
+    //   final newItems = await service.tingApiGetdata(pageKey, limitCount);
+    //   final isLastPage = newItems.length < limitCount;
+    //   if (isLastPage) {
+    //     _pagingController.appendLastPage(newItems);
+    //   } else {
+    //     final nextPageKey = pageKey + newItems.length;
+    //     _pagingController.appendPage(newItems, nextPageKey);
+    //   }
+    // } catch (error) {
+    //   _pagingController.error = error;
+    // }
   }
 }

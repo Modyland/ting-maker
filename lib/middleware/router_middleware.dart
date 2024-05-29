@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/person.dart';
-import 'package:ting_maker/widget/snackbar/no_title_snackbar.dart';
+import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 Future initLoginCheck() async {
   final isLogin = utilBox.get('isLogin') ?? false;

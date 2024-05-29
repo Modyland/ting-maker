@@ -3,6 +3,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/map_controller.dart';
 import 'package:ting_maker/util/logger.dart';
+import 'package:ting_maker/widget/common_style.dart';
 
 class NaverMapScreen extends GetView<CustomNaverMapController> {
   const NaverMapScreen({super.key});
@@ -44,7 +45,7 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   scrollGesturesFriction: 0.3,
                   rotationGesturesEnable: false,
                   indoorEnable: true,
-                  // scaleBarEnable: false,
+                  scaleBarEnable: false,
                   locationButtonEnable: false,
                   logoAlign: NLogoAlign.leftBottom,
                 ),
@@ -72,10 +73,19 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
               Positioned(
                 bottom: 10,
                 right: 10,
-                child: FloatingActionButton(
-                  onPressed: () async {
-                    await controller.moveCurrentPositionCamera();
-                  },
+                child: Card(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  shadowColor: grey300,
+                  elevation: 4,
+                  child: IconButton(
+                    icon: const Icon(Icons.my_location_outlined),
+                    onPressed: () async {
+                      await controller.moveCurrentPositionCamera();
+                    },
+                  ),
                 ),
               ),
             ],

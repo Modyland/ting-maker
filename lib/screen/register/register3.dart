@@ -7,7 +7,7 @@ import 'package:ting_maker/main.dart';
 import 'package:ting_maker/screen/register/profile/image_profile.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
-import 'package:ting_maker/widget/snackbar/no_title_snackbar.dart';
+import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 class RegisterScreen3 extends StatefulWidget {
   const RegisterScreen3({super.key});

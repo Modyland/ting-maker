@@ -6,6 +6,9 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ting_maker/controller/chatting_controller.dart';
+import 'package:ting_maker/controller/community/community_notice_single_controller.dart';
+import 'package:ting_maker/controller/community/community_regi_controller.dart';
+import 'package:ting_maker/controller/community/community_view_controller.dart';
 import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/controller/map_controller.dart';
 import 'package:ting_maker/controller/myinfo_controller.dart';
@@ -18,11 +21,9 @@ import 'package:ting_maker/screen/account/find/find_success.dart';
 import 'package:ting_maker/screen/account/find/password_change.dart';
 import 'package:ting_maker/screen/account/login.dart';
 import 'package:ting_maker/screen/home.dart';
-import 'package:ting_maker/screen/main/chatting_screen.dart';
-import 'package:ting_maker/screen/main/community_screen.dart';
-import 'package:ting_maker/screen/main/map_screen.dart';
-import 'package:ting_maker/screen/main/myinfo_screen.dart';
-import 'package:ting_maker/screen/main/myplace_screen.dart';
+import 'package:ting_maker/screen/main/community/community_notice_single.dart';
+import 'package:ting_maker/screen/main/community/community_regi.dart';
+import 'package:ting_maker/screen/main/community/community_view.dart';
 import 'package:ting_maker/screen/onboarding/onboarding.dart';
 import 'package:ting_maker/screen/register/permission/permission.dart';
 import 'package:ting_maker/screen/register/permission/service_agree.dart';
@@ -176,24 +177,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               page: () => const MainScreen(),
               children: [
                 GetPage(
-                  name: '/map',
-                  page: () => const NaverMapScreen(),
+                  name: '/community_view',
+                  page: () => const CommunityViewScreen(),
+                  binding: BindingsBuilder(() {
+                    Get.lazyPut(() => CommunityViewController());
+                  }),
+                  transition: Transition.zoom,
                 ),
                 GetPage(
-                  name: '/community',
-                  page: () => const CommunityScreen(),
+                  name: '/community_regi',
+                  page: () => const CommunityRegiScreen(),
+                  binding: BindingsBuilder(() {
+                    Get.lazyPut(() => CommunityRegiController());
+                  }),
+                  transition: Transition.zoom,
                 ),
                 GetPage(
-                  name: '/myplace',
-                  page: () => const MyPlaceScreen(),
-                ),
-                GetPage(
-                  name: '/chatting',
-                  page: () => const ChattingScreen(),
-                ),
-                GetPage(
-                  name: '/myinfo',
-                  page: () => const MyInfoScreen(),
+                  name: '/community_notice',
+                  page: () => const CommunityNoticeSingleScreen(),
+                  binding: BindingsBuilder(() {
+                    Get.lazyPut(() => CommunityNoticeSingleController());
+                  }),
+                  transition: Transition.zoom,
                 ),
               ],
             ),

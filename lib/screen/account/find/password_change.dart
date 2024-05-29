@@ -7,7 +7,7 @@ import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
-import 'package:ting_maker/widget/snackbar/no_title_snackbar.dart';
+import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 class PasswordChangeScreen extends StatefulWidget {
   const PasswordChangeScreen({super.key});
