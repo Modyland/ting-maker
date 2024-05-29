@@ -232,8 +232,6 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
-  // Timer? _throttleTimer;
-
   void onCameraIdle() async {
     if (getMapController != null &&
         NavigationProvider.to.currentIndex.value == Navigation.naverMap.index) {
@@ -242,17 +240,6 @@ class CustomNaverMapController extends GetxController {
       final region = await nowCameraRegion();
       cameraStopSendData(region);
     }
-    // _throttleTimer?.cancel();
-
-    // _throttleTimer = Timer(const Duration(milliseconds: 300), () async {
-    //   if (getMapController != null &&
-    //       navigationProvider.currentIndex.value == Navigation.naverMap.index) {
-    //     Log.f('카메라 멈췄다!');
-
-    //     final region = await nowCameraRegion();
-    //     cameraStopSendData(region);
-    //   }
-    // });
   }
 
   Future<void> zoomChange(double zoomLevel) async {

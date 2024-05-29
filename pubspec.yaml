@@ -66,6 +66,15 @@ dev_dependencies:
   hive_generator: ^2.0.1
   build_runner: ^2.4.9
 
+flutter_launcher_icons:
+  image_path_android: 'assets/splash/app_icon.png'
+  image_path_ios: 'assets/splash/app_icon.png'
+  android: true
+  ios: true
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  background_color_ios: '#00BFFE'
+
 flutter:
   uses-material-design: true
 

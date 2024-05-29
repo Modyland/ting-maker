@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:ting_maker/main.dart';
+import 'package:ting_maker/model/nbo.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/sheet/community_sheet.dart';
@@ -12,9 +14,10 @@ enum TabState { all, schedule, my }
 class CommunityController extends GetxController
     with GetSingleTickerProviderStateMixin {
   static CommunityController get to => Get.find();
-  final limitCount = 10;
-  final PagingController<int, dynamic> _pagingController =
-      PagingController(firstPageKey: 0);
+  final limitSize = 10;
+  final PagingController<int, Nbo> _pagingController = PagingController(
+    firstPageKey: 0,
+  );
   Rx<TabState> nowTab = TabState.all.obs;
   Rx<PageState> pageState = PageState.noticePage.obs;
 
@@ -64,7 +67,7 @@ class CommunityController extends GetxController
     animationDuration: const Duration(milliseconds: 300),
   );
 
-  PagingController<int, dynamic> get getPagingController => _pagingController;
+  PagingController<int, Nbo> get getPagingController => _pagingController;
   TabState get getTab => nowTab.value;
   bool get isClassPage =>
       NavigationProvider.to.currentIndex.value == Navigation.community.index &&
@@ -142,17 +145,20 @@ class CommunityController extends GetxController
   }
 
   Future<void> _fetchPage(int pageKey) async {
-    // try {
-    //   final newItems = await service.tingApiGetdata(pageKey, limitCount);
-    //   final isLastPage = newItems.length < limitCount;
-    //   if (isLastPage) {
-    //     _pagingController.appendLastPage(newItems);
-    //   } else {
-    //     final nextPageKey = pageKey + newItems.length;
-    //     _pagingController.appendPage(newItems, nextPageKey);
-    //   }
-    // } catch (error) {
-    //   _pagingController.error = error;
-    // }
+    try {
+      final newItems = await service.getNboSelect(limitSize,
+          idx: pageKey != 0 ? _pagingController.itemList?.last.idx : null);
+      if (newItems != null) {
+        final isLastPage = newItems.length < limitSize;
+        if (isLastPage) {
+          _pagingController.appendLastPage(newItems);
+        } else {
+          final nextPageKey = pageKey + 1;
+          _pagingController.appendPage(newItems, nextPageKey);
+        }
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get_connect/connect.dart';
+import 'package:ting_maker/model/nbo.dart';
 
 class MainProvider extends GetConnect {
   @override
@@ -25,5 +28,26 @@ class MainProvider extends GetConnect {
 
   Future<Response> tingApiGetdata(Map data) async {
     return httpClient.post('/ting/api_getdata', body: data);
+  }
+
+  Future<List<Nbo>?> getNboSelect(int limit,
+      {String? id, String? keyword, int? idx}) async {
+    String url = '/nbo/nboSelect?limit=$limit';
+    if (id != null) {
+      url += '&id=$id';
+    }
+    if (keyword != null) {
+      url += '&keyword=$keyword';
+    }
+    if (idx != null) {
+      url += '&idx=$idx';
+    }
+    final res = await httpClient.get(url);
+    if (res.statusCode! <= 400) {
+      final List<dynamic> data = json.decode(res.bodyString!);
+      return data.map((json) => Nbo.fromJson(json)).toList();
+    } else {
+      return null;
+    }
   }
 }

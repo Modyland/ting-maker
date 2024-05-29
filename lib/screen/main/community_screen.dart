@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/icons/home_navi_icons.dart';
+import 'package:ting_maker/model/nbo.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/community/class_list.dart';
 import 'package:ting_maker/widget/community/subject_list.dart';
@@ -37,9 +38,10 @@ class CommunityScreen extends GetView<CommunityController> {
                           child: PagedListView(
                             physics: const AlwaysScrollableScrollPhysics(),
                             pagingController: controller.getPagingController,
-                            builderDelegate: PagedChildBuilderDelegate<dynamic>(
-                              itemBuilder: (context, item, index) =>
-                                  Container(),
+                            builderDelegate: PagedChildBuilderDelegate<Nbo>(
+                              itemBuilder: (context, item, index) => Container(
+                                child: Text(item.aka),
+                              ),
                               firstPageErrorIndicatorBuilder: (context) =>
                                   Center(
                                 child: TextButton(
@@ -58,10 +60,12 @@ class CommunityScreen extends GetView<CommunityController> {
                               ),
                               firstPageProgressIndicatorBuilder: (context) =>
                                   const Center(
-                                      child: CircularProgressIndicator()),
+                                child: CircularProgressIndicator(),
+                              ),
                               newPageProgressIndicatorBuilder: (context) =>
                                   const Center(
-                                      child: CircularProgressIndicator()),
+                                child: CircularProgressIndicator(),
+                              ),
                             ),
                           ),
                         ),

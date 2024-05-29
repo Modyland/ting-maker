@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             GlobalMaterialLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          defaultTransition: Transition.leftToRightWithFade,
+          defaultTransition: Transition.native,
           transitionDuration: Durations.short4,
           title: 'Ting',
           theme: ThemeData(
