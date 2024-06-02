@@ -1,24 +1,15 @@
 flutter_native_splash:
   # dart run flutter_native_splash:create
   # dart run flutter_native_splash:remove
-  color: "#FCFDFF"
-  #background_image: "assets/splash/background.png"
+  color: '#FFFFFF'
   image: assets/splash/splash.png
-  #branding: assets/splash/dart.png
-  #branding_mode: bottom
-  color_dark: "#181A21"
-  #background_image_dark: "assets/splash/dark-background.png"
-  image_dark: assets/splash/splash.png
-  #branding_dark: assets/splash/dart_dark.png
   android_12:
     image: assets/splash/splash.png
-    color: "#FCFDFF"
-    icon_background_color: "#FCFDFF"
-    #branding: assets/splash/dart.png
-    image_dark: assets/splash/splash.png
-    color_dark: "#181A21"
-    icon_background_color_dark: "#181A21"
+    color: '#FFFFFF'
+    icon_background_color: '#FFFFFF'
   android: true
   ios: true
   web: false
+  android_gravity: center
+  ios_content_mode: center
   fullscreen: true
