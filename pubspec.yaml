@@ -78,19 +78,17 @@ flutter_launcher_icons:
 # 2) flutter pub get
 # 3) flutter pub run flutter_native_splash:create
 flutter_native_splash:
-  color: '#FFFFFF'
   image: assets/splash/splash3.png
-  fullscreen: true
-  android_gravity: center
-  ios_content_mode: center
+  color: '#00BFFE'
   android_12:
     image: assets/splash/splash3.png
-    color: '#FFFFFF'
-    fullscreen: true
-    android_gravity: center
+    color: '#00BFFE'
   android: true
   ios: true
   web: false
+  fullscreen: true
+  android_gravity: center
+  ios_content_mode: center
 
 flutter:
   uses-material-design: true
