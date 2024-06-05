@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/controller/map_controller.dart';
-import 'package:ting_maker/icons/home_navi_icons.dart';
+import 'package:ting_maker/icons/tingicons_icons.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -94,10 +94,10 @@ class NavigationProvider extends GetxService {
                       delegate: CustomSearchDelegate(),
                     );
                   },
-                  icon: const Icon(HomeNavi.search),
+                  icon: const Icon(Tingicons.search),
                 ),
-                IconButton(onPressed: () {}, icon: const Icon(HomeNavi.heart)),
-                IconButton(onPressed: () {}, icon: const Icon(HomeNavi.bell)),
+                IconButton(onPressed: () {}, icon: const Icon(Tingicons.heart)),
+                IconButton(onPressed: () {}, icon: const Icon(Tingicons.bell)),
               ],
             )
           ],
@@ -116,7 +116,7 @@ class NavigationProvider extends GetxService {
                   delegate: CustomSearchDelegate(),
                 );
               },
-              icon: const Icon(HomeNavi.search),
+              icon: const Icon(Tingicons.search),
             ),
           ],
         );

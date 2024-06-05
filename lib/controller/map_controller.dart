@@ -185,18 +185,6 @@ class CustomNaverMapController extends GetxController {
     zoomChange(zoom);
   }
 
-  Future<ImageStream> fetchUserImage(int userIdx) async {
-    String imageUrl =
-        "http://db.medsyslab.co.kr:4500/ting/mapProfiles?idx=$userIdx";
-    return ExtendedImage.network(
-      imageUrl,
-      cache: true,
-      cacheKey: userIdx.toString(),
-      cacheMaxAge: const Duration(days: 3),
-      enableMemoryCache: true,
-    ).image.resolve(ImageConfiguration.empty);
-  }
-
   Future<void> initCurrentPosition() async {
     // 현재 위치 가져오기
     await locationPermissionCheck();
@@ -265,21 +253,31 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
+  Future<ImageInfo> fetchUserImage(int userIdx) async {
+    String imageUrl =
+        "http://db.medsyslab.co.kr:4500/ting/mapProfiles?idx=$userIdx";
+    final image = ExtendedImage.network(
+      imageUrl,
+      cache: true,
+      cacheKey: userIdx.toString(),
+      cacheMaxAge: const Duration(days: 3),
+      enableMemoryCache: true,
+    ).image;
+
+    final Completer<ImageInfo> completer = Completer();
+    image.resolve(const ImageConfiguration()).addListener(
+      ImageStreamListener((ImageInfo info, bool synchronousCall) {
+        completer.complete(info);
+      }),
+    );
+
+    return completer.future;
+  }
+
   Future<NMarker> createMarker(dynamic user) async {
     const double size = 36;
 
-    // 이미지가 완전히 로드될 때까지 기다립니다.
-    final ImageStream imageStream = await fetchUserImage(user['userIdx']);
-    Completer<ImageInfo> completer = Completer();
-    ImageStreamListener listener =
-        ImageStreamListener((ImageInfo info, bool _) {
-      if (!completer.isCompleted) {
-        completer.complete(info);
-      }
-    });
-    imageStream.addListener(listener);
-    ImageInfo imageInfo = await completer.future;
-    imageStream.removeListener(listener);
+    final ImageInfo imageInfo = await fetchUserImage(user['userIdx']);
 
     // 이미지 로드가 완료된 후에 마커를 생성합니다.
     final userIcon = await NOverlayImage.fromWidget(
@@ -407,28 +405,27 @@ class CustomNaverMapController extends GetxController {
   Future<void> showMarkers(Set<NMarker> markers) async {
     try {
       if (getMapController != null) {
-        Set<NMarker> currentMarkers = getMarkers.toSet();
-        Set<NMarker> newData = markers.toSet();
+        await getMapController?.clearOverlays(type: NOverlayType.marker);
+        await getMapController?.addOverlayAll(markers);
+        // Set<NMarker> currentMarkers = getMarkers.toSet();
+        // Set<NMarker> newData = markers.toSet();
 
-        final retainedMarkers = currentMarkers
-            .where((cm) => newData.any((nd) => nd.info.id == cm.info.id))
-            .toSet();
-        final addedMarkers = newData
-            .where(
-                (nd) => !currentMarkers.any((cm) => cm.info.id == nd.info.id))
-            .toList();
-        await getMapController?.addOverlayAll(addedMarkers.toSet());
-        final removedMarkers = currentMarkers
-            .where((cm) => !newData.any((nd) => nd.info.id == cm.info.id))
-            .toList();
-        _markers.value = retainedMarkers.union(addedMarkers.toSet()).toList();
-        for (var marker in removedMarkers) {
-          await getMapController?.deleteOverlay(marker.info);
-        }
+        // final retainedMarkers = currentMarkers
+        //     .where((cm) => newData.any((nd) => nd.info.id == cm.info.id))
+        //     .toSet();
+        // final addedMarkers = newData
+        //     .where(
+        //         (nd) => !currentMarkers.any((cm) => cm.info.id == nd.info.id))
+        //     .toList();
+        // await getMapController?.addOverlayAll(addedMarkers.toSet());
+        // final removedMarkers = currentMarkers
+        //     .where((cm) => !newData.any((nd) => nd.info.id == cm.info.id))
+        //     .toList();
+        // _markers.value = retainedMarkers.union(addedMarkers.toSet()).toList();
+        // for (var marker in removedMarkers) {
+        //   await getMapController?.deleteOverlay(marker.info);
+        // }
       }
-
-      // await getMapController?.clearOverlays(type: NOverlayType.marker);
-      // await getMapController?.addOverlayAll(markers);
     } catch (err) {
       Log.e('지도 뜨기전에 나감 : $err');
     }

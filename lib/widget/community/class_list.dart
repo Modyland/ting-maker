@@ -13,7 +13,7 @@ class ClassListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
+      height: 98,
       decoration: BoxDecoration(
         color: const Color(0XAAD4D4D4),
         border: Border.all(
@@ -47,8 +47,11 @@ class ClassListWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    Text(controller.classList[idx]['id']!),
+                    const SizedBox(height: 8),
+                    Text(
+                      controller.classList[idx]['id']!,
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
               ),

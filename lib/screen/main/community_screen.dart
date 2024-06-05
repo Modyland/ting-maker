@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/controller/community_controller.dart';
-import 'package:ting_maker/icons/home_navi_icons.dart';
-import 'package:ting_maker/model/nbo.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/community/class_list.dart';
+import 'package:ting_maker/widget/community/nbo_list.dart';
 import 'package:ting_maker/widget/community/subject_list.dart';
 
 class CommunityScreen extends GetView<CommunityController> {
@@ -13,6 +11,12 @@ class CommunityScreen extends GetView<CommunityController> {
 
   @override
   Widget build(BuildContext context) {
+    const textButtonStyle = TextStyle(
+      fontSize: 16,
+      height: 1,
+      fontWeight: FontWeight.w500,
+      color: Colors.white,
+    );
     return Obx(
       () => PopScope(
         canPop: !controller.isClassPage,
@@ -31,44 +35,7 @@ class CommunityScreen extends GetView<CommunityController> {
                       ClassListWidget(controller: controller),
                       SubjectListWidget(controller: controller),
                       Flexible(
-                        child: RefreshIndicator(
-                          onRefresh: () async {
-                            controller.getPagingController.refresh();
-                          },
-                          child: PagedListView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            pagingController: controller.getPagingController,
-                            builderDelegate: PagedChildBuilderDelegate<Nbo>(
-                              itemBuilder: (context, item, index) => Container(
-                                child: Text(item.aka),
-                              ),
-                              firstPageErrorIndicatorBuilder: (context) =>
-                                  Center(
-                                child: TextButton(
-                                  onPressed: () =>
-                                      controller.getPagingController.refresh(),
-                                  child: const Text('다시 시도'),
-                                ),
-                              ),
-                              newPageErrorIndicatorBuilder: (context) => Center(
-                                child: TextButton(
-                                  onPressed: () => controller
-                                      .getPagingController
-                                      .retryLastFailedRequest(),
-                                  child: const Text('다시 시도'),
-                                ),
-                              ),
-                              firstPageProgressIndicatorBuilder: (context) =>
-                                  const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                              newPageProgressIndicatorBuilder: (context) =>
-                                  const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
-                          ),
-                        ),
+                        child: NboListWidget(controller: controller),
                       )
                     ],
                   ),
@@ -83,18 +50,7 @@ class CommunityScreen extends GetView<CommunityController> {
                         iconColor: Colors.white,
                         backgroundColor: pointColor,
                       ),
-                      child: const Row(
-                        children: [
-                          Icon(HomeNavi.plus),
-                          Text(
-                            '글쓰기',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: const Text('+ 글쓰기', style: textButtonStyle),
                       onPressed: () async {
                         await Get.toNamed('/home/community_regi');
                       },

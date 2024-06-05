@@ -14,6 +14,40 @@ AppBar commonAppbar() {
   );
 }
 
+AppBar dialogAppbar(String title, bool isReady) {
+  return AppBar(
+    elevation: 0,
+    scrolledUnderElevation: 3,
+    leading: IconButton(
+      icon: Icon(Icons.close, color: grey500),
+      onPressed: () => Get.back(),
+    ),
+    title: Center(
+      child: Text(
+        title,
+        style: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w300,
+            height: 1),
+      ),
+    ),
+    actions: [
+      TextButton(
+        child: Text(
+          '완료',
+          style: TextStyle(
+              color: isReady ? Colors.black : grey300,
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              height: 1),
+        ),
+        onPressed: () {},
+      ),
+    ],
+  );
+}
+
 AppBar homeAppbar(
   Navigation navigation,
   Widget child, {

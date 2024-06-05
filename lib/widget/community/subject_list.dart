@@ -32,12 +32,9 @@ class SubjectListWidget extends StatelessWidget {
             onTap: () =>
                 controller.goingSubjectPage(controller.subjectList[idx]['id']!),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
@@ -46,7 +43,10 @@ class SubjectListWidget extends StatelessWidget {
                   ),
                 ),
                 child: Center(
-                  child: Text(controller.subjectList[idx]['id']!),
+                  child: Text(
+                    controller.subjectList[idx]['id']!,
+                    style: const TextStyle(fontSize: 12, height: 1),
+                  ),
                 ),
               ),
             ),

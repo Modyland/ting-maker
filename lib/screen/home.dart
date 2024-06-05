@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/icons/home_navi_icons.dart';
+import 'package:ting_maker/icons/tingicons_icons.dart';
 import 'package:ting_maker/screen/main/chatting_screen.dart';
 import 'package:ting_maker/screen/main/community_screen.dart';
 import 'package:ting_maker/screen/main/map_screen.dart';
@@ -44,23 +44,23 @@ class MainScreen extends GetView<NavigationProvider> {
           onTap: controller.changeIndex,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(HomeNavi.home_outline),
+              icon: Icon(Tingicons.home),
               label: '홈',
             ),
             BottomNavigationBarItem(
-              icon: Icon(HomeNavi.doc_text),
+              icon: Icon(Tingicons.newspaper),
               label: '동네',
             ),
             BottomNavigationBarItem(
-              icon: Icon(HomeNavi.location_outline),
+              icon: Icon(Tingicons.place),
               label: '내 근처',
             ),
             BottomNavigationBarItem(
-              icon: Icon(HomeNavi.chat),
+              icon: Icon(Tingicons.commenting_o),
               label: '채팅',
             ),
             BottomNavigationBarItem(
-              icon: Icon(HomeNavi.user_outline),
+              icon: Icon(Tingicons.user),
               label: '내정보',
             ),
           ],

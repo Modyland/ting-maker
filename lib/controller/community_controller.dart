@@ -146,8 +146,10 @@ class CommunityController extends GetxController
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      final newItems = await service.getNboSelect(limitSize,
-          idx: pageKey != 0 ? _pagingController.itemList?.last.idx : null);
+      final newItems = await service.getNboSelect(
+        limitSize,
+        idx: pageKey != 0 ? _pagingController.itemList?.last.idx : null,
+      );
       if (newItems != null) {
         final isLastPage = newItems.length < limitSize;
         if (isLastPage) {
