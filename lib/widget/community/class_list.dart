@@ -26,11 +26,13 @@ class ClassListWidget extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         itemCount: controller.classList.length,
         itemBuilder: (context, idx) {
-          return InkWell(
-            onTap: () =>
-                controller.goingClassPage(controller.classList[idx]['id']!),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              onTap: () =>
+                  controller.goingClassPage(controller.classList[idx]['id']!),
               child: Card(
                 elevation: 0,
                 color: Colors.transparent,

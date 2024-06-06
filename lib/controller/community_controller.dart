@@ -21,6 +21,10 @@ class CommunityController extends GetxController
   Rx<TabState> nowTab = TabState.all.obs;
   Rx<PageState> pageState = PageState.noticePage.obs;
 
+  final Rx<List> subjectList = Rx<List>(utilBox.get('subject')!);
+
+  List get getSubjectList => subjectList.value;
+
   final List<Map<String, String>> classList = [
     {'id': '1'},
     {'id': '2'},
@@ -32,32 +36,6 @@ class CommunityController extends GetxController
     {'id': '8'},
     {'id': '9'},
     {'id': '10'},
-  ];
-
-  final List<Map<String, String>> subjectList = [
-    {'id': '주제'},
-    {'id': '인기글'},
-    {'id': '모르겠다'},
-    {'id': '질문'},
-    {'id': '잘못된정보'},
-    {'id': '기타'},
-    {'id': '라이브'},
-    {'id': '자유게시판'},
-    {'id': '몇글자'},
-    {'id': '테스트용'},
-  ];
-
-  final List<Map<String, String>> postList = [
-    {'id': '주제'},
-    {'id': '인기글'},
-    {'id': '모르겠다'},
-    {'id': '질문'},
-    {'id': '잘못된정보'},
-    {'id': '기타'},
-    {'id': '라이브'},
-    {'id': '자유게시판'},
-    {'id': '몇글자'},
-    {'id': '테스트용'},
   ];
 
   late TabController tabController = TabController(
@@ -138,7 +116,7 @@ class CommunityController extends GetxController
   void goingSubjectPage(String id) async {
     if (id == '주제') {
       await showSubjectSheet(
-          subjectList.where((e) => e['id'] != '주제').toList());
+          subjectList.value.where((e) => e != '주제').toList(), () => {});
     } else {
       return;
     }

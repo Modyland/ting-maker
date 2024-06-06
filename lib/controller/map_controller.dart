@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
@@ -54,6 +55,9 @@ class CustomNaverMapController extends GetxController {
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
+          .setReconnectionDelay(5)
+          .setReconnectionDelayMax(10)
+          .setReconnectionAttempts(999)
           .build());
 
   @override
@@ -148,11 +152,10 @@ class CustomNaverMapController extends GetxController {
 
   Future<void> visibleUpdate() async {
     final person = personBox.get('person');
-
     final req = {
       'kind': 'visibleUpdate',
       'id': person!.id,
-      'visible': getVisible == 1 ? 0 : 1
+      'visible': visible.value == 1 ? 0 : 1
     };
     final res = await service.tingApiGetdata(req);
     final data = json.decode(res.bodyString!);
@@ -223,7 +226,7 @@ class CustomNaverMapController extends GetxController {
   void onCameraIdle() async {
     if (getMapController != null &&
         NavigationProvider.to.currentIndex.value == Navigation.naverMap.index) {
-      Log.f('카메라 멈췄다!');
+      log('카메라 멈췄다!', time: DateTime.now());
 
       final region = await nowCameraRegion();
       cameraStopSendData(region);

@@ -14,7 +14,6 @@ class CommunityNoticeSingleController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print(id.value);
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });

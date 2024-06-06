@@ -30,6 +30,10 @@ class MainProvider extends GetConnect {
     return httpClient.post('/ting/api_getdata', body: data);
   }
 
+  Future<Response> getSubject(int length) async {
+    return httpClient.get('/nbo/nbo_Subject?length=$length');
+  }
+
   Future<List<Nbo>?> getNboSelect(int limit,
       {String? id, String? keyword, int? idx}) async {
     String url = '/nbo/nboSelect?limit=$limit';

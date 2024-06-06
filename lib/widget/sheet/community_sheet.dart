@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-Future<void> showSubjectSheet(List<dynamic> list) async {
+Future<void> showSubjectSheet(List<dynamic> list, VoidCallback callback) async {
   return await Get.bottomSheet(
     Container(
-      padding: const EdgeInsets.all(20),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -15,33 +14,43 @@ Future<void> showSubjectSheet(List<dynamic> list) async {
       child: Column(
         children: [
           Container(
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 20),
             height: 50,
+            child: const Text(
+              '동네생활 주제',
+              style: TextStyle(fontSize: 18, height: 1),
+            ),
           ),
           Flexible(
-            child: ListView.builder(
-              itemCount: list.length,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) {
-                return Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: ListTile(
-                    leading: Text(
-                      '${list[index]['id']}',
-                      style: const TextStyle(fontSize: 16),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ListView.builder(
+                itemCount: list.length,
+                physics: const BouncingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    onTap: () async {
-                      Get.back();
-                      await Get.toNamed(
-                        '/home/community_notice',
-                        arguments: list[index]['id'],
-                      );
-                    },
-                  ),
-                );
-              },
+                    child: ListTile(
+                      leading: Text(
+                        '${list[index]['id']}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      onTap: () async {
+                        callback();
+                        Get.back();
+                        await Get.toNamed(
+                          '/home/community_notice',
+                          arguments: list[index]['id'],
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],

@@ -34,7 +34,9 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               InkWell(
-                                onTap: () {},
+                                onTap: () async {
+                                  // await showSubjectSheet(list, callback)
+                                },
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
                                   height: 60,

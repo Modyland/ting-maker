@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,8 +23,34 @@ class NavigationProvider extends GetxService {
   int get getVisible => visible.value;
   set setVisible(int v) => visible(v);
 
+  @override
+  void onInit() {
+    super.onInit();
+    getSubjectList();
+  }
+
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+  }
+
   void changeIndex(int idx) {
     currentIndex(idx);
+  }
+
+  Future<void> getSubjectList() async {
+    int subjectLength = 0;
+    final subject = utilBox.get('subject');
+    if (subject != null) {
+      subjectLength = subject.length;
+    }
+    final res = await service.getSubject(subjectLength);
+    final data = json.decode(res.bodyString!) as List;
+    if (data.isNotEmpty) {
+      await utilBox.put('subject', data);
+      log('${utilBox.get('subject')}', time: DateTime.now());
+    }
   }
 
   Widget mapAppbarButton(String text, Future Function() onTap) {

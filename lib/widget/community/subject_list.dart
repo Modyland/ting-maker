@@ -26,13 +26,15 @@ class SubjectListWidget extends StatelessWidget {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
-        itemCount: controller.subjectList.length,
+        itemCount: controller.getSubjectList.length,
         itemBuilder: (context, idx) {
-          return InkWell(
-            onTap: () =>
-                controller.goingSubjectPage(controller.subjectList[idx]['id']!),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            child: InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              onTap: () =>
+                  controller.goingSubjectPage(controller.getSubjectList[idx]!),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                 decoration: BoxDecoration(
@@ -44,7 +46,7 @@ class SubjectListWidget extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    controller.subjectList[idx]['id']!,
+                    controller.getSubjectList[idx]!,
                     style: const TextStyle(fontSize: 12, height: 1),
                   ),
                 ),

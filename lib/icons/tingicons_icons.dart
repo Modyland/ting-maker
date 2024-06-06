@@ -11,7 +11,7 @@
 ///      fonts:
 ///       - asset: fonts/Tingicons.ttf
 ///
-/// 
+///
 /// * Material Design Icons, Copyright (C) Google, Inc
 ///         Author:    Google
 ///         License:   Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
@@ -29,7 +29,10 @@
 ///         License:   SIL (https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt)
 ///         Homepage:  http://fortawesome.github.com/Font-Awesome/
 ///
+library;
+
 import 'package:flutter/widgets.dart';
+// ignore_for_file: constant_identifier_names
 
 class Tingicons {
   Tingicons._();
@@ -37,26 +40,48 @@ class Tingicons {
   static const _kFontFam = 'Tingicons';
   static const String? _kFontPkg = null;
 
-  static const IconData home = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData place = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData sms = IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData tag_faces = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData child_care = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData content_paste = IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData comment = IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData description = IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData chat = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData home_1 = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData location = IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData megaphone = IconData(0xe80b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData bell = IconData(0xe80c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData book_open = IconData(0xe80d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData newspaper = IconData(0xe80e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData user = IconData(0xe80f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData search = IconData(0xe810, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData heart = IconData(0xe811, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData user_1 = IconData(0xf007, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData toggle_off = IconData(0xf204, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData toggle_on = IconData(0xf205, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData commenting_o = IconData(0xf27b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData home =
+      IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData place =
+      IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData sms =
+      IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData tag_faces =
+      IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData child_care =
+      IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData content_paste =
+      IconData(0xe805, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData comment =
+      IconData(0xe806, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData description =
+      IconData(0xe807, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData chat =
+      IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData home_1 =
+      IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData location =
+      IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData megaphone =
+      IconData(0xe80b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData bell =
+      IconData(0xe80c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData book_open =
+      IconData(0xe80d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData newspaper =
+      IconData(0xe80e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData user =
+      IconData(0xe80f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData search =
+      IconData(0xe810, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData heart =
+      IconData(0xe811, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData user_1 =
+      IconData(0xf007, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData toggle_off =
+      IconData(0xf204, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData toggle_on =
+      IconData(0xf205, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData commenting_o =
+      IconData(0xf27b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
