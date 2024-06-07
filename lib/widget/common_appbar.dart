@@ -62,7 +62,7 @@ AppBar homeAppbar(
           width: double.infinity,
           height: kToolbarHeight,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
             child: child,
           ),
         ),
@@ -75,7 +75,7 @@ AppBar homeAppbar(
           width: double.infinity,
           height: kToolbarHeight,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: child,
           ),
         ),
@@ -88,7 +88,7 @@ AppBar homeAppbar(
           width: double.infinity,
           height: kToolbarHeight,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: child,
           ),
         ),
@@ -101,7 +101,7 @@ AppBar homeAppbar(
           width: double.infinity,
           height: kToolbarHeight,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: child,
           ),
         ),
@@ -114,7 +114,7 @@ AppBar homeAppbar(
           width: double.infinity,
           height: kToolbarHeight,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: child,
           ),
         ),

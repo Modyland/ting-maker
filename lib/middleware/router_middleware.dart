@@ -8,25 +8,29 @@ import 'package:ting_maker/model/person.dart';
 import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 Future initLoginCheck() async {
-  final isLogin = utilBox.get('isLogin') ?? false;
-  final person = personBox.get('person');
-  if (isLogin && person != null) {
-    final Map<String, dynamic> requestData = {
-      'kind': 'login',
-      'id': '',
-      'guard': 1
-    };
-    requestData['id'] = person.id;
-    final res = await service.tingApiGetdata(requestData);
-    final data = json.decode(res.bodyString!);
-    if (data is Map<String, dynamic> && data.containsKey('profile')) {
-      final profile = json.decode(data['profile']);
-      final Person person = Person.fromJson(profile);
-      await personBox.put('person', person);
-      return true;
-    } else {
-      return false;
+  try {
+    final isLogin = utilBox.get('isLogin') ?? false;
+    final person = personBox.get('person');
+    if (isLogin && person != null) {
+      final Map<String, dynamic> requestData = {
+        'kind': 'login',
+        'id': '',
+        'guard': 1
+      };
+      requestData['id'] = person.id;
+      final res = await service.tingApiGetdata(requestData);
+      final data = json.decode(res.bodyString!);
+      if (data is Map<String, dynamic> && data.containsKey('profile')) {
+        final profile = json.decode(data['profile']);
+        final Person person = Person.fromJson(profile);
+        await personBox.put('person', person);
+        return true;
+      } else {
+        return false;
+      }
     }
+  } catch (err) {
+    titleSnackbar('로그인 오류', '접속이 원활하지 않습니다.');
   }
 }
 

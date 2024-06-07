@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/person.dart';
 import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -42,26 +43,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void loginService() async {
     FocusScope.of(context).requestFocus(FocusNode());
-    final Map<String, dynamic> requestData = {
-      'kind': 'login',
-      'id': _idEditingController.text,
-      'pwd': _pwdEditingController.text,
-      'guard': 0
-    };
-    final res = await service.tingApiGetdata(requestData);
-    final data = json.decode(res.bodyString!);
-    if (data is Map<String, dynamic> && data.containsKey('msg')) {
-      if (data['msg'] == 0) {
-        validCheck = 0;
+    try {
+      final Map<String, dynamic> requestData = {
+        'kind': 'login',
+        'id': _idEditingController.text,
+        'pwd': _pwdEditingController.text,
+        'guard': 0
+      };
+      final res = await service.tingApiGetdata(requestData);
+      final data = json.decode(res.bodyString!);
+      if (data is Map<String, dynamic> && data.containsKey('msg')) {
+        if (data['msg'] == 0) {
+          validCheck = 0;
+        }
+        _formKey.currentState!.validate();
+      } else if (data is Map<String, dynamic> && data.containsKey('profile')) {
+        final profile = json.decode(data['profile']);
+        validCheck = -1;
+        final Person person = Person.fromJson(profile);
+        await utilBox.put('isLogin', true);
+        await personBox.put('person', person);
+        nextPage();
       }
-      _formKey.currentState!.validate();
-    } else if (data is Map<String, dynamic> && data.containsKey('profile')) {
-      final profile = json.decode(data['profile']);
-      validCheck = -1;
-      final Person person = Person.fromJson(profile);
-      await utilBox.put('isLogin', true);
-      await personBox.put('person', person);
-      nextPage();
+    } catch (err) {
+      titleSnackbar('로그인 오류', '접속이 원활하지 않습니다.');
     }
   }
 

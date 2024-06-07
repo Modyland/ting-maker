@@ -33,35 +33,41 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              InkWell(
-                                onTap: () async {
-                                  // await showSubjectSheet(list, callback)
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    border: Border.symmetric(
-                                      horizontal:
-                                          BorderSide(width: 1, color: grey200),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text('게시글의 주제를 선택해주세요.'),
-                                      Transform.rotate(
-                                        angle: pi,
-                                        child: const Icon(
-                                          Icons.arrow_back_ios_rounded,
-                                          color: Colors.black,
-                                          size: 24.0,
+                              Obx(
+                                () {
+                                  return InkWell(
+                                    onTap: () async {
+                                      await controller.showSubjectSheetList();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                        border: Border.symmetric(
+                                          horizontal: BorderSide(
+                                              width: 1, color: grey200),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(controller.getRegiSubject == ''
+                                              ? '게시글의 주제를 선택해주세요.'
+                                              : controller.getRegiSubject),
+                                          Transform.rotate(
+                                            angle: pi,
+                                            child: const Icon(
+                                              Icons.arrow_back_ios_rounded,
+                                              color: Colors.black,
+                                              size: 24.0,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                               TextFormField(
                                 maxLines: null,

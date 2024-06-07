@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-Future<void> showSubjectSheet(List<dynamic> list, VoidCallback callback) async {
+Future<void> showSubjectSheet(
+  List<dynamic> list,
+  Future<void> Function(String sub) callback,
+) async {
   return await Get.bottomSheet(
     Container(
       decoration: const BoxDecoration(
@@ -28,7 +31,7 @@ Future<void> showSubjectSheet(List<dynamic> list, VoidCallback callback) async {
               child: ListView.builder(
                 itemCount: list.length,
                 physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
+                itemBuilder: (context, idx) {
                   return Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(
@@ -36,16 +39,11 @@ Future<void> showSubjectSheet(List<dynamic> list, VoidCallback callback) async {
                     ),
                     child: ListTile(
                       leading: Text(
-                        '${list[index]['id']}',
+                        '${list[idx]}',
                         style: const TextStyle(fontSize: 16),
                       ),
                       onTap: () async {
-                        callback();
-                        Get.back();
-                        await Get.toNamed(
-                          '/home/community_notice',
-                          arguments: list[index]['id'],
-                        );
+                        await callback(list[idx]);
                       },
                     ),
                   );

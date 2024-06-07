@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,39 +20,13 @@ class NavigationProvider extends GetxService {
   int get getVisible => visible.value;
   set setVisible(int v) => visible(v);
 
-  @override
-  void onInit() {
-    super.onInit();
-    getSubjectList();
-  }
-
-  @override
-  void onClose() {
-    // TODO: implement onClose
-    super.onClose();
-  }
-
   void changeIndex(int idx) {
     currentIndex(idx);
   }
 
-  Future<void> getSubjectList() async {
-    int subjectLength = 0;
-    final subject = utilBox.get('subject');
-    if (subject != null) {
-      subjectLength = subject.length;
-    }
-    final res = await service.getSubject(subjectLength);
-    final data = json.decode(res.bodyString!) as List;
-    if (data.isNotEmpty) {
-      await utilBox.put('subject', data);
-      log('${utilBox.get('subject')}', time: DateTime.now());
-    }
-  }
-
   Widget mapAppbarButton(String text, Future Function() onTap) {
     return Container(
-      height: 52,
+      height: 28,
       decoration: enableButton,
       child: MaterialButton(
         animationDuration: Durations.short4,
@@ -69,7 +40,7 @@ class NavigationProvider extends GetxService {
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 16, color: Colors.white),
+            style: const TextStyle(fontSize: 14, color: Colors.white),
           ),
         ),
       ),
@@ -80,28 +51,45 @@ class NavigationProvider extends GetxService {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            mapAppbarButton('인구해변',
-                () async => await CustomNaverMapController.to.moveFirstHole()),
-            const SizedBox(width: 8),
-            mapAppbarButton('서피비치',
-                () async => await CustomNaverMapController.to.moveSecondHole()),
+            Container(
+              margin: const EdgeInsets.only(left: 10, bottom: 3),
+              child: Text(
+                CustomNaverMapController.to.getReverseGeocoding,
+                style: const TextStyle(
+                    fontSize: 14, color: Colors.black87, height: 1),
+              ),
+            ),
+            Row(
+              children: [
+                mapAppbarButton(
+                    '인구해변',
+                    () async =>
+                        await CustomNaverMapController.to.moveFirstHole()),
+                const SizedBox(width: 8),
+                mapAppbarButton(
+                    '서피비치',
+                    () async =>
+                        await CustomNaverMapController.to.moveSecondHole()),
+              ],
+            ),
           ],
         ),
         AnimatedToggleSwitch.size(
-          height: 30,
+          height: 26,
           borderWidth: 2,
-          indicatorSize: const Size.fromWidth(26),
+          indicatorSize: const Size.fromWidth(24),
           current: CustomNaverMapController.to.getVisible,
           values: const [1, 0],
           onTap: (i) => CustomNaverMapController.to.visibleUpdate(),
-          style: ToggleStyle(
-            backgroundColor: Colors.white,
-            borderColor: pointColor.withOpacity(0.5),
-          ),
-          styleBuilder: (value) =>
-              ToggleStyle(indicatorColor: value == 1 ? pointColor : grey300),
+          styleBuilder: (value) => ToggleStyle(
+              indicatorColor: Colors.white,
+              backgroundColor: value == 1 ? pointColor : grey300,
+              borderColor: value == 1
+                  ? pointColor.withOpacity(0.5)
+                  : grey300.withOpacity(0.5)),
         ),
       ],
     );
@@ -113,7 +101,14 @@ class NavigationProvider extends GetxService {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(child: Container()),
+            Container(
+              margin: const EdgeInsets.only(left: 10, bottom: 3),
+              child: Text(
+                CustomNaverMapController.to.getReverseGeocoding,
+                style: const TextStyle(
+                    fontSize: 14, color: Colors.black87, height: 1),
+              ),
+            ),
             Row(
               children: [
                 IconButton(

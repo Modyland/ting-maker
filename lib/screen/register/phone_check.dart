@@ -6,6 +6,7 @@ import 'package:ting_maker/main.dart';
 import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 class PhoneCheckScreen extends StatefulWidget {
   const PhoneCheckScreen({super.key});
@@ -29,23 +30,27 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
 
   Future<void> phoneCheckCallback() async {
     FocusScope.of(context).requestFocus(FocusNode());
-    final res = await service.phoneCheck(
-        _phoneCheckEditing.text, registerData == null ? true : false);
-    final data = json.decode(res.bodyString!);
-    if (data is Map<String, dynamic> && data.containsKey('msg')) {
-      // 0 이미 가입된 휴대폰
-      // 1 인증 횟수 초과
-      if (data['msg'] == 0) {
-        validCheck = 0;
-      } else if (data['msg'] == 1) {
-        validCheck = 1;
+    try {
+      final res = await service.phoneCheck(
+          _phoneCheckEditing.text, registerData == null ? true : false);
+      final data = json.decode(res.bodyString!);
+      if (data is Map<String, dynamic> && data.containsKey('msg')) {
+        // 0 이미 가입된 휴대폰
+        // 1 인증 횟수 초과
+        if (data['msg'] == 0) {
+          validCheck = 0;
+        } else if (data['msg'] == 1) {
+          validCheck = 1;
+        }
+        _phoneFormkey.currentState!.validate();
+      } else {
+        if (data) {
+          validCheck = -1;
+          nextPage();
+        }
       }
-      _phoneFormkey.currentState!.validate();
-    } else {
-      if (data) {
-        validCheck = -1;
-        nextPage();
-      }
+    } catch (err) {
+      noTitleSnackbar('잠시 후 다시 시도해 주세요.');
     }
   }
 

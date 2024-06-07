@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -96,6 +98,7 @@ Future<void> initData() async {
   ]);
   deviceInfo = await deviceData();
   packageInfo = await PackageInfo.fromPlatform();
+  await getSubjectList();
 }
 
 Future<void> initFirebase() async {
@@ -115,4 +118,18 @@ Future<void> initFirebase() async {
   }
 
   Log.f('Initialized Default App ${app.name}');
+}
+
+Future<void> getSubjectList() async {
+  int subjectLength = 0;
+  final subject = utilBox.get('subject');
+  if (subject != null) {
+    subjectLength = subject.length;
+  }
+  final res = await service.getSubject(subjectLength);
+  final data = json.decode(res.bodyString!) as List;
+  if (data.isNotEmpty) {
+    await utilBox.put('subject', data);
+    log('${utilBox.get('subject')}', time: DateTime.now());
+  }
 }

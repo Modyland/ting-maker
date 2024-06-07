@@ -6,15 +6,13 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ting_maker/controller/chatting_controller.dart';
-import 'package:ting_maker/controller/community/community_notice_single_controller.dart';
-import 'package:ting_maker/controller/community/community_regi_controller.dart';
-import 'package:ting_maker/controller/community/community_view_controller.dart';
 import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/controller/map_controller.dart';
 import 'package:ting_maker/controller/myinfo_controller.dart';
 import 'package:ting_maker/controller/myplace_controller.dart';
 import 'package:ting_maker/database/db.dart';
 import 'package:ting_maker/init.dart';
+import 'package:ting_maker/middleware/binding_builder.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/person.dart';
 import 'package:ting_maker/screen/account/find/find_success.dart';
@@ -179,25 +177,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 GetPage(
                   name: '/community_view',
                   page: () => const CommunityViewScreen(),
-                  binding: BindingsBuilder(() {
-                    Get.lazyPut(() => CommunityViewController());
-                  }),
+                  binding: CommunityViewBinding(),
                   transition: Transition.zoom,
                 ),
                 GetPage(
                   name: '/community_regi',
                   page: () => const CommunityRegiScreen(),
-                  binding: BindingsBuilder(() {
-                    Get.lazyPut(() => CommunityRegiController());
-                  }),
+                  binding: CommunityRegiBinding(),
                   transition: Transition.zoom,
                 ),
                 GetPage(
                   name: '/community_notice',
                   page: () => const CommunityNoticeSingleScreen(),
-                  binding: BindingsBuilder(() {
-                    Get.lazyPut(() => CommunityNoticeSingleController());
-                  }),
+                  binding: CommunityNoticeSingleBinding(),
                   transition: Transition.zoom,
                 ),
               ],

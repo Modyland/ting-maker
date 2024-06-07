@@ -116,9 +116,20 @@ class CommunityController extends GetxController
   void goingSubjectPage(String id) async {
     if (id == '주제') {
       await showSubjectSheet(
-          subjectList.value.where((e) => e != '주제').toList(), () => {});
+        subjectList.value.where((e) => e != '주제').toList(),
+        (sub) async {
+          Get.back();
+          await Get.toNamed(
+            '/home/community_notice',
+            arguments: sub,
+          );
+        },
+      );
     } else {
-      return;
+      await Get.toNamed(
+        '/home/community_notice',
+        arguments: id,
+      );
     }
   }
 

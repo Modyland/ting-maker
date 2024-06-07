@@ -30,6 +30,10 @@ class MainProvider extends GetConnect {
     return httpClient.post('/ting/api_getdata', body: data);
   }
 
+  Future<Response> visibleUpdater(Map data) async {
+    return httpClient.put('/position/visibleUpdate', body: data);
+  }
+
   Future<Response> getSubject(int length) async {
     return httpClient.get('/nbo/nbo_Subject?length=$length');
   }

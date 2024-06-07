@@ -36,7 +36,7 @@ class NboListWidget extends StatelessWidget {
         physics: const AlwaysScrollableScrollPhysics(),
         pagingController: controller.getPagingController,
         builderDelegate: PagedChildBuilderDelegate<Nbo>(
-          itemBuilder: (context, item, index) {
+          itemBuilder: (context, item, idx) {
             return InkWell(
               onTap: () {},
               child: Container(
@@ -61,15 +61,26 @@ class NboListWidget extends StatelessWidget {
                             color: Colors.white, fontSize: 10, height: 1),
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: Text(item.title, style: titleStyle),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      child: Text(item.content, style: contentStyle),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              child: Text(item.title, style: titleStyle),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              child: Text(item.content, style: contentStyle),
+                            ),
+                          ],
+                        ),
+                        Container()
+                      ],
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text.rich(
                           TextSpan(

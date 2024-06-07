@@ -15,6 +15,7 @@ import 'package:ting_maker/function/map_func.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/cluster.dart';
+import 'package:ting_maker/model/person.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
@@ -33,9 +34,10 @@ class CustomNaverMapController extends GetxController {
   final Rx<double?> _currentZoom = Rx<double?>(null);
   final Rx<List<dynamic>> _users = Rx<List<dynamic>>([]);
   final Rx<List<NMarker>> _markers = Rx<List<NMarker>>([]);
-  final Rx<String> reverseGeocoding = ''.obs;
+  final Rx<String> reverseGeocoding = '유성구 관평동'.obs;
   final Rx<String> socketId = ''.obs;
   final Rx<int> visible = Rx<int>(personBox.get('person')!.visible);
+  final Rx<Person> person = Rx<Person>(personBox.get('person')!);
 
   NaverMapController? get getMapController => _mapController.value;
   Position? get getCurrentPosition => _currentPosition.value;
@@ -44,6 +46,7 @@ class CustomNaverMapController extends GetxController {
   List<dynamic> get getUsers => _users.value;
   List<NMarker> get getMarkers => _markers.value;
   int get getVisible => visible.value;
+  Person get getPerson => person.value;
   StreamSubscription<Position>? get getPositionStream => _positionStream.value;
   String get getReverseGeocoding => reverseGeocoding.value;
   set setMapController(NaverMapController? controller) =>
@@ -75,12 +78,11 @@ class CustomNaverMapController extends GetxController {
   }
 
   Map<String, dynamic> requestUserData() {
-    final person = personBox.get('person');
     final Map<String, dynamic> userPositionData = {
       'clientId': socketId.value,
-      'aka': person?.aka,
-      'userIdx': person?.idx,
-      'userId': person?.id,
+      'aka': getPerson.aka,
+      'userIdx': getPerson.idx,
+      'userId': getPerson.id,
       'position': {},
       'visible': getVisible,
     };
@@ -151,20 +153,17 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<void> visibleUpdate() async {
-    final person = personBox.get('person');
-    final req = {
-      'kind': 'visibleUpdate',
-      'id': person!.id,
-      'visible': visible.value == 1 ? 0 : 1
-    };
-    final res = await service.tingApiGetdata(req);
-    final data = json.decode(res.bodyString!);
-    if (data) {
-      setVisible = getVisible == 1 ? 0 : 1;
-      person.visible = getVisible;
-      await personBox.put('person', person);
-    } else {
-      noTitleSnackbar('잠시후 다시 시도해 주세요.');
+    try {
+      final req = {'id': getPerson.id, 'visible': visible.value == 1 ? 0 : 1};
+      final res = await service.visibleUpdater(req);
+      final data = json.decode(res.bodyString!);
+      if (data) {
+        setVisible = getVisible == 1 ? 0 : 1;
+        person.value.visible = getVisible;
+        await personBox.put('person', getPerson);
+      }
+    } catch (err) {
+      noTitleSnackbar('잠시 후 다시 시도해 주세요.');
     }
 
     final region = await nowCameraRegion();
@@ -184,6 +183,17 @@ class CustomNaverMapController extends GetxController {
         .toList();
 
     _users.value = retainedUsers.union(addedUsers.toSet()).toList();
+
+    _users.value.add({
+      'clientId ': getPerson.id,
+      'aka': getPerson.aka,
+      'userIdx': getPerson.idx,
+      'position': {
+        'lat': getCurrentPosition?.latitude,
+        'lng': getCurrentPosition?.longitude,
+      },
+      'visible': 1
+    });
     final zoom = await nowCameraZoom();
     zoomChange(zoom);
   }
@@ -235,16 +245,7 @@ class CustomNaverMapController extends GetxController {
 
   Future<void> zoomChange(double zoomLevel) async {
     try {
-      final myMarker = NMarker(
-        id: 'iam',
-        size: const Size(48, 48),
-        position: NLatLng(
-            getCurrentPosition!.latitude, getCurrentPosition!.longitude),
-        icon: const NOverlayImage.fromAssetImage('assets/image/my_marker.png'),
-      );
-
       Set<NMarker> markers = {};
-      markers.add(myMarker);
       if (getUsers.isNotEmpty) {
         List<Future<NMarker>> markerFutures =
             getUsers.map((u) => createMarker(u)).toList();
@@ -289,7 +290,9 @@ class CustomNaverMapController extends GetxController {
         height: size + 3,
         child: CustomPaint(
           painter: ClusterPainter(
-            borderColor: pointColor,
+            borderColor: getPerson.idx == user['userIdx']
+                ? Colors.blueAccent.shade400
+                : pointColor,
             backgroundColor: Colors.white,
             borderWidth: 2,
             imageInfo: imageInfo,
@@ -300,7 +303,7 @@ class CustomNaverMapController extends GetxController {
       context: Get.context!,
     );
     return NMarker(
-      id: '${user['userIdx']}',
+      id: getPerson.idx == user['userIdx'] ? 'iam' : '${user['userIdx']}',
       icon: userIcon,
       position: NLatLng(
         user['position']['lat'],
