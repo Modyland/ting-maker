@@ -14,7 +14,7 @@ AppBar commonAppbar() {
   );
 }
 
-AppBar dialogAppbar(String title, bool isReady) {
+AppBar dialogAppbar(String title, bool isReady, VoidCallback callback) {
   return AppBar(
     elevation: 0,
     scrolledUnderElevation: 3,
@@ -42,7 +42,9 @@ AppBar dialogAppbar(String title, bool isReady) {
               fontWeight: FontWeight.w300,
               height: 1),
         ),
-        onPressed: () {},
+        onPressed: () {
+          callback();
+        },
       ),
     ],
   );

@@ -47,7 +47,6 @@ class CommunityScreen extends GetView<CommunityController> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        iconColor: Colors.white,
                         backgroundColor: pointColor,
                       ),
                       child: const Text('+ 글쓰기', style: textButtonStyle),

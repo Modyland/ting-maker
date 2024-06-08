@@ -11,8 +11,12 @@ final snackShadow = BoxShadow(
 SnackbarController noTitleSnackbar(
   String message, {
   SnackPosition? snackPosition,
+  int? time,
 }) {
+  final count =
+      time != null ? Duration(seconds: time) : const Duration(seconds: 3);
   return Get.rawSnackbar(
+    duration: count,
     dismissDirection: DismissDirection.horizontal,
     snackPosition: snackPosition ?? SnackPosition.TOP,
     backgroundColor: Colors.transparent,
@@ -42,10 +46,14 @@ SnackbarController titleSnackbar(
   String title,
   String message, {
   SnackPosition? snackPosition,
+  int? time,
 }) {
+  final count =
+      time != null ? Duration(seconds: time) : const Duration(seconds: 3);
   return Get.snackbar(
     title,
     message,
+    duration: count,
     boxShadows: [snackShadow],
     dismissDirection: DismissDirection.horizontal,
     snackPosition: snackPosition ?? SnackPosition.TOP,
