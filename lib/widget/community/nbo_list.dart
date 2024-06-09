@@ -71,12 +71,14 @@ class NboListWidget extends StatelessWidget {
                             Container(
                               width: MyApp.width * 0.7,
                               margin: const EdgeInsets.only(bottom: 8),
-                              child: Text(item.title, style: titleStyle),
+                              child: Text(item.title,
+                                  style: titleStyle, maxLines: 1),
                             ),
                             Container(
                               width: MyApp.width * 0.7,
                               margin: const EdgeInsets.only(bottom: 12),
-                              child: Text(item.content, style: contentStyle),
+                              child: Text(item.content,
+                                  style: contentStyle, maxLines: 2),
                             ),
                           ],
                         ),

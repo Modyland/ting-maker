@@ -82,7 +82,7 @@ class CommunityRegiController extends GetxController {
   }
 
   Future<void> getImageFromGallery() async {
-    final pickedFile = await picker.pickMultiImage(limit: 5);
+    final pickedFile = await picker.pickMultiImage(limit: 5, imageQuality: 60);
     if (pickedFile.length > 5) {
       noTitleSnackbar('최대 업로드 갯수는 5개 입니다.', time: 2);
     }
@@ -95,7 +95,7 @@ class CommunityRegiController extends GetxController {
 
   Future<void> getImageFromCamera() async {
     final XFile? pickedFile =
-        await picker.pickImage(source: ImageSource.camera);
+        await picker.pickImage(source: ImageSource.camera, imageQuality: 60);
     if (pickedFile != null) {
       regiImage.add(await pickedFile.readAsBytes());
     }
