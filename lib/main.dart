@@ -148,6 +148,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               useMaterial3: false,
               brightness: Brightness.light,
               scaffoldBackgroundColor: Colors.white,
+              splashColor: pointColor.withAlpha(30),
+              highlightColor: pointColor.withAlpha(30),
               appBarTheme: const AppBarTheme(
                 backgroundColor: Colors.white,
                 surfaceTintColor: Colors.white,

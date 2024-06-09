@@ -37,11 +37,15 @@ class MainScreen extends GetView<NavigationProvider> {
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
           currentIndex: controller.currentIndex.value,
+          onTap: controller.changeIndex,
           type: BottomNavigationBarType.fixed,
+          iconSize: 21,
           showSelectedLabels: true,
           showUnselectedLabels: true,
+          selectedItemColor: Colors.black87,
           unselectedItemColor: grey300,
-          onTap: controller.changeIndex,
+          selectedLabelStyle: const TextStyle(height: 1.2, fontSize: 13),
+          unselectedLabelStyle: const TextStyle(height: 1.2, fontSize: 11),
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Tingicons.home),
@@ -56,11 +60,15 @@ class MainScreen extends GetView<NavigationProvider> {
               label: '내 근처',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Tingicons.commenting_o),
+              icon: Icon(
+                Tingicons.commenting_o,
+              ),
               label: '채팅',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Tingicons.user),
+              icon: Icon(
+                Tingicons.user,
+              ),
               label: '내정보',
             ),
           ],

@@ -132,6 +132,7 @@ class CommunityRegiController extends GetxController {
         log('$data');
       }
     } catch (err) {
+      log('$err');
       noTitleSnackbar('잠시 후 다시 이용해 주세요.');
     }
   }
