@@ -126,7 +126,7 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
                                         children: [
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                MainAxisAlignment.start,
                                             children: List.generate(
                                               controller.regiImage.length,
                                               (v) {

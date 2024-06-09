@@ -50,7 +50,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
         }
       }
     } catch (err) {
-      noTitleSnackbar('잠시 후 다시 시도해 주세요.');
+      noTitleSnackbar('잠시 후 다시 이용해 주세요.');
     }
   }
 
@@ -69,7 +69,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
     return Scaffold(
       appBar: commonAppbar(),
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,

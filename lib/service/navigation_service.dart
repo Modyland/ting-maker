@@ -5,6 +5,7 @@ import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/controller/map_controller.dart';
 import 'package:ting_maker/icons/tingicons_icons.dart';
 import 'package:ting_maker/main.dart';
+import 'package:ting_maker/model/person.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/search_delegate.dart';
@@ -15,10 +16,9 @@ class NavigationProvider extends GetxService {
   static NavigationProvider get to => Get.find();
 
   RxInt currentIndex = 0.obs;
-  final Rx<int> visible = Rx<int>(personBox.get('person')!.visible);
+  final Rx<Person> person = Rx<Person>(personBox.get('person')!);
 
-  int get getVisible => visible.value;
-  set setVisible(int v) => visible(v);
+  Person get getPerson => person.value;
 
   void changeIndex(int idx) {
     currentIndex(idx);

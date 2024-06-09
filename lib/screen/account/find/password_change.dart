@@ -68,7 +68,7 @@ class _PasswordChangeScreenState extends State<PasswordChangeScreen> {
     return Scaffold(
       appBar: commonAppbar(),
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,

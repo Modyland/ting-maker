@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -139,6 +141,7 @@ class CommunityController extends GetxController
         limitSize,
         idx: pageKey != 0 ? _pagingController.itemList?.last.idx : null,
       );
+      log('$newItems');
       if (newItems != null) {
         final isLastPage = newItems.length < limitSize;
         if (isLastPage) {

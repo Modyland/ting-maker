@@ -65,15 +65,19 @@ Future<void> locationPermissionCheck() async {
 class RouterObserver extends GetObserver {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) async {
-    if (previousRoute == null && route.settings.name == '/home') {
-      final check = await initLoginCheck();
-      if (!check) {
-        Get.offAllNamed('/login');
+    try {
+      if (previousRoute == null && route.settings.name == '/home') {
+        final check = await initLoginCheck();
+        if (!check) {
+          await Get.offAllNamed('/login');
+        }
       }
-    }
-    if (previousRoute?.settings.name == '/login' &&
-        route.settings.name == '/home') {
-      await locationPermissionCheck();
+      if (previousRoute?.settings.name == '/login' &&
+          route.settings.name == '/home') {
+        await locationPermissionCheck();
+      }
+    } catch (err) {
+      await Get.offAllNamed('/login');
     }
   }
 }

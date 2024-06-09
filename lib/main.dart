@@ -52,6 +52,14 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
+class NoGlowScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
+  }
+}
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -110,135 +118,142 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: GetMaterialApp(
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context),
-            child: child!,
+      child: GlowingOverscrollIndicator(
+        showLeading: false,
+        showTrailing: false,
+        axisDirection: AxisDirection.down,
+        color: Colors.transparent,
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+          child: GetMaterialApp(
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context),
+              child: child!,
+            ),
+            scrollBehavior: NoGlowScrollBehavior(),
+            debugShowCheckedModeBanner: false,
+            enableLog: true,
+            locale: Get.locale,
+            supportedLocales: const [
+              Locale('ko', 'KR'),
+            ],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            defaultTransition: Transition.native,
+            transitionDuration: Durations.short4,
+            title: 'Ting',
+            theme: ThemeData(
+              useMaterial3: false,
+              brightness: Brightness.light,
+              scaffoldBackgroundColor: Colors.white,
+              appBarTheme: const AppBarTheme(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.white,
+                shadowColor: Colors.white,
+              ),
+              bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+                backgroundColor: Colors.white,
+                selectedItemColor: Colors.black,
+                elevation: 10,
+              ),
+              bottomSheetTheme: const BottomSheetThemeData(
+                backgroundColor: Colors.white,
+              ),
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: grey400,
+                selectionColor: grey300,
+                selectionHandleColor: grey300,
+              ),
+            ),
+            initialBinding: BindingsBuilder(() {
+              Get.put(MainProvider());
+              Get.lazyPut(() => NavigationProvider());
+              Get.lazyPut(() => CustomNaverMapController());
+              Get.lazyPut(() => CommunityController());
+              Get.lazyPut(() => MyInfoController());
+              Get.lazyPut(() => MyPlaceController());
+              Get.lazyPut(() => ChattingController());
+            }),
+            navigatorKey: Get.key,
+            navigatorObservers: [RouterObserver()],
+            initialRoute: initRoute(),
+            getPages: [
+              GetPage(
+                name: '/',
+                page: () => const OnboardingScreen(),
+              ),
+              GetPage(
+                name: '/home',
+                page: () => const MainScreen(),
+                children: [
+                  GetPage(
+                    name: '/community_view',
+                    page: () => const CommunityViewScreen(),
+                    binding: CommunityViewBinding(),
+                    transition: Transition.zoom,
+                  ),
+                  GetPage(
+                    name: '/community_regi',
+                    page: () => const CommunityRegiScreen(),
+                    binding: CommunityRegiBinding(),
+                    transition: Transition.zoom,
+                  ),
+                  GetPage(
+                    name: '/community_notice',
+                    page: () => const CommunityNoticeSingleScreen(),
+                    binding: CommunityNoticeSingleBinding(),
+                    transition: Transition.zoom,
+                  ),
+                ],
+              ),
+              GetPage(
+                name: '/service_agree',
+                page: () => const ServiceAgreeScreen(),
+              ),
+              GetPage(
+                name: '/permission',
+                page: () => const PermissionScreen(),
+              ),
+              GetPage(
+                name: '/phone_check',
+                page: () => const PhoneCheckScreen(),
+              ),
+              GetPage(
+                name: '/phone_check2',
+                page: () => const PhoneCheckScreen2(),
+              ),
+              GetPage(
+                name: '/register',
+                page: () => const RegisterScreen(),
+              ),
+              GetPage(
+                name: '/register2',
+                page: () => const RegisterScreen2(),
+              ),
+              GetPage(
+                name: '/register3',
+                page: () => const RegisterScreen3(),
+              ),
+              GetPage(
+                name: '/image_crop',
+                page: () => const ImageCropScreen(),
+              ),
+              GetPage(
+                name: '/login',
+                page: () => const LoginScreen(),
+              ),
+              GetPage(
+                name: '/find_success',
+                page: () => const FindSuccessScreen(),
+              ),
+              GetPage(
+                name: '/password_change',
+                page: () => const PasswordChangeScreen(),
+              ),
+            ],
           ),
-          debugShowCheckedModeBanner: false,
-          enableLog: true,
-          locale: Get.locale,
-          supportedLocales: const [
-            Locale('ko', 'KR'),
-          ],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          defaultTransition: Transition.native,
-          transitionDuration: Durations.short4,
-          title: 'Ting',
-          theme: ThemeData(
-            useMaterial3: false,
-            brightness: Brightness.light,
-            scaffoldBackgroundColor: Colors.white,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.white,
-              surfaceTintColor: Colors.white,
-              shadowColor: Colors.white,
-            ),
-            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-              backgroundColor: Colors.white,
-              selectedItemColor: Colors.black,
-              elevation: 10,
-            ),
-            bottomSheetTheme: const BottomSheetThemeData(
-              backgroundColor: Colors.white,
-            ),
-            textSelectionTheme: TextSelectionThemeData(
-              cursorColor: grey400,
-              selectionColor: grey300,
-              selectionHandleColor: grey300,
-            ),
-          ),
-          initialBinding: BindingsBuilder(() {
-            Get.put(MainProvider());
-            Get.lazyPut(() => NavigationProvider());
-            Get.lazyPut(() => CustomNaverMapController());
-            Get.lazyPut(() => CommunityController());
-            Get.lazyPut(() => MyInfoController());
-            Get.lazyPut(() => MyPlaceController());
-            Get.lazyPut(() => ChattingController());
-          }),
-          navigatorKey: Get.key,
-          navigatorObservers: [RouterObserver()],
-          initialRoute: initRoute(),
-          getPages: [
-            GetPage(
-              name: '/',
-              page: () => const OnboardingScreen(),
-            ),
-            GetPage(
-              name: '/home',
-              page: () => const MainScreen(),
-              children: [
-                GetPage(
-                  name: '/community_view',
-                  page: () => const CommunityViewScreen(),
-                  binding: CommunityViewBinding(),
-                  transition: Transition.zoom,
-                ),
-                GetPage(
-                  name: '/community_regi',
-                  page: () => const CommunityRegiScreen(),
-                  binding: CommunityRegiBinding(),
-                  transition: Transition.zoom,
-                ),
-                GetPage(
-                  name: '/community_notice',
-                  page: () => const CommunityNoticeSingleScreen(),
-                  binding: CommunityNoticeSingleBinding(),
-                  transition: Transition.zoom,
-                ),
-              ],
-            ),
-            GetPage(
-              name: '/service_agree',
-              page: () => const ServiceAgreeScreen(),
-            ),
-            GetPage(
-              name: '/permission',
-              page: () => const PermissionScreen(),
-            ),
-            GetPage(
-              name: '/phone_check',
-              page: () => const PhoneCheckScreen(),
-            ),
-            GetPage(
-              name: '/phone_check2',
-              page: () => const PhoneCheckScreen2(),
-            ),
-            GetPage(
-              name: '/register',
-              page: () => const RegisterScreen(),
-            ),
-            GetPage(
-              name: '/register2',
-              page: () => const RegisterScreen2(),
-            ),
-            GetPage(
-              name: '/register3',
-              page: () => const RegisterScreen3(),
-            ),
-            GetPage(
-              name: '/image_crop',
-              page: () => const ImageCropScreen(),
-            ),
-            GetPage(
-              name: '/login',
-              page: () => const LoginScreen(),
-            ),
-            GetPage(
-              name: '/find_success',
-              page: () => const FindSuccessScreen(),
-            ),
-            GetPage(
-              name: '/password_change',
-              page: () => const PasswordChangeScreen(),
-            ),
-          ],
         ),
       ),
     );

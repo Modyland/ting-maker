@@ -11,7 +11,7 @@ class MainProvider extends GetConnect {
     httpClient
       ..baseUrl = dotenv.get('TEST_URL')
       ..defaultContentType = 'application/json'
-      ..timeout = const Duration(seconds: 10);
+      ..timeout = const Duration(seconds: 3);
   }
 
   Future<Response> loginLog(Map data) async {
@@ -57,5 +57,9 @@ class MainProvider extends GetConnect {
     } else {
       return null;
     }
+  }
+
+  Future<Response> nboInsert(Map data) async {
+    return httpClient.post('/nbo/api_post', body: data);
   }
 }

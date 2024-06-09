@@ -1,9 +1,14 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ting_maker/controller/community_controller.dart';
+import 'package:ting_maker/controller/map_controller.dart';
+import 'package:ting_maker/main.dart';
+import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/widget/sheet/community_sheet.dart';
 import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
@@ -40,7 +45,7 @@ class CommunityRegiController extends GetxController {
     final subjectList = CommunityController.to.getSubjectList;
 
     await showSubjectSheet(
-      subjectList.where((e) => e != '주제').toList(),
+      subjectList.where((e) => e != '주제' && e != '인기글').toList(),
       (sub) async {
         Get.back();
         setSubject = sub;
@@ -105,5 +110,29 @@ class CommunityRegiController extends GetxController {
     }
   }
 
-  Future<void> registerSubmit() async {}
+  Future<void> registerSubmit() async {
+    try {
+      final req = {
+        "kind": "nboInsert",
+        "id": NavigationProvider.to.getPerson.id,
+        "aka": NavigationProvider.to.getPerson.aka,
+        "vilege": CustomNaverMapController.to.getReverseGeocoding,
+        "subject": getSubject,
+        "title": getTitle,
+        "content": getContent,
+        "nboImg": regiImage.toList().isNotEmpty ? regiImage.toList() : null,
+      };
+
+      final res = await service.nboInsert(req);
+      final data = json.decode(res.bodyString!);
+      if (data) {
+        Get.back();
+        CommunityController.to.getPagingController.refresh();
+        noTitleSnackbar('게시글이 등록되었습니다.', time: 2);
+        log('$data');
+      }
+    } catch (err) {
+      noTitleSnackbar('잠시 후 다시 이용해 주세요.');
+    }
+  }
 }

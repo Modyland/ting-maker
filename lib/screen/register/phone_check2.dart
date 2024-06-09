@@ -81,7 +81,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
         }
       }
     } catch (err) {
-      noTitleSnackbar('잠시 후 다시 시도해 주세요.');
+      noTitleSnackbar('잠시 후 다시 이용해 주세요.');
     }
   }
 
@@ -122,7 +122,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
     return Scaffold(
       appBar: commonAppbar(),
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/controller/community_controller.dart';
+import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo.dart';
 import 'package:ting_maker/util/time.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -65,12 +66,15 @@ class NboListWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
+                              width: MyApp.width * 0.7,
                               margin: const EdgeInsets.only(bottom: 8),
                               child: Text(item.title, style: titleStyle),
                             ),
                             Container(
+                              width: MyApp.width * 0.7,
                               margin: const EdgeInsets.only(bottom: 12),
                               child: Text(item.content, style: contentStyle),
                             ),

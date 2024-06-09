@@ -68,7 +68,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
             const SizedBox(height: 30),
             Expanded(
               child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: permissions.length,
                 itemBuilder: (context, index) {
                   final permission = permissions[index];
