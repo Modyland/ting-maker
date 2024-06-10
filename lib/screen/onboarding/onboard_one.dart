@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -47,17 +48,35 @@ class _OnePageScreenState extends State<OnePageScreen>
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                '여기서 뭐하지?',
-                style: onboardTitleStyle,
+              AnimatedTextKit(
+                totalRepeatCount: 1,
+                animatedTexts: [
+                  TyperAnimatedText(
+                    speed: Durations.short2,
+                    '여기서 뭐하지?',
+                    textStyle: onboardTitleStyle,
+                  ),
+                ],
               ),
-              Text(
-                '빠르고 쉬운 실시간 동네 소모임',
-                style: onboardRegularStyle,
+              AnimatedTextKit(
+                totalRepeatCount: 1,
+                animatedTexts: [
+                  TyperAnimatedText(
+                    speed: Durations.short2,
+                    '빠르고 쉬운 실시간 동네 소모임',
+                    textStyle: onboardRegularStyle,
+                  ),
+                ],
               ),
-              Text(
-                '어렵지 않아요',
-                style: onboardRegularStyle,
+              AnimatedTextKit(
+                totalRepeatCount: 1,
+                animatedTexts: [
+                  TyperAnimatedText(
+                    speed: Durations.short2,
+                    '어렵지 않아요',
+                    textStyle: onboardRegularStyle,
+                  ),
+                ],
               )
             ],
           ),

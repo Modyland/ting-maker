@@ -80,8 +80,8 @@ class CommunityController extends GetxController
   void onInit() {
     super.onInit();
     tabController.addListener(handleTabChange);
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
+    _pagingController.addPageRequestListener((pageKey) async {
+      await _fetchPage(pageKey);
     });
   }
 

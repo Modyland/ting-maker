@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/cluster.dart';
+import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/dialog/profile_dialog.dart';
 
 Future<void> showProfileSheet(List<dynamic> users, Cluster cluster) async {
@@ -31,12 +32,13 @@ Future<void> showProfileSheet(List<dynamic> users, Cluster cluster) async {
             ),
             child: ListTile(
               leading: CircleAvatar(
+                backgroundColor: pointColor.withAlpha(100),
                 backgroundImage: ExtendedNetworkImageProvider(
                   "${baseUrl}ting/mapProfiles?idx=$userIdx",
                   cache: true,
                   cacheKey: 'markerImg$userIdx',
+                  imageCacheName: 'markerImg$userIdx',
                   cacheMaxAge: const Duration(days: 3),
-                  cacheRawData: true,
                 ),
               ),
               title: Text(

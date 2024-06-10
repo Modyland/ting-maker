@@ -262,15 +262,10 @@ class CustomNaverMapController extends GetxController {
     String imageUrl = "${baseUrl}ting/mapProfiles?idx=$userIdx";
     final image = ExtendedImage.network(
       imageUrl,
-      cache: true,
       cacheKey: 'markerImg$userIdx',
+      imageCacheName: 'markerImg$userIdx',
       cacheMaxAge: const Duration(days: 3),
-      enableMemoryCache: true,
-      cacheRawData: true,
       fit: BoxFit.cover,
-      enableSlideOutPage: true,
-      clearMemoryCacheWhenDispose: true,
-      handleLoadingProgress: true,
     ).image;
 
     final Completer<ImageInfo> completer = Completer();

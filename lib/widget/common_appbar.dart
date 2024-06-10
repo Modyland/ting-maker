@@ -6,7 +6,7 @@ import 'package:ting_maker/widget/common_style.dart';
 AppBar commonAppbar() {
   return AppBar(
     elevation: 0,
-    scrolledUnderElevation: 3,
+    scrolledUnderElevation: 0,
     leading: IconButton(
       icon: Icon(Icons.arrow_back, color: grey500),
       onPressed: () => Get.back(),
@@ -14,10 +14,10 @@ AppBar commonAppbar() {
   );
 }
 
-AppBar dialogAppbar(String title, bool isReady, VoidCallback callback) {
+AppBar registerAppbar(String title, bool isReady, VoidCallback callback) {
   return AppBar(
     elevation: 0,
-    scrolledUnderElevation: 3,
+    scrolledUnderElevation: 0,
     leading: IconButton(
       icon: Icon(Icons.close, color: grey500),
       onPressed: () => Get.back(),
@@ -71,8 +71,8 @@ AppBar homeAppbar(
       );
     case Navigation.community:
       return AppBar(
-        elevation: ele ?? 1,
-        scrolledUnderElevation: ele ?? 1,
+        elevation: ele ?? 3,
+        scrolledUnderElevation: ele ?? 3,
         flexibleSpace: SizedBox(
           width: double.infinity,
           height: kToolbarHeight,

@@ -16,12 +16,14 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Obx(
-          () => dialogAppbar(
+          () => registerAppbar(
               '동네생활 글쓰기',
               controller.getSubject.isNotEmpty &&
                   controller.getTitle.isNotEmpty &&
                   controller.getContent.isNotEmpty,
-              () async => await controller.registerSubmit()),
+              () async => Get.showOverlay(
+                  asyncFunction: controller.registerSubmit,
+                  loadingWidget: const CircularProgressIndicator())),
         ),
       ),
       body: GestureDetector(
@@ -103,7 +105,7 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
                                 TextFormField(
                                   style:
                                       const TextStyle(fontSize: 15, height: 1),
-                                  minLines: 1,
+                                  minLines: 10,
                                   maxLines: null,
                                   decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.symmetric(

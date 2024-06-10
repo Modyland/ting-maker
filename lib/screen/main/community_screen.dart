@@ -34,9 +34,7 @@ class CommunityScreen extends GetView<CommunityController> {
                     children: [
                       ClassListWidget(controller: controller),
                       SubjectListWidget(controller: controller),
-                      Flexible(
-                        child: NboListWidget(controller: controller),
-                      )
+                      Flexible(child: NboListWidget(controller: controller))
                     ],
                   ),
                   Positioned(

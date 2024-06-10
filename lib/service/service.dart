@@ -38,8 +38,12 @@ class MainProvider extends GetConnect {
     return httpClient.get('/nbo/nbo_Subject?length=$length');
   }
 
-  Future<List<Nbo>?> getNboSelect(int limit,
-      {String? id, String? keyword, int? idx}) async {
+  Future<List<Nbo>?> getNboSelect(
+    int limit, {
+    String? id,
+    String? keyword,
+    int? idx,
+  }) async {
     String url = '/nbo/nboSelect?limit=$limit';
     if (id != null) {
       url += '&id=$id';

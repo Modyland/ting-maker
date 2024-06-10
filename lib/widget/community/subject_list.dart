@@ -36,25 +36,51 @@ class SubjectListWidget extends StatelessWidget {
               onTap: () =>
                   controller.goingSubjectPage(controller.getSubjectList[idx]!),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: grey300,
-                    width: 1,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: grey300,
+                      width: 1,
+                    ),
                   ),
-                ),
-                child: Center(
-                  child: Text(
-                    controller.getSubjectList[idx]!,
-                    style: const TextStyle(fontSize: 12, height: 1),
-                  ),
-                ),
-              ),
+                  child: controller.getSubjectList[idx]! != '주제'
+                      ? Center(
+                          child: SubjectTextWidget(
+                            controller: controller,
+                            idx: idx,
+                          ),
+                        )
+                      : Row(
+                          children: [
+                            const Icon(Icons.subject_rounded),
+                            SubjectTextWidget(
+                              controller: controller,
+                              idx: idx,
+                            ),
+                          ],
+                        )),
             ),
           );
         },
       ),
+    );
+  }
+}
+
+class SubjectTextWidget extends StatelessWidget {
+  const SubjectTextWidget(
+      {super.key, required this.controller, required this.idx});
+
+  final CommunityController controller;
+  final int idx;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      controller.getSubjectList[idx]!,
+      style: const TextStyle(fontSize: 12, height: 1),
     );
   }
 }
