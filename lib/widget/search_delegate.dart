@@ -2,25 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomSearchDelegate extends SearchDelegate<String> {
-  final List<String> searchList = [
-    "Apple",
-    "Banana",
-    "Cherry",
-    "Date",
-    "Fig",
-    "Grapes",
-    "Kiwi",
-    "Lemon",
-    "Mango",
-    "Orange",
-    "Papaya",
-    "Raspberry",
-    "Strawberry",
-    "Tomato",
-    "Watermelon",
-  ];
-
-  // These methods are mandatory you cannot skip them.
+  final List<String> searchList = [];
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -29,7 +11,6 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
-          // When pressed here the query will be cleared from the search bar.
         },
       ),
     ];
@@ -40,7 +21,6 @@ class CustomSearchDelegate extends SearchDelegate<String> {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () => Get.back(),
-      // Exit from the search screen.
     );
   }
 
@@ -55,7 +35,6 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         return ListTile(
           title: Text(searchResults[index]),
           onTap: () {
-            // Handle the selected search result.
             close(context, searchResults[index]);
           },
         );
@@ -71,6 +50,10 @@ class CustomSearchDelegate extends SearchDelegate<String> {
             .where((item) => item.toLowerCase().contains(query.toLowerCase()))
             .toList();
 
+    if (query.isEmpty) {
+      return const Text('123');
+    }
+
     return ListView.builder(
       itemCount: suggestionList.length,
       itemBuilder: (context, index) {
@@ -78,7 +61,6 @@ class CustomSearchDelegate extends SearchDelegate<String> {
           title: Text(suggestionList[index]),
           onTap: () {
             query = suggestionList[index];
-            // Show the search results based on the selected suggestion.
           },
         );
       },

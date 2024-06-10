@@ -14,7 +14,11 @@ Future<void> showProfileDialog(String idx) async {
           image: DecorationImage(
             fit: BoxFit.contain,
             image: ExtendedNetworkImageProvider(
-              "http://db.medsyslab.co.kr:4500/ting/mapProfiles?idx=$idx",
+              "${baseUrl}ting/mapProfiles?idx=$idx",
+              cache: true,
+              cacheKey: 'markerImg$idx',
+              cacheMaxAge: const Duration(days: 3),
+              cacheRawData: true,
             ),
           ),
         ),

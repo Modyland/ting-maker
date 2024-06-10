@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -82,7 +81,7 @@ class CommunityRegiController extends GetxController {
   }
 
   Future<void> getImageFromGallery() async {
-    final pickedFile = await picker.pickMultiImage(limit: 5, imageQuality: 60);
+    final pickedFile = await picker.pickMultiImage(limit: 5, imageQuality: 50);
     if (pickedFile.length > 5) {
       noTitleSnackbar('최대 업로드 갯수는 5개 입니다.', time: 2);
     }
@@ -95,7 +94,7 @@ class CommunityRegiController extends GetxController {
 
   Future<void> getImageFromCamera() async {
     final XFile? pickedFile =
-        await picker.pickImage(source: ImageSource.camera, imageQuality: 60);
+        await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
     if (pickedFile != null) {
       regiImage.add(await pickedFile.readAsBytes());
     }
@@ -122,17 +121,14 @@ class CommunityRegiController extends GetxController {
         "content": getContent,
         "nboImg": regiImage.toList().isNotEmpty ? regiImage.toList() : null,
       };
-
       final res = await service.nboInsert(req);
       final data = json.decode(res.bodyString!);
       if (data) {
         Get.back();
         CommunityController.to.getPagingController.refresh();
         noTitleSnackbar('게시글이 등록되었습니다.', time: 2);
-        log('$data');
       }
     } catch (err) {
-      log('$err');
       noTitleSnackbar('잠시 후 다시 이용해 주세요.');
     }
   }

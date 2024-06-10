@@ -60,6 +60,7 @@ class MainProvider extends GetConnect {
   }
 
   Future<Response> nboInsert(Map data) async {
-    return httpClient.post('/nbo/api_post', body: data);
+    return httpClient.post('/nbo/api_post', body: data)
+      ..timeout(const Duration(seconds: 10));
   }
 }

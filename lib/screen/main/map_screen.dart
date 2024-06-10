@@ -56,8 +56,8 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                 onCameraChange: (reason, animated) {
                   // 카메라 움직일때
                 },
-                onCameraIdle: () {
-                  controller.onCameraIdle();
+                onCameraIdle: () async {
+                  await controller.onCameraIdle();
                 },
                 onMapTapped: (point, latLng) {
                   // 지도에서 클릭한 위치 나옴

@@ -32,7 +32,11 @@ Future<void> showProfileSheet(List<dynamic> users, Cluster cluster) async {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage: ExtendedNetworkImageProvider(
-                  "http://db.medsyslab.co.kr:4500/ting/mapProfiles?idx=$userIdx",
+                  "${baseUrl}ting/mapProfiles?idx=$userIdx",
+                  cache: true,
+                  cacheKey: 'markerImg$userIdx',
+                  cacheMaxAge: const Duration(days: 3),
+                  cacheRawData: true,
                 ),
               ),
               title: Text(

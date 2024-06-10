@@ -38,6 +38,7 @@ import 'package:ting_maker/widget/common_style.dart';
 
 // const BasicMessageChannel<String> appLifeCycleChannel =
 // BasicMessageChannel<String>('appLifeCycle', StringCodec());
+const baseUrl = 'http://db.medsyslab.co.kr:4500/';
 late SqliteBase sqliteBase;
 late PackageInfo packageInfo;
 late Map<String, dynamic> deviceInfo;

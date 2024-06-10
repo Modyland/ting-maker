@@ -86,7 +86,7 @@ class CustomNaverMapController extends GetxController {
     return userPositionData;
   }
 
-  void cameraStopSendData(List<NLatLng> region) {
+  Future<void> cameraStopSendData(List<NLatLng> region) async {
     final req = {
       'mapRect': [
         {'lat': region[0].latitude, 'lng': region[0].longitude},
@@ -110,7 +110,7 @@ class CustomNaverMapController extends GetxController {
   }
 
   void socketInit() {
-    socket.onConnect((_) {
+    socket.onConnect((_) async {
       Log.f('connect');
     });
     socket.onDisconnect((_) {
@@ -167,7 +167,7 @@ class CustomNaverMapController extends GetxController {
     }
 
     final region = await nowCameraRegion();
-    cameraStopSendData(region);
+    await cameraStopSendData(region);
   }
 
   Future<void> checkUsers(List<dynamic> data) async {
@@ -195,7 +195,7 @@ class CustomNaverMapController extends GetxController {
       'visible': 1
     });
     final zoom = await nowCameraZoom();
-    zoomChange(zoom);
+    await zoomChange(zoom);
   }
 
   Future<void> initCurrentPosition() async {
@@ -233,13 +233,14 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
-  void onCameraIdle() async {
+  Future<void> onCameraIdle() async {
     if (getMapController != null &&
+        socket.connected &&
         NavigationProvider.to.currentIndex.value == Navigation.naverMap.index) {
-      log('카메라 멈췄다!', time: DateTime.now());
+      log('카메라 멈췄다!', time: DateTime.now(), name: 'camera');
 
       final region = await nowCameraRegion();
-      cameraStopSendData(region);
+      await cameraStopSendData(region);
     }
   }
 
@@ -258,14 +259,18 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<ImageInfo> fetchUserImage(int userIdx) async {
-    String imageUrl =
-        "http://db.medsyslab.co.kr:4500/ting/mapProfiles?idx=$userIdx";
+    String imageUrl = "${baseUrl}ting/mapProfiles?idx=$userIdx";
     final image = ExtendedImage.network(
       imageUrl,
       cache: true,
-      cacheKey: userIdx.toString(),
+      cacheKey: 'markerImg$userIdx',
       cacheMaxAge: const Duration(days: 3),
       enableMemoryCache: true,
+      cacheRawData: true,
+      fit: BoxFit.cover,
+      enableSlideOutPage: true,
+      clearMemoryCacheWhenDispose: true,
+      handleLoadingProgress: true,
     ).image;
 
     final Completer<ImageInfo> completer = Completer();
@@ -415,9 +420,8 @@ class CustomNaverMapController extends GetxController {
       if (getMapController != null) {
         await getMapController
             ?.clearOverlays(type: NOverlayType.marker)
-            .then((v) async {
-          await getMapController?.addOverlayAll(markers);
-        });
+            .then((v) async => await getMapController?.addOverlayAll(markers));
+
         // Set<NMarker> currentMarkers = getMarkers.toSet();
         // Set<NMarker> newData = markers.toSet();
 

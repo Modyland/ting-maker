@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/controller/community_controller.dart';
@@ -41,70 +42,105 @@ class NboListWidget extends StatelessWidget {
             return InkWell(
               onTap: () {},
               child: Container(
+                height: 120,
                 padding:
                     const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(width: 1, color: grey100),
+                  ),
+                ),
+                child: Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 2.5, horizontal: 7),
-                      margin: const EdgeInsets.only(bottom: 8),
-                      decoration: BoxDecoration(
-                        color: grey300,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        item.subject,
-                        style: const TextStyle(
-                            color: Colors.white, fontSize: 10, height: 1),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: MyApp.width * 0.7,
-                              margin: const EdgeInsets.only(bottom: 8),
-                              child: Text(item.title,
-                                  style: titleStyle, maxLines: 1),
+                    Expanded(
+                      flex: 8,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 2.5, horizontal: 7),
+                            margin: const EdgeInsets.only(bottom: 8),
+                            decoration: BoxDecoration(
+                              color: grey300,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(12),
+                              ),
                             ),
-                            Container(
-                              width: MyApp.width * 0.7,
-                              margin: const EdgeInsets.only(bottom: 12),
-                              child: Text(item.content,
-                                  style: contentStyle, maxLines: 2),
+                            child: Text(
+                              item.subject,
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 10, height: 1),
                             ),
-                          ],
-                        ),
-                        Container()
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text.rich(
-                          TextSpan(
-                            style: contentStyle,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(text: item.vilege),
-                              const TextSpan(text: '·'),
-                              TextSpan(text: getTimeDiff(item.writetime)),
-                              const TextSpan(text: '·'),
-                              TextSpan(text: item.likes.toString()),
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                child: Text(item.title,
+                                    style: titleStyle, maxLines: 1),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                child: Text(
+                                    item.content.splitMapJoin('\n',
+                                        onMatch: (m) => ' '),
+                                    style: contentStyle,
+                                    maxLines: 1),
+                              ),
                             ],
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text.rich(
+                                TextSpan(
+                                  style: contentStyle,
+                                  children: [
+                                    TextSpan(text: item.vilege),
+                                    const TextSpan(text: '·'),
+                                    TextSpan(text: getTimeDiff(item.writetime)),
+                                    const TextSpan(text: '·'),
+                                    TextSpan(text: item.likes.toString()),
+                                  ],
+                                ),
+                              ),
+                              const Row(
+                                children: [],
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 120,
+                        child: Card(
+                          shadowColor: grey300,
+                          color: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          clipBehavior: Clip.hardEdge,
+                          child: ExtendedImage.network(
+                            '${baseUrl}nbo/nboImgFirstSelect?nboidx=${item.idx}',
+                            cache: true,
+                            cacheKey: 'nboFirstImg${item.idx}',
+                            cacheMaxAge: const Duration(days: 3),
+                            enableMemoryCache: true,
+                            fit: BoxFit.cover,
+                            cacheRawData: true,
+                            enableSlideOutPage: true,
+                            clearMemoryCacheWhenDispose: true,
+                            handleLoadingProgress: true,
+                          ),
                         ),
-                        const Row(
-                          children: [],
-                        )
-                      ],
-                    )
+                      ),
+                    ),
                   ],
                 ),
               ),
