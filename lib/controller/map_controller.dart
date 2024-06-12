@@ -413,9 +413,9 @@ class CustomNaverMapController extends GetxController {
   Future<void> showMarkers(Set<NMarker> markers) async {
     try {
       if (getMapController != null) {
-        await getMapController
-            ?.clearOverlays(type: NOverlayType.marker)
-            .then((v) async => await getMapController?.addOverlayAll(markers));
+        await getMapController?.clearOverlays(type: NOverlayType.marker);
+        await getMapController?.addOverlayAll(markers);
+        await getMapController?.forceRefresh();
 
         // Set<NMarker> currentMarkers = getMarkers.toSet();
         // Set<NMarker> newData = markers.toSet();

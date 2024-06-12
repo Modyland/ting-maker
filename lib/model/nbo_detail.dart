@@ -1,40 +1,42 @@
-class Nbo {
+import 'package:ting_maker/model/comment.dart';
+
+class NboDetail {
   final int idx;
   final String writetime;
   final String aka;
   final int likes;
-  final int commentes;
   final String vilege;
   final String subject;
   final String title;
   final String content;
-  final int isImg;
+  final List<int> imgIdxArr;
+  final List<Comment> commentDto;
 
-  Nbo({
+  NboDetail({
     required this.idx,
     required this.writetime,
     required this.aka,
     required this.likes,
-    required this.commentes,
     required this.vilege,
     required this.subject,
     required this.title,
     required this.content,
-    required this.isImg,
+    required this.imgIdxArr,
+    required this.commentDto,
   });
 
-  factory Nbo.fromJson(Map<String, dynamic> json) {
-    return Nbo(
+  factory NboDetail.fromJson(Map<String, dynamic> json) {
+    return NboDetail(
       idx: json['idx'],
       writetime: json['writetime'],
       aka: json['aka'],
       likes: json['likes'],
-      commentes: json['commentes'],
       vilege: json['vilege'],
       subject: json['subject'],
       title: json['title'],
       content: json['content'],
-      isImg: json['isImg'],
+      imgIdxArr: json['imgIdxArr'],
+      commentDto: json['commentDto'],
     );
   }
 
@@ -44,12 +46,12 @@ class Nbo {
       'writetime': writetime,
       'aka': aka,
       'likes': likes,
-      'commentes': commentes,
       'vilege': vilege,
       'subject': subject,
       'title': title,
       'content': content,
-      'isImg': isImg,
+      'imgIdxArr': imgIdxArr,
+      'commentDto': commentDto,
     };
   }
 }

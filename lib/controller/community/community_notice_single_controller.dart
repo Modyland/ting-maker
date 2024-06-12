@@ -1,16 +1,16 @@
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/model/nbo.dart';
+import 'package:ting_maker/model/nbo_list.dart';
 
 class CommunityNoticeSingleController extends GetxController {
   static CommunityNoticeSingleController get to => Get.find();
   Rx<dynamic> id = Rx(Get.arguments);
   final limitSize = 10;
-  final PagingController<int, Nbo> _pagingController =
+  final PagingController<int, NboList> _pagingController =
       PagingController(firstPageKey: 0);
 
-  PagingController<int, Nbo> get getPagingController => _pagingController;
+  PagingController<int, NboList> get getPagingController => _pagingController;
   String get getId => id.value;
 
   @override

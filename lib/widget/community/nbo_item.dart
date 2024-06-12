@@ -1,7 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/model/nbo.dart';
+import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/util/time.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -19,7 +19,7 @@ TextStyle contentStyle = TextStyle(
   color: grey400,
 );
 
-InkWell nboItem(Nbo item, TextStyle titleStyle, TextStyle contentStyle) {
+InkWell nboItem(NboList item, TextStyle titleStyle, TextStyle contentStyle) {
   return InkWell(
     onTap: () {},
     child: Container(
@@ -47,8 +47,6 @@ InkWell nboItem(Nbo item, TextStyle titleStyle, TextStyle contentStyle) {
                       TextSpan(text: item.vilege),
                       const TextSpan(text: '·'),
                       TextSpan(text: getTimeDiff(item.writetime)),
-                      const TextSpan(text: '·'),
-                      TextSpan(text: item.likes.toString()),
                     ],
                   ),
                 )
@@ -74,13 +72,14 @@ InkWell nboItem(Nbo item, TextStyle titleStyle, TextStyle contentStyle) {
   );
 }
 
-SizedBox nboFirstImg(Nbo item) {
+SizedBox nboFirstImg(NboList item) {
   return SizedBox(
     width: double.infinity,
     height: 80,
     child: Card(
-      shadowColor: grey300,
-      color: pointColor.withAlpha(100),
+      elevation: 4,
+      shadowColor: grey200,
+      color: pointColor.withAlpha(30),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -96,7 +95,8 @@ SizedBox nboFirstImg(Nbo item) {
   );
 }
 
-Column nboTitleContent(Nbo item, TextStyle titleStyle, TextStyle contentStyle) {
+Column nboTitleContent(
+    NboList item, TextStyle titleStyle, TextStyle contentStyle) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -110,7 +110,7 @@ Column nboTitleContent(Nbo item, TextStyle titleStyle, TextStyle contentStyle) {
   );
 }
 
-Container nboSubjectBadge(Nbo item) {
+Container nboSubjectBadge(NboList item) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 7),
     decoration: BoxDecoration(

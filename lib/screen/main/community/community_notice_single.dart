@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/controller/community/community_notice_single_controller.dart';
-import 'package:ting_maker/model/nbo.dart';
+import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/community/nbo_item.dart';
@@ -45,7 +45,7 @@ class CommunityNoticeSingleScreen
               child: PagedListView(
                 shrinkWrap: true,
                 pagingController: controller.getPagingController,
-                builderDelegate: PagedChildBuilderDelegate<Nbo>(
+                builderDelegate: PagedChildBuilderDelegate<NboList>(
                   itemBuilder: (context, item, idx) {
                     return nboItem(item, titleStyle, contentStyle);
                   },

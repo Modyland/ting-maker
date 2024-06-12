@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/model/nbo.dart';
+import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/sheet/community_sheet.dart';
@@ -15,7 +15,7 @@ class CommunityController extends GetxController
     with GetSingleTickerProviderStateMixin {
   static CommunityController get to => Get.find();
   final limitSize = 10;
-  final PagingController<int, Nbo> _pagingController = PagingController(
+  final PagingController<int, NboList> _pagingController = PagingController(
     firstPageKey: 0,
   );
   Rx<TabState> nowTab = TabState.all.obs;
@@ -45,7 +45,7 @@ class CommunityController extends GetxController
     animationDuration: const Duration(milliseconds: 300),
   );
 
-  PagingController<int, Nbo> get getPagingController => _pagingController;
+  PagingController<int, NboList> get getPagingController => _pagingController;
   TabState get getTab => nowTab.value;
   bool get isClassPage =>
       NavigationProvider.to.currentIndex.value == Navigation.community.index &&
@@ -77,12 +77,13 @@ class CommunityController extends GetxController
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     tabController.addListener(handleTabChange);
     _pagingController.addPageRequestListener((pageKey) async {
       await _fetchPage(pageKey);
     });
+    await test();
   }
 
   @override
@@ -151,5 +152,12 @@ class CommunityController extends GetxController
     } catch (error) {
       _pagingController.error = error;
     }
+  }
+
+  Future<void> test() async {
+    Future.delayed(
+        const Duration(seconds: 2),
+        () async =>
+            await service.getNboDetail(93, personBox.get('person')!.id));
   }
 }

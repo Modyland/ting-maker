@@ -42,6 +42,9 @@ class CommunityScreen extends GetView<CommunityController> {
                     right: 20,
                     child: TextButton(
                       style: TextButton.styleFrom(
+                        padding: const EdgeInsets.all(12),
+                        shadowColor: grey200,
+                        elevation: 4,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
                         ),

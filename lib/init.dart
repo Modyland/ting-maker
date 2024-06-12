@@ -16,6 +16,7 @@ import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/person.dart';
 import 'package:ting_maker/util/device.dart';
 import 'package:ting_maker/util/logger.dart';
+import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 // Future<void> initGeoJson(
 //   String assetPath, {
@@ -121,15 +122,19 @@ Future<void> initFirebase() async {
 }
 
 Future<void> getSubjectList() async {
-  int subjectLength = 0;
-  final subject = utilBox.get('subject');
-  if (subject != null) {
-    subjectLength = subject.length;
-  }
-  final res = await service.getSubject(subjectLength);
-  final data = json.decode(res.bodyString!) as List;
-  if (data.isNotEmpty) {
-    await utilBox.put('subject', data);
-    log('${utilBox.get('subject')}', time: DateTime.now());
+  try {
+    int subjectLength = 0;
+    final subject = utilBox.get('subject');
+    if (subject != null) {
+      subjectLength = subject.length;
+    }
+    final res = await service.getSubject(subjectLength);
+    final data = json.decode(res.bodyString!) as List;
+    if (data.isNotEmpty) {
+      await utilBox.put('subject', data);
+      log('${utilBox.get('subject')}', time: DateTime.now());
+    }
+  } catch (err) {
+    noTitleSnackbar('잠시 후 다시 이용해 주세요.');
   }
 }

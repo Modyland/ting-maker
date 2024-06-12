@@ -17,13 +17,15 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Obx(
           () => registerAppbar(
-              '동네생활 글쓰기',
-              controller.getSubject.isNotEmpty &&
-                  controller.getTitle.isNotEmpty &&
-                  controller.getContent.isNotEmpty,
-              () async => Get.showOverlay(
-                  asyncFunction: controller.registerSubmit,
-                  loadingWidget: const CircularProgressIndicator())),
+            '동네생활 글쓰기',
+            controller.getSubject.isNotEmpty &&
+                controller.getTitle.isNotEmpty &&
+                controller.getContent.isNotEmpty,
+            () async => Get.showOverlay(
+              asyncFunction: controller.registerSubmit,
+              loadingWidget: const CircularProgressIndicator(),
+            ),
+          ),
         ),
       ),
       body: GestureDetector(
@@ -123,75 +125,76 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
                                     controller.setContent = value;
                                   },
                                 ),
-                                Obx(() => Expanded(
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: List.generate(
-                                              controller.regiImage.length,
-                                              (v) {
-                                                return Stack(
-                                                  alignment: Alignment.topRight,
-                                                  children: [
-                                                    Container(
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              right: 8),
-                                                      height:
-                                                          MyApp.width * 0.16,
-                                                      width: MyApp.width * 0.16,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(14),
-                                                        image: DecorationImage(
-                                                          image: MemoryImage(
-                                                            controller
-                                                                .regiImage[v],
+                                Obx(
+                                  () => Expanded(
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: List.generate(
+                                            controller.regiImage.length,
+                                            (v) {
+                                              return Stack(
+                                                alignment: Alignment.topRight,
+                                                children: [
+                                                  Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            right: 8),
+                                                    height: MyApp.width * 0.16,
+                                                    width: MyApp.width * 0.16,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              14),
+                                                      image: DecorationImage(
+                                                        image: MemoryImage(
+                                                          controller
+                                                              .regiImage[v],
+                                                        ),
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    top: 3,
+                                                    right: 11,
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        controller.regiImage
+                                                            .removeAt(v);
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(3),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: grey500,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                            50,
                                                           ),
-                                                          fit: BoxFit.cover,
+                                                        ),
+                                                        child: Icon(
+                                                          Icons.close,
+                                                          color: grey100,
+                                                          size: 14,
                                                         ),
                                                       ),
                                                     ),
-                                                    Positioned(
-                                                      top: 3,
-                                                      right: 11,
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          controller.regiImage
-                                                              .removeAt(v);
-                                                        },
-                                                        child: Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(3),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: grey500,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                              50,
-                                                            ),
-                                                          ),
-                                                          child: Icon(
-                                                            Icons.close,
-                                                            color: grey100,
-                                                            size: 14,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
                                           ),
-                                        ],
-                                      ),
-                                    )),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -218,7 +221,7 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
                       children: [
                         TextButton(
                           style: TextButton.styleFrom(
-                            iconColor: grey300,
+                            iconColor: grey400,
                             backgroundColor: Colors.transparent,
                           ),
                           child: Row(
@@ -227,7 +230,7 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
                               const SizedBox(width: 4),
                               Text(
                                 '사진',
-                                style: TextStyle(color: grey300, height: 1),
+                                style: TextStyle(color: grey400, height: 1),
                               ),
                             ],
                           ),

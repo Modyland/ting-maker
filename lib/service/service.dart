@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get_connect/connect.dart';
-import 'package:ting_maker/model/nbo.dart';
+import 'package:ting_maker/model/nbo_detail.dart';
+import 'package:ting_maker/model/nbo_list.dart';
 
 class MainProvider extends GetConnect {
   @override
@@ -38,12 +40,19 @@ class MainProvider extends GetConnect {
     return httpClient.get('/nbo/nbo_Subject?length=$length');
   }
 
-  Future<List<Nbo>?> getNboSelect(
-    int limit, {
-    String? id,
-    String? keyword,
-    int? idx,
-  }) async {
+  Future<NboDetail?> getNboDetail(int idx, String id) async {
+    final res = await httpClient.get('/nbo/nboClick?idx=$idx&id=$id');
+    if (res.statusCode! <= 400) {
+      final NboDetail data = json.decode(res.bodyString!);
+      log('$data');
+      return data;
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<NboList>?> getNboSelect(int limit,
+      {String? id, String? keyword, int? idx}) async {
     String url = '/nbo/nboSelect?limit=$limit';
     if (id != null) {
       url += '&id=$id';
@@ -57,7 +66,7 @@ class MainProvider extends GetConnect {
     final res = await httpClient.get(url);
     if (res.statusCode! <= 400) {
       final List<dynamic> data = json.decode(res.bodyString!);
-      return data.map((json) => Nbo.fromJson(json)).toList();
+      return data.map((json) => NboList.fromJson(json)).toList();
     } else {
       return null;
     }
