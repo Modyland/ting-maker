@@ -35,8 +35,10 @@ class NboDetail {
       subject: json['subject'],
       title: json['title'],
       content: json['content'],
-      imgIdxArr: json['imgIdxArr'],
-      commentDto: json['commentDto'],
+      imgIdxArr: List<int>.from(json['imgIdxArr']),
+      commentDto: (json['commentDto'] as List<dynamic>)
+          .map((commentJson) => Comment.fromJson(commentJson))
+          .toList(),
     );
   }
 

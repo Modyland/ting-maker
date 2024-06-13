@@ -24,7 +24,13 @@ class NboListWidget extends StatelessWidget {
         pagingController: controller.getPagingController,
         builderDelegate: PagedChildBuilderDelegate<NboList>(
           itemBuilder: (context, item, idx) {
-            return nboItem(item, titleStyle, contentStyle);
+            return nboItem(
+              context,
+              item,
+              titleStyle,
+              contentStyle,
+              controller.goDetail,
+            );
           },
           firstPageProgressIndicatorBuilder: (context) {
             return const Center(

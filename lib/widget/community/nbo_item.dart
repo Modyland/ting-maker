@@ -2,6 +2,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_list.dart';
+import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/util/time.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -19,9 +20,18 @@ TextStyle contentStyle = TextStyle(
   color: grey400,
 );
 
-InkWell nboItem(NboList item, TextStyle titleStyle, TextStyle contentStyle) {
+InkWell nboItem(
+  BuildContext context,
+  NboList item,
+  TextStyle titleStyle,
+  TextStyle contentStyle,
+  Future<void> Function(int) callback,
+) {
   return InkWell(
-    onTap: () {},
+    onTap: () async {
+      OverlayManager.showOverlay(context);
+      await callback(item.idx);
+    },
     child: Container(
       height: 120,
       padding: const EdgeInsets.fromLTRB(12, 6, 12, 3),

@@ -2,14 +2,14 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_list.dart';
+import 'package:ting_maker/util/overlay.dart';
 
 class CommunityNoticeSingleController extends GetxController {
-  static CommunityNoticeSingleController get to => Get.find();
-  Rx<dynamic> id = Rx(Get.arguments);
   final limitSize = 10;
+  static CommunityNoticeSingleController get to => Get.find();
+  final Rx<String> id = Rx(Get.arguments);
   final PagingController<int, NboList> _pagingController =
       PagingController(firstPageKey: 0);
-
   PagingController<int, NboList> get getPagingController => _pagingController;
   String get getId => id.value;
 
@@ -46,5 +46,11 @@ class CommunityNoticeSingleController extends GetxController {
     } catch (error) {
       _pagingController.error = error;
     }
+  }
+
+  Future<void> goDetail(int idx) async {
+    final detail = await service.getNboDetail(idx, personBox.get('person')!.id);
+    Get.toNamed('/home/community_view', arguments: detail);
+    OverlayManager.hideOverlay();
   }
 }

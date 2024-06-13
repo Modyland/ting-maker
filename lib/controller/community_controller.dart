@@ -4,6 +4,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/service/navigation_service.dart';
+import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/sheet/community_sheet.dart';
 
@@ -13,18 +14,27 @@ enum TabState { all, schedule, my }
 
 class CommunityController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  static CommunityController get to => Get.find();
   final limitSize = 10;
+  static CommunityController get to => Get.find();
+  final Rx<TabState> nowTab = TabState.all.obs;
+  final Rx<PageState> pageState = PageState.noticePage.obs;
+  final Rx<List> subjectList = Rx<List>(utilBox.get('subject')!);
   final PagingController<int, NboList> _pagingController = PagingController(
     firstPageKey: 0,
   );
-  Rx<TabState> nowTab = TabState.all.obs;
-  Rx<PageState> pageState = PageState.noticePage.obs;
-
-  final Rx<List> subjectList = Rx<List>(utilBox.get('subject')!);
-
+  PagingController<int, NboList> get getPagingController => _pagingController;
+  TabState get getTab => nowTab.value;
+  bool get isClassPage =>
+      NavigationProvider.to.currentIndex.value == Navigation.community.index &&
+      pageState.value == PageState.classPage;
   List get getSubjectList => subjectList.value;
 
+  late TabController tabController = TabController(
+    length: 3,
+    vsync: this,
+    initialIndex: 0,
+    animationDuration: const Duration(milliseconds: 300),
+  );
   final List<Map<String, String>> classList = [
     {'id': '1'},
     {'id': '2'},
@@ -37,19 +47,6 @@ class CommunityController extends GetxController
     {'id': '9'},
     {'id': '10'},
   ];
-
-  late TabController tabController = TabController(
-    length: 3,
-    vsync: this,
-    initialIndex: 0,
-    animationDuration: const Duration(milliseconds: 300),
-  );
-
-  PagingController<int, NboList> get getPagingController => _pagingController;
-  TabState get getTab => nowTab.value;
-  bool get isClassPage =>
-      NavigationProvider.to.currentIndex.value == Navigation.community.index &&
-      pageState.value == PageState.classPage;
   TabBar tabBar() {
     return TabBar(
       controller: tabController,
@@ -77,13 +74,12 @@ class CommunityController extends GetxController
   }
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
     tabController.addListener(handleTabChange);
     _pagingController.addPageRequestListener((pageKey) async {
       await _fetchPage(pageKey);
     });
-    await test();
   }
 
   @override
@@ -154,10 +150,9 @@ class CommunityController extends GetxController
     }
   }
 
-  Future<void> test() async {
-    Future.delayed(
-        const Duration(seconds: 2),
-        () async =>
-            await service.getNboDetail(93, personBox.get('person')!.id));
+  Future<void> goDetail(int idx) async {
+    final detail = await service.getNboDetail(idx, personBox.get('person')!.id);
+    Get.toNamed('/home/community_view', arguments: detail);
+    OverlayManager.hideOverlay();
   }
 }

@@ -8,6 +8,7 @@ import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/controller/map_controller.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/service/navigation_service.dart';
+import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/widget/sheet/community_sheet.dart';
 import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
@@ -130,6 +131,8 @@ class CommunityRegiController extends GetxController {
       }
     } catch (err) {
       noTitleSnackbar('잠시 후 다시 이용해 주세요.');
+    } finally {
+      OverlayManager.hideOverlay();
     }
   }
 }

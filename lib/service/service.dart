@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get_connect/connect.dart';
@@ -43,9 +42,9 @@ class MainProvider extends GetConnect {
   Future<NboDetail?> getNboDetail(int idx, String id) async {
     final res = await httpClient.get('/nbo/nboClick?idx=$idx&id=$id');
     if (res.statusCode! <= 400) {
-      final NboDetail data = json.decode(res.bodyString!);
-      log('$data');
-      return data;
+      final data = json.decode(res.bodyString!);
+      final NboDetail detail = NboDetail.fromJson(data);
+      return detail;
     } else {
       return null;
     }
