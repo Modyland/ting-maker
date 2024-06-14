@@ -151,6 +151,7 @@ class CommunityController extends GetxController
   }
 
   Future<void> goDetail(int idx) async {
+    OverlayManager.showOverlay(Get.overlayContext!);
     final detail = await service.getNboDetail(idx, personBox.get('person')!.id);
     Get.toNamed('/home/community_view', arguments: detail);
     OverlayManager.hideOverlay();

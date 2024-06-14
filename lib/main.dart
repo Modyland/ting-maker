@@ -133,6 +133,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ),
             scrollBehavior: NoGlowScrollBehavior(),
             debugShowCheckedModeBanner: false,
+            // showPerformanceOverlay: true,
             enableLog: true,
             locale: Get.locale,
             supportedLocales: const [
@@ -144,7 +145,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ],
             defaultTransition: Transition.native,
             transitionDuration: Durations.short4,
-            showPerformanceOverlay: true,
             title: 'Ting',
             theme: ThemeData(
               useMaterial3: false,

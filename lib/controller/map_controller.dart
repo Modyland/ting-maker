@@ -17,6 +17,7 @@ import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/util/logger.dart';
+import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/dialog/profile_dialog.dart';
@@ -36,6 +37,8 @@ class CustomNaverMapController extends GetxController {
   final Rx<String> reverseGeocoding = '유성구 관평동'.obs;
   final Rx<String> socketId = ''.obs;
   final Rx<int> visible = Rx<int>(personBox.get('person')!.visible);
+
+  final Rx<bool> isLoad = Rx<bool>(false);
 
   NaverMapController? get getMapController => _mapController.value;
   Position? get getCurrentPosition => _currentPosition.value;
@@ -65,6 +68,12 @@ class CustomNaverMapController extends GetxController {
     super.onInit();
     initCurrentPosition();
     socketInit();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    OverlayManager.showOverlay(Get.overlayContext!);
   }
 
   @override
@@ -416,7 +425,10 @@ class CustomNaverMapController extends GetxController {
         await getMapController?.clearOverlays(type: NOverlayType.marker);
         await getMapController?.addOverlayAll(markers);
         await getMapController?.forceRefresh();
-
+        if (!isLoad.value) {
+          OverlayManager.hideOverlay();
+          isLoad.value = true;
+        }
         // Set<NMarker> currentMarkers = getMarkers.toSet();
         // Set<NMarker> newData = markers.toSet();
 

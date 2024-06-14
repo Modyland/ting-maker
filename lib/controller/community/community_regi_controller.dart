@@ -111,6 +111,7 @@ class CommunityRegiController extends GetxController {
   }
 
   Future<void> registerSubmit() async {
+    OverlayManager.showOverlay(Get.overlayContext!);
     try {
       final req = {
         "kind": "nboInsert",

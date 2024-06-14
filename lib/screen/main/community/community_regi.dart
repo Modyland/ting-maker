@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/community/community_regi_controller.dart';
 import 'package:ting_maker/main.dart';
-import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -22,7 +21,6 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
               controller.getSubject.isNotEmpty &&
                   controller.getTitle.isNotEmpty &&
                   controller.getContent.isNotEmpty, () async {
-            OverlayManager.showOverlay(context);
             await controller.registerSubmit();
           }),
         ),
