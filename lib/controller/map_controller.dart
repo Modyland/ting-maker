@@ -5,7 +5,6 @@ import 'dart:developer';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -17,7 +16,6 @@ import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/util/logger.dart';
-import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/dialog/profile_dialog.dart';
@@ -49,12 +47,13 @@ class CustomNaverMapController extends GetxController {
   int get getVisible => visible.value;
   StreamSubscription<Position>? get getPositionStream => _positionStream.value;
   String get getReverseGeocoding => reverseGeocoding.value;
+  bool get getIsLoad => isLoad.value;
   set setMapController(NaverMapController? controller) =>
       _mapController(controller);
   set setVisible(int v) => visible(v);
 
   IO.Socket socket = IO.io(
-      dotenv.get('TEST_SOCKET'),
+      baseUrl,
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
@@ -68,12 +67,6 @@ class CustomNaverMapController extends GetxController {
     super.onInit();
     initCurrentPosition();
     socketInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-    OverlayManager.showOverlay(Get.overlayContext!);
   }
 
   @override
@@ -426,7 +419,6 @@ class CustomNaverMapController extends GetxController {
         await getMapController?.addOverlayAll(markers);
         await getMapController?.forceRefresh();
         if (!isLoad.value) {
-          OverlayManager.hideOverlay();
           isLoad.value = true;
         }
         // Set<NMarker> currentMarkers = getMarkers.toSet();

@@ -14,13 +14,20 @@ Future<void> showProfileDialog(String idx) async {
           color: pointColor.withAlpha(100),
           image: DecorationImage(
             fit: BoxFit.contain,
-            image: ExtendedNetworkImageProvider(
+            image: ExtendedImage.network(
               "${baseUrl}ting/mapProfiles?idx=$idx",
               cache: true,
               cacheKey: 'markerImg$idx',
               imageCacheName: 'markerImg$idx',
               cacheMaxAge: const Duration(days: 3),
-            ),
+              loadStateChanged: (state) {
+                if (state.extendedImageLoadState == LoadState.loading) {
+                  return Center(
+                      child: CircularProgressIndicator(color: pointColor));
+                }
+                return null;
+              },
+            ).image,
           ),
         ),
       ),

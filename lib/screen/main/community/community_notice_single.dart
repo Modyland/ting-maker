@@ -16,6 +16,7 @@ class CommunityNoticeSingleScreen
     return Scaffold(
       appBar: commonAppbar(),
       body: RefreshIndicator(
+        color: pointColor,
         onRefresh: () async {
           controller.getPagingController.refresh();
         },
@@ -47,22 +48,16 @@ class CommunityNoticeSingleScreen
                 pagingController: controller.getPagingController,
                 builderDelegate: PagedChildBuilderDelegate<NboList>(
                   itemBuilder: (context, item, idx) {
-                    return nboItem(
-                      context,
-                      item,
-                      titleStyle,
-                      contentStyle,
-                      controller.goDetail,
-                    );
+                    return nboItem(context, item, controller.goDetail);
                   },
                   firstPageProgressIndicatorBuilder: (context) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                    return Center(
+                      child: CircularProgressIndicator(color: pointColor),
                     );
                   },
                   newPageProgressIndicatorBuilder: (context) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                    return Center(
+                      child: CircularProgressIndicator(color: pointColor),
                     );
                   },
                   firstPageErrorIndicatorBuilder: (context) {

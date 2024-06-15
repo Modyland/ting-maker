@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get_connect/connect.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
 import 'package:ting_maker/model/nbo_list.dart';
@@ -10,7 +9,7 @@ class MainProvider extends GetConnect {
   void onInit() {
     super.onInit();
     httpClient
-      ..baseUrl = dotenv.get('TEST_URL')
+      ..baseUrl = baseUrl
       ..defaultContentType = 'application/json'
       ..timeout = const Duration(seconds: 3);
   }

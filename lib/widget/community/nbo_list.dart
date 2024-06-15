@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/model/nbo_list.dart';
+import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/community/nbo_item.dart';
 
 class NboListWidget extends StatelessWidget {
@@ -15,6 +16,7 @@ class NboListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
+      color: pointColor,
       onRefresh: () async {
         controller.getPagingController.refresh();
       },
@@ -24,22 +26,16 @@ class NboListWidget extends StatelessWidget {
         pagingController: controller.getPagingController,
         builderDelegate: PagedChildBuilderDelegate<NboList>(
           itemBuilder: (context, item, idx) {
-            return nboItem(
-              context,
-              item,
-              titleStyle,
-              contentStyle,
-              controller.goDetail,
-            );
+            return nboItem(context, item, controller.goDetail);
           },
           firstPageProgressIndicatorBuilder: (context) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Center(
+              child: CircularProgressIndicator(color: pointColor),
             );
           },
           newPageProgressIndicatorBuilder: (context) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Center(
+              child: CircularProgressIndicator(color: pointColor),
             );
           },
           firstPageErrorIndicatorBuilder: (context) {

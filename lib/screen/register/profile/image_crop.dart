@@ -38,7 +38,8 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
           withCircleUi: true,
           baseColor: pointColor,
           maskColor: Colors.black45,
-          progressIndicator: const Center(child: CircularProgressIndicator()),
+          progressIndicator:
+              Center(child: CircularProgressIndicator(color: pointColor)),
           cornerDotBuilder: (size, edgeAlignment) => DotControl(
             color: pointColor,
           ),

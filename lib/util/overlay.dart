@@ -5,9 +5,10 @@ class OverlayManager {
   static final OverlayEntry _overlayEntry = OverlayEntry(
     builder: (context) {
       return Container(
-          color: Colors.black54,
-          alignment: Alignment.center,
-          child: Image.asset('assets/image/loading.gif'));
+        color: Colors.black54,
+        alignment: Alignment.center,
+        child: Image.asset('assets/image/loading.gif'),
+      );
     },
   );
 

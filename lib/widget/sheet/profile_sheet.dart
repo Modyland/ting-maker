@@ -33,13 +33,20 @@ Future<void> showProfileSheet(List<dynamic> users, Cluster cluster) async {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: pointColor.withAlpha(100),
-                backgroundImage: ExtendedNetworkImageProvider(
+                backgroundImage: ExtendedImage.network(
                   "${baseUrl}ting/mapProfiles?idx=$userIdx",
                   cache: true,
                   cacheKey: 'markerImg$userIdx',
                   imageCacheName: 'markerImg$userIdx',
                   cacheMaxAge: const Duration(days: 3),
-                ),
+                  loadStateChanged: (state) {
+                    if (state.extendedImageLoadState == LoadState.loading) {
+                      return Center(
+                          child: CircularProgressIndicator(color: pointColor));
+                    }
+                    return null;
+                  },
+                ).image,
               ),
               title: Text(
                 '${user['aka']}',

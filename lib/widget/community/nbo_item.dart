@@ -1,5 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:ting_maker/icons/tingicons_icons.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/util/time.dart';
@@ -22,8 +23,6 @@ TextStyle contentStyle = TextStyle(
 InkWell nboItem(
   BuildContext context,
   NboList item,
-  TextStyle titleStyle,
-  TextStyle contentStyle,
   Future<void> Function(int) callback,
 ) {
   return InkWell(
@@ -41,19 +40,19 @@ InkWell nboItem(
       child: Row(
         children: [
           Expanded(
-            flex: item.isImg == 1 ? 8 : 9,
+            flex: 8,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 nboSubjectBadge(item),
-                nboTitleContent(item, titleStyle, contentStyle),
+                nboTitleContent(item, titleStyle),
                 Text.rich(
                   TextSpan(
                     style: contentStyle,
                     children: [
                       TextSpan(text: item.vilege),
-                      const TextSpan(text: '·'),
+                      const TextSpan(text: ' · '),
                       TextSpan(text: getTimeDiff(item.writetime)),
                     ],
                   ),
@@ -62,7 +61,7 @@ InkWell nboItem(
             ),
           ),
           Expanded(
-            flex: item.isImg == 1 ? 2 : 1,
+            flex: 2,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: item.isImg == 1
@@ -70,7 +69,23 @@ InkWell nboItem(
                   : MainAxisAlignment.end,
               children: [
                 if (item.isImg == 1) nboFirstImg(item),
-                const Text('1234')
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Tingicons.heart, color: grey400, size: 16),
+                        Text('\t${item.likes}', style: contentStyle),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Tingicons.comment, color: grey400, size: 16),
+                        Text('\t${item.commentes}', style: contentStyle),
+                      ],
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -87,7 +102,7 @@ SizedBox nboFirstImg(NboList item) {
     child: Card(
       elevation: 4,
       shadowColor: grey200,
-      color: pointColor.withAlpha(30),
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -98,13 +113,21 @@ SizedBox nboFirstImg(NboList item) {
         imageCacheName: 'nboFirstImg${item.idx}',
         cacheMaxAge: const Duration(days: 3),
         fit: BoxFit.cover,
+        loadStateChanged: (state) {
+          if (state.extendedImageLoadState == LoadState.loading) {
+            return Center(child: CircularProgressIndicator(color: pointColor));
+          }
+          return null;
+        },
       ),
     ),
   );
 }
 
 Column nboTitleContent(
-    NboList item, TextStyle titleStyle, TextStyle contentStyle) {
+  NboList item,
+  TextStyle titleStyle,
+) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
