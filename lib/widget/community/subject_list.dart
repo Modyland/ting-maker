@@ -25,7 +25,6 @@ class SubjectListWidget extends StatelessWidget {
       ),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        physics: const AlwaysScrollableScrollPhysics(),
         itemCount: controller.getSubjectList.length,
         itemBuilder: (context, idx) {
           return Padding(

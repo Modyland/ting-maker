@@ -77,7 +77,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
         controller: _scrollController,
         slivers: [
           SliverFillRemaining(

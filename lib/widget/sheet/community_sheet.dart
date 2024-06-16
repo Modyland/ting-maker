@@ -30,7 +30,6 @@ Future<void> showSubjectSheet(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ListView.builder(
                 itemCount: list.length,
-                physics: const AlwaysScrollableScrollPhysics(),
                 itemBuilder: (context, idx) {
                   return Card(
                     elevation: 4,

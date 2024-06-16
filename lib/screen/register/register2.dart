@@ -70,7 +70,6 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
     return Scaffold(
       appBar: commonAppbar(),
       body: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,

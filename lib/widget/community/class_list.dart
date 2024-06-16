@@ -23,7 +23,6 @@ class ClassListWidget extends StatelessWidget {
       ),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        physics: const AlwaysScrollableScrollPhysics(),
         itemCount: controller.classList.length,
         itemBuilder: (context, idx) {
           return Padding(

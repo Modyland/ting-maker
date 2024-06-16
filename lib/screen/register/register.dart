@@ -85,7 +85,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       appBar: commonAppbar(),
       body: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,

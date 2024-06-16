@@ -45,6 +45,7 @@ class CommunityNoticeSingleScreen
             Expanded(
               child: PagedListView(
                 shrinkWrap: true,
+                physics: const AlwaysScrollableScrollPhysics(),
                 pagingController: controller.getPagingController,
                 builderDelegate: PagedChildBuilderDelegate<NboList>(
                   itemBuilder: (context, item, idx) {

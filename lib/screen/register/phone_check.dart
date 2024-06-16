@@ -69,7 +69,6 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
     return Scaffold(
       appBar: commonAppbar(),
       body: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverFillRemaining(
             hasScrollBody: false,

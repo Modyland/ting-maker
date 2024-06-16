@@ -20,7 +20,6 @@ Future<void> showProfileSheet(List<dynamic> users, Cluster cluster) async {
       ),
       child: ListView.builder(
         itemCount: cluster.idxs.length,
-        physics: const AlwaysScrollableScrollPhysics(),
         itemBuilder: (context, index) {
           final userIdx = cluster.idxs[index];
           final user =
