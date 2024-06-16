@@ -15,7 +15,7 @@ Future<void> showProfileDialog(String idx) async {
           image: DecorationImage(
             fit: BoxFit.contain,
             image: ExtendedImage.network(
-              "${baseUrl}ting/mapProfiles?idx=$idx",
+              "${service.baseUrl}ting/mapProfiles?idx=$idx",
               cache: true,
               cacheKey: 'markerImg$idx',
               imageCacheName: 'markerImg$idx',

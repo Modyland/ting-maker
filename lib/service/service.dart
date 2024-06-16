@@ -7,6 +7,7 @@ import 'package:ting_maker/model/nbo_list.dart';
 class MainProvider extends GetConnect {
   @override
   void onInit() {
+    const baseUrl = 'http://db.medsyslab.co.kr:4500/';
     super.onInit();
     httpClient
       ..baseUrl = baseUrl
@@ -15,31 +16,31 @@ class MainProvider extends GetConnect {
   }
 
   Future<Response> loginLog(Map data) async {
-    return httpClient.post('/Login_log/api_getdata', body: data);
+    return httpClient.post('Login_log/api_getdata', body: data);
   }
 
   Future<Response> phoneCheck(String phone, bool check) async {
-    return httpClient.get('/SMS/sendSMS?id=&phone=$phone&check=$check');
+    return httpClient.get('SMS/sendSMS?id=&phone=$phone&check=$check');
   }
 
   Future<Response> phoneCheck2(String phone, String code) async {
-    return httpClient.get('/SMS/checkSMS?phone=$phone&code=$code');
+    return httpClient.get('SMS/checkSMS?phone=$phone&code=$code');
   }
 
   Future<Response> tingApiGetdata(Map data) async {
-    return httpClient.post('/ting/api_getdata', body: data);
+    return httpClient.post('ting/api_getdata', body: data);
   }
 
   Future<Response> visibleUpdater(Map data) async {
-    return httpClient.put('/position/visibleUpdate', body: data);
+    return httpClient.put('position/visibleUpdate', body: data);
   }
 
   Future<Response> getSubject(int length) async {
-    return httpClient.get('/nbo/nbo_Subject?length=$length');
+    return httpClient.get('nbo/nbo_Subject?length=$length');
   }
 
   Future<NboDetail?> getNboDetail(int idx, String id) async {
-    final res = await httpClient.get('/nbo/nboClick?idx=$idx&id=$id');
+    final res = await httpClient.get('nbo/nboClick?idx=$idx&id=$id');
     if (res.statusCode! <= 400) {
       final data = json.decode(res.bodyString!);
       final NboDetail detail = NboDetail.fromJson(data);
@@ -51,7 +52,7 @@ class MainProvider extends GetConnect {
 
   Future<List<NboList>?> getNboSelect(int limit,
       {String? id, String? keyword, int? idx}) async {
-    String url = '/nbo/nboSelect?limit=$limit';
+    String url = 'nbo/nboSelect?limit=$limit';
     if (id != null) {
       url += '&id=$id';
     }

@@ -34,7 +34,7 @@ Future<void> showProfileSheet(List<dynamic> users, Cluster cluster) async {
               leading: CircleAvatar(
                 backgroundColor: pointColor.withAlpha(100),
                 backgroundImage: ExtendedImage.network(
-                  "${baseUrl}ting/mapProfiles?idx=$userIdx",
+                  "${service.baseUrl}ting/mapProfiles?idx=$userIdx",
                   cache: true,
                   cacheKey: 'markerImg$userIdx',
                   imageCacheName: 'markerImg$userIdx',

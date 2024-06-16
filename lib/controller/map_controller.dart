@@ -53,7 +53,7 @@ class CustomNaverMapController extends GetxController {
   set setVisible(int v) => visible(v);
 
   IO.Socket socket = IO.io(
-      baseUrl,
+      service.baseUrl,
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
@@ -261,7 +261,7 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<ImageInfo> fetchUserImage(int userIdx) async {
-    String imageUrl = "${baseUrl}ting/mapProfiles?idx=$userIdx";
+    String imageUrl = "${service.baseUrl}ting/mapProfiles?idx=$userIdx";
     final image = ExtendedImage.network(
       imageUrl,
       cacheKey: 'markerImg$userIdx',

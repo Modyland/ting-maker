@@ -135,6 +135,7 @@ Future<void> getSubjectList() async {
       log('${utilBox.get('subject')}', time: DateTime.now());
     }
   } catch (err) {
+    log('$err', name: 'Subject');
     noTitleSnackbar('잠시 후 다시 이용해 주세요.');
   }
 }

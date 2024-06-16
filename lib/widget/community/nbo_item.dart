@@ -108,7 +108,7 @@ SizedBox nboFirstImg(NboList item) {
       ),
       clipBehavior: Clip.hardEdge,
       child: ExtendedImage.network(
-        '${baseUrl}nbo/nboImgFirstSelect?nboidx=${item.idx}',
+        '${service.baseUrl}nbo/nboImgFirstSelect?nboidx=${item.idx}',
         cacheKey: 'nboFirstImg${item.idx}',
         imageCacheName: 'nboFirstImg${item.idx}',
         cacheMaxAge: const Duration(days: 3),

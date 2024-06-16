@@ -39,7 +39,7 @@ Container nboDetailProfile(NboDetail item) {
               radius: 25,
               backgroundColor: pointColor.withAlpha(100),
               backgroundImage: ExtendedImage.network(
-                "${baseUrl}ting/mapProfiles?idx=${item.idx}",
+                "${service.baseUrl}ting/mapProfiles?idx=${item.idx}",
                 cache: true,
                 cacheKey: 'markerImg${item.idx}',
                 imageCacheName: 'markerImg${item.idx}',
