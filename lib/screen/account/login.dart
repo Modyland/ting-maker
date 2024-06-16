@@ -38,7 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
   }
 
   void loginService() async {
@@ -77,160 +76,168 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
+      body: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         controller: _scrollController,
-        child: Column(
-          children: [
-            Center(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(
-                  0,
-                  MyApp.height * 0.1,
-                  0,
-                  MyApp.height * 0.05,
+        slivers: [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(
+                      0,
+                      MyApp.height * 0.1,
+                      0,
+                      MyApp.height * 0.05,
+                    ),
+                    child: SvgPicture.asset('assets/image/logo.svg'),
+                  ),
                 ),
-                child: SvgPicture.asset('assets/image/logo.svg'),
-              ),
-            ),
-            Form(
-              key: _formKey,
-              child: Padding(
-                padding: const EdgeInsets.all(25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text(
-                      '아이디',
-                      style: _labelStyle,
-                    ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: _idEditingController,
-                      decoration: inputDecoration('아이디를 입력하세요'),
-                      keyboardType: TextInputType.text,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '아이디를 입력하세요';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      '비밀번호',
-                      style: _labelStyle,
-                    ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: _pwdEditingController,
-                      obscureText: true,
-                      decoration: inputDecoration('비밀번호를 입력하세요'),
-                      keyboardType: TextInputType.text,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '비밀번호를 입력하세요';
-                        } else if (validCheck == 0) {
-                          return '아이디 또는 비밀번호를 확인해주세요.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            text: '아이디 찾기',
-                            style: _findStyle,
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Get.toNamed(
-                                  '/phone_check',
-                                  arguments: {'tab': 'id'},
-                                );
-                              },
-                          ),
+                Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(25),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text(
+                          '아이디',
+                          style: _labelStyle,
                         ),
-                        Container(
-                          height: 12,
-                          width: 1,
-                          color: Colors.black,
-                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: _idEditingController,
+                          decoration: inputDecoration('아이디를 입력하세요'),
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '아이디를 입력하세요';
+                            }
+                            return null;
+                          },
                         ),
-                        RichText(
-                          text: TextSpan(
-                            text: '비밀번호 찾기',
-                            style: _findStyle,
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Get.toNamed(
-                                  '/phone_check',
-                                  arguments: {'tab': 'pwd'},
-                                );
-                              },
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-                    Container(
-                      width: double.infinity,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: pointColor,
-                      ),
-                      child: MaterialButton(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                        const SizedBox(height: 10),
+                        const Text(
+                          '비밀번호',
+                          style: _labelStyle,
                         ),
-                        onPressed: () {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          loginService();
-                        },
-                        child: Center(
-                          child: Text(
-                            '로그인',
-                            style: buttonWhiteTextStyle,
-                          ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: _pwdEditingController,
+                          obscureText: true,
+                          decoration: inputDecoration('비밀번호를 입력하세요'),
+                          keyboardType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '비밀번호를 입력하세요';
+                            } else if (validCheck == 0) {
+                              return '아이디 또는 비밀번호를 확인해주세요.';
+                            }
+                            return null;
+                          },
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Center(
-                      child: RichText(
-                        text: TextSpan(
-                          text: '계정이 없으신가요?\t\t',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Colors.black,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: '회원가입',
-                              style: TextStyle(
-                                color: pointColor,
-                                fontSize: 13,
-                                decoration: TextDecoration.underline,
+                        const SizedBox(height: 8),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: '아이디 찾기',
+                                style: _findStyle,
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Get.toNamed(
+                                      '/phone_check',
+                                      arguments: {'tab': 'id'},
+                                    );
+                                  },
                               ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Get.toNamed('/service_agree');
-                                },
+                            ),
+                            Container(
+                              height: 12,
+                              width: 1,
+                              color: Colors.black,
+                              margin: const EdgeInsets.symmetric(horizontal: 5),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: '비밀번호 찾기',
+                                style: _findStyle,
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Get.toNamed(
+                                      '/phone_check',
+                                      arguments: {'tab': 'pwd'},
+                                    );
+                                  },
+                              ),
                             )
                           ],
                         ),
-                      ),
+                        const SizedBox(height: 30),
+                        Container(
+                          width: double.infinity,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: pointColor,
+                          ),
+                          child: MaterialButton(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            onPressed: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              loginService();
+                            },
+                            child: Center(
+                              child: Text(
+                                '로그인',
+                                style: buttonWhiteTextStyle,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        Center(
+                          child: RichText(
+                            text: TextSpan(
+                              text: '계정이 없으신가요?\t\t',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black,
+                              ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '회원가입',
+                                  style: TextStyle(
+                                    color: pointColor,
+                                    fontSize: 13,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () async {
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                      await Get.toNamed('/service_agree');
+                                    },
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
