@@ -5,12 +5,12 @@ import 'package:ting_maker/model/nbo_detail.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 
 class MainProvider extends GetConnect {
+  static const base = 'http://db.medsyslab.co.kr:4500/';
   @override
   void onInit() {
-    const baseUrl = 'http://db.medsyslab.co.kr:4500/';
     super.onInit();
     httpClient
-      ..baseUrl = baseUrl
+      ..baseUrl = base
       ..defaultContentType = 'application/json'
       ..timeout = const Duration(seconds: 3);
   }

@@ -20,66 +20,51 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                 '동네생활 글쓰기', controller.getDetail.aka != '', () {}),
           ),
         ),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Stack(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: ListView(
+                  children: [
+                    nboDetailSubjectBadge(item),
+                    nboDetailProfile(item),
+                    nboDetailContent(item, controller),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: 52,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(color: grey200),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 52),
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: Container(
-                            padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                nboDetailSubjectBadge(item),
-                                nboDetailProfile(item)
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  IconButton(
+                    icon: Icon(Icons.image, color: grey400),
+                    onPressed: () {},
                   ),
-                  Positioned(
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      width: double.infinity,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border(
-                          top: BorderSide(color: grey200),
-                        ),
+                  Expanded(
+                    child: TextField(
+                      controller: controller.commentController,
+                      decoration: const InputDecoration(
+                        hintText: '댓글을 입력하세요',
+                        border: OutlineInputBorder(),
                       ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.image),
-                            style: TextButton.styleFrom(
-                              iconColor: grey400,
-                              backgroundColor: Colors.transparent,
-                            ),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
+                      onSubmitted: (_) {},
                     ),
                   ),
                 ],
-              );
-            },
-          ),
+              ),
+            ),
+          ],
         ),
       );
     });

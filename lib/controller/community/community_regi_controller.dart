@@ -35,12 +35,6 @@ class CommunityRegiController extends GetxController {
     await showSubjectSheetList();
   }
 
-  @override
-  void onClose() {
-    regiSubject.value = '';
-    super.onClose();
-  }
-
   Future<void> showSubjectSheetList() async {
     final subjectList = CommunityController.to.getSubjectList;
 

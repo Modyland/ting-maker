@@ -14,6 +14,7 @@ import 'package:ting_maker/main.dart';
 import 'package:ting_maker/middleware/router_middleware.dart';
 import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/service/navigation_service.dart';
+import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -53,7 +54,7 @@ class CustomNaverMapController extends GetxController {
   set setVisible(int v) => visible(v);
 
   IO.Socket socket = IO.io(
-      service.baseUrl,
+      MainProvider.base,
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()

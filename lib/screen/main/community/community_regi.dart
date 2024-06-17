@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/community/community_regi_controller.dart';
-import 'package:ting_maker/main.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -17,148 +16,133 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Obx(
           () => registerAppbar(
-              '동네생활 글쓰기',
-              controller.getSubject.isNotEmpty &&
-                  controller.getTitle.isNotEmpty &&
-                  controller.getContent.isNotEmpty, () async {
-            await controller.registerSubmit();
-          }),
+            '동네생활 글쓰기',
+            controller.getSubject.isNotEmpty &&
+                controller.getTitle.isNotEmpty &&
+                controller.getContent.isNotEmpty,
+            () async {
+              await controller.registerSubmit();
+            },
+          ),
         ),
       ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return Stack(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Form(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: ListView(
+                  children: [
+                    Obx(() => subjectSelectButton()),
+                    titleInput(),
+                    contentInput(),
+                    Obx(() => imageInput()),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          footer(context),
+        ],
+      ),
+    );
+  }
+
+  Container footer(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 52,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(color: grey200),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          TextButton(
+            style: TextButton.styleFrom(
+              iconColor: grey400,
+              backgroundColor: Colors.transparent,
+            ),
+            child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 52),
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                          child: Form(
-                            child: Column(
-                              children: [
-                                Obx(() => subjectSelectButton()),
-                                titleInput(),
-                                contentInput(),
-                                Obx(() => imageInput()),
-                              ],
+                const Icon(Icons.image),
+                const SizedBox(width: 4),
+                Text(
+                  '사진',
+                  style: TextStyle(color: grey400, height: 1),
+                ),
+              ],
+            ),
+            onPressed: () {
+              controller.showImageOptions();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container imageInput() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List.generate(
+                controller.regiImage.length,
+                (v) {
+                  return Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 8, top: 8),
+                        height: 80,
+                        width: 80,
+                        clipBehavior: Clip.none,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          image: DecorationImage(
+                            image: MemoryImage(
+                              controller.regiImage[v],
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 2,
+                        right: 0,
+                        child: InkWell(
+                          onTap: () {
+                            controller.regiImage.removeAt(v);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: grey500,
+                              borderRadius: BorderRadius.circular(
+                                50,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              color: grey100,
+                              size: 14,
                             ),
                           ),
                         ),
                       ),
                     ],
-                  ),
-                ),
-                footer(context),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Positioned footer(BuildContext context) {
-    return Positioned(
-      bottom: MediaQuery.of(context).viewInsets.bottom,
-      left: 0,
-      right: 0,
-      child: Container(
-        width: double.infinity,
-        height: 52,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            top: BorderSide(color: grey200),
-          ),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TextButton(
-              style: TextButton.styleFrom(
-                iconColor: grey400,
-                backgroundColor: Colors.transparent,
+                  );
+                },
               ),
-              child: Row(
-                children: [
-                  const Icon(Icons.image),
-                  const SizedBox(width: 4),
-                  Text(
-                    '사진',
-                    style: TextStyle(color: grey400, height: 1),
-                  ),
-                ],
-              ),
-              onPressed: () {
-                controller.showImageOptions();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Expanded imageInput() {
-    return Expanded(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: List.generate(
-              controller.regiImage.length,
-              (v) {
-                return Stack(
-                  alignment: Alignment.topRight,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      height: MyApp.width * 0.16,
-                      width: MyApp.width * 0.16,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                        image: DecorationImage(
-                          image: MemoryImage(
-                            controller.regiImage[v],
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 3,
-                      right: 11,
-                      child: InkWell(
-                        onTap: () {
-                          controller.regiImage.removeAt(v);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(3),
-                          decoration: BoxDecoration(
-                            color: grey500,
-                            borderRadius: BorderRadius.circular(
-                              50,
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.close,
-                            color: grey100,
-                            size: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
             ),
           ),
         ],

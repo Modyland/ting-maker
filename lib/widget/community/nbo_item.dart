@@ -1,8 +1,8 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ting_maker/icons/tingicons_icons.dart';
-import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_list.dart';
+import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/time.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -108,7 +108,7 @@ SizedBox nboFirstImg(NboList item) {
       ),
       clipBehavior: Clip.hardEdge,
       child: ExtendedImage.network(
-        '${service.baseUrl}nbo/nboImgFirstSelect?nboidx=${item.idx}',
+        '${MainProvider.base}nbo/nboImgFirstSelect?nboidx=${item.idx}',
         cacheKey: 'nboFirstImg_${item.idx}',
         imageCacheName: 'nboFirstImg_${item.idx}',
         cacheMaxAge: const Duration(days: 3),
