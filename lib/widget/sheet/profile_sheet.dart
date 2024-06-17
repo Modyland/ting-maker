@@ -1,10 +1,10 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/cluster.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/dialog/profile_dialog.dart';
+import 'package:ting_maker/widget/marker_img.dart';
 
 Future<void> showProfileSheet(List<dynamic> users, Cluster cluster) async {
   return await Get.bottomSheet(
@@ -32,20 +32,7 @@ Future<void> showProfileSheet(List<dynamic> users, Cluster cluster) async {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: pointColor.withAlpha(100),
-                backgroundImage: ExtendedImage.network(
-                  "${service.baseUrl}ting/mapProfiles?idx=$userIdx",
-                  cache: true,
-                  cacheKey: 'markerImg$userIdx',
-                  imageCacheName: 'markerImg$userIdx',
-                  cacheMaxAge: const Duration(days: 3),
-                  loadStateChanged: (state) {
-                    if (state.extendedImageLoadState == LoadState.loading) {
-                      return Center(
-                          child: CircularProgressIndicator(color: pointColor));
-                    }
-                    return null;
-                  },
-                ).image,
+                backgroundImage: markerImg(int.tryParse(userIdx)!),
               ),
               title: Text(
                 '${user['aka']}',

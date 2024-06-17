@@ -4,6 +4,7 @@ import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
 import 'package:ting_maker/util/time.dart';
 import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/widget/marker_img.dart';
 
 Container nboDetailSubjectBadge(NboDetail item) {
   return Container(
@@ -30,7 +31,7 @@ Container nboDetailSubjectBadge(NboDetail item) {
 
 Container nboDetailProfile(NboDetail item) {
   return Container(
-    padding: const EdgeInsets.symmetric(vertical: 10),
+    padding: EdgeInsets.symmetric(vertical: MyApp.height * 0.03),
     child: Column(
       children: [
         Row(
@@ -38,20 +39,7 @@ Container nboDetailProfile(NboDetail item) {
             CircleAvatar(
               radius: 25,
               backgroundColor: pointColor.withAlpha(100),
-              backgroundImage: ExtendedImage.network(
-                "${service.baseUrl}ting/mapProfiles?idx=${item.idx}",
-                cache: true,
-                cacheKey: 'markerImg${item.idx}',
-                imageCacheName: 'markerImg${item.idx}',
-                cacheMaxAge: const Duration(days: 3),
-                loadStateChanged: (state) {
-                  if (state.extendedImageLoadState == LoadState.loading) {
-                    return Center(
-                        child: CircularProgressIndicator(color: pointColor));
-                  }
-                  return null;
-                },
-              ).image,
+              backgroundImage: markerImg(item.idx),
             ),
             const SizedBox(width: 7),
             Column(
@@ -65,6 +53,46 @@ Container nboDetailProfile(NboDetail item) {
             )
           ],
         )
+      ],
+    ),
+  );
+}
+
+Container nboDetailContent(NboDetail item) {
+  return Container(
+    padding: EdgeInsets.symmetric(vertical: MyApp.height * 0.03),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(vertical: MyApp.height * 0.03),
+          child: Text(item.title),
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: MyApp.height * 0.03),
+          child: Text(item.content),
+        ),
+        if (item.imgIdxArr.isNotEmpty)
+          for (var idx in item.imgIdxArr)
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: ExtendedImage.network(
+                  '${service.baseUrl}nbo/nboImgSelect?imgIdx=$idx',
+                  cacheKey: 'nboImg_${item.idx}_$idx',
+                  imageCacheName: 'nboImg_${item.idx}_$idx',
+                  cacheMaxAge: const Duration(days: 3),
+                  fit: BoxFit.cover,
+                  loadStateChanged: (state) {
+                    if (state.extendedImageLoadState == LoadState.loading) {
+                      return Center(
+                          child: CircularProgressIndicator(color: pointColor));
+                    }
+                    return null;
+                  },
+                ).image),
+              ),
+            )
       ],
     ),
   );

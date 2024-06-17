@@ -55,6 +55,7 @@ dependencies:
   animated_toggle_switch: ^0.8.2
   animated_text_kit: ^4.2.2
   auto_size_text: ^3.0.0
+  flutter_chat_ui: ^1.6.14
 
 dev_dependencies:
   flutter_test:

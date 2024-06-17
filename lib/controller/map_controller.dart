@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
@@ -19,6 +18,7 @@ import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/widget/cluster_custom.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/dialog/profile_dialog.dart';
+import 'package:ting_maker/widget/marker_img.dart';
 import 'package:ting_maker/widget/sheet/profile_sheet.dart';
 import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
@@ -261,14 +261,7 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<ImageInfo> fetchUserImage(int userIdx) async {
-    String imageUrl = "${service.baseUrl}ting/mapProfiles?idx=$userIdx";
-    final image = ExtendedImage.network(
-      imageUrl,
-      cacheKey: 'markerImg$userIdx',
-      imageCacheName: 'markerImg$userIdx',
-      cacheMaxAge: const Duration(days: 3),
-      fit: BoxFit.cover,
-    ).image;
+    final image = markerImg(userIdx);
 
     final Completer<ImageInfo> completer = Completer();
     image.resolve(const ImageConfiguration()).addListener(
