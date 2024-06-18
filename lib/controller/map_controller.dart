@@ -37,7 +37,7 @@ class CustomNaverMapController extends GetxController {
   final Rx<String> socketId = ''.obs;
   final Rx<int> visible = Rx<int>(personBox.get('person')!.visible);
 
-  final Rx<bool> isLoad = Rx<bool>(false);
+  final Rx<bool> isLoading = Rx<bool>(true);
 
   NaverMapController? get getMapController => _mapController.value;
   Position? get getCurrentPosition => _currentPosition.value;
@@ -48,7 +48,7 @@ class CustomNaverMapController extends GetxController {
   int get getVisible => visible.value;
   StreamSubscription<Position>? get getPositionStream => _positionStream.value;
   String get getReverseGeocoding => reverseGeocoding.value;
-  bool get getIsLoad => isLoad.value;
+  bool get getIsLoading => isLoading.value;
   set setMapController(NaverMapController? controller) =>
       _mapController(controller);
   set setVisible(int v) => visible(v);
@@ -412,8 +412,8 @@ class CustomNaverMapController extends GetxController {
         await getMapController?.clearOverlays(type: NOverlayType.marker);
         await getMapController?.addOverlayAll(markers);
         await getMapController?.forceRefresh();
-        if (!isLoad.value) {
-          isLoad.value = true;
+        if (!getIsLoading) {
+          Future.delayed(Durations.short4, () => isLoading(false));
         }
         // Set<NMarker> currentMarkers = getMarkers.toSet();
         // Set<NMarker> newData = markers.toSet();

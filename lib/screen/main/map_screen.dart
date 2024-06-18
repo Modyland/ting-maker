@@ -11,10 +11,9 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final isLoad = controller.getIsLoad;
       final currentPosition = controller.getCurrentPosition;
       const initTarget = NLatLng(37.9699574603738, 128.7609243929731);
-      if (!isLoad && currentPosition == null) {
+      if (controller.getIsLoading && currentPosition == null) {
         return Container(
           width: double.infinity,
           height: double.infinity,

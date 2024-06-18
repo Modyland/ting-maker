@@ -45,7 +45,7 @@ Align nboDetailSubjectBadge(NboDetail item) {
   );
 }
 
-Container nboDetailProfile(NboDetail item) {
+Container nboDetailProfile(NboDetail item, bool loading) {
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
     child: Column(
@@ -54,6 +54,7 @@ Container nboDetailProfile(NboDetail item) {
           children: [
             CircleAvatar(
               radius: 25,
+              backgroundColor: Colors.transparent,
               backgroundImage: markerImg(item.idx),
             ),
             const SizedBox(width: 7),
@@ -105,7 +106,7 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
                 return Container(
                   margin: const EdgeInsets.fromLTRB(5, 0, 5, 10),
                   child: Card(
-                    color: Colors.white,
+                    color: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -126,9 +127,20 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
                 );
               } else {
                 return Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: CircularProgressIndicator(color: pointColor),
+                  margin: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+                  child: Card(
+                    color: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: 1 / 1,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                      ),
+                    ),
                   ),
                 );
               }
@@ -149,6 +161,8 @@ Container nboDetailComment(NboDetail item) {
             Text('댓글 ${item.commentDto.length}'),
           ],
         ),
+        if (item.commentDto.isNotEmpty)
+          for (var c in item.commentDto) nboCommentProfile(c)
       ],
     ),
   );
@@ -158,11 +172,13 @@ Container nboCommentProfile(Comment item) {
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             CircleAvatar(
               radius: 20,
+              backgroundColor: Colors.transparent,
               backgroundImage: markerImg(item.idx),
             ),
             const SizedBox(width: 7),
@@ -178,7 +194,8 @@ Container nboCommentProfile(Comment item) {
               ],
             )
           ],
-        )
+        ),
+        Text(item.content),
       ],
     ),
   );

@@ -8,22 +8,25 @@ import 'package:ting_maker/model/nbo_detail.dart';
 import 'package:ting_maker/service/service.dart';
 
 class CommunityViewController extends GetxController {
-  final Rx<Map<String, dynamic>> args = Rx(Get.arguments);
   final TextEditingController commentController = TextEditingController();
   final FocusNode commentFocus = FocusNode();
+
+  final Rx<Map<String, dynamic>> args = Rx(Get.arguments);
   final Rx<NboDetail?> detail = Rx(null);
-  final Rx<bool> isLoading = Rx(true);
   final Rx<int> imgCount = Rx(0);
+  final Rx<bool> isLoading = Rx(true);
+  final Rx<bool> isFocusing = Rx(false);
 
   Map<String, dynamic> get getArgs => args.value;
   NboDetail? get getDetail => detail.value;
   bool get getIsLoading => isLoading.value;
-  bool get getCommentFocus => commentFocus.hasFocus;
+  bool get getCommentFocus => isFocusing.value;
 
   @override
   void onReady() async {
     super.onReady();
     await detailInit();
+    commentFocus.addListener(() => isFocusing(commentFocus.hasFocus));
   }
 
   Future<void> detailInit() async {

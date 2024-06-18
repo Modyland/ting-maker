@@ -38,10 +38,12 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                     child: Obx(
                       () => Skeletonizer(
                         enabled: controller.getIsLoading,
+                        enableSwitchAnimation: true,
+                        justifyMultiLineText: false,
                         child: ListView(
                           children: [
                             nboDetailSubjectBadge(item),
-                            nboDetailProfile(item),
+                            nboDetailProfile(item, controller.getIsLoading),
                             nboDetailContent(item, controller),
                             nboDetailComment(item)
                           ],
@@ -68,43 +70,52 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(4),
-                        child: TextField(
-                          controller: controller.commentController,
-                          focusNode: controller.commentFocus,
-                          smartDashesType: SmartDashesType.enabled,
-                          keyboardType: TextInputType.text,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(10),
-                            hintText: '댓글을 입력하세요',
-                            filled: true,
-                            fillColor: grey100,
-                            suffixIcon: controller.getCommentFocus
-                                ? Icon(Icons.send, color: pointColor)
-                                : null,
-                            border: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(width: 1, color: pointColor),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(15),
+                        child: Obx(() {
+                          final isFocus = controller.getCommentFocus;
+                          return TextField(
+                            controller: controller.commentController,
+                            focusNode: controller.commentFocus,
+                            smartDashesType: SmartDashesType.enabled,
+                            keyboardType: TextInputType.text,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.all(10),
+                              hintText: '댓글을 입력하세요',
+                              filled: true,
+                              fillColor: pointColor.withAlpha(20),
+                              suffixIcon: isFocus
+                                  ? IconButton(
+                                      splashColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      icon: const Icon(Icons.send),
+                                      color: pointColor,
+                                      onPressed: () {},
+                                    )
+                                  : null,
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 1, color: pointColor),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(15),
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 1, color: pointColor),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(15),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 1, color: pointColor),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(15),
+                                ),
                               ),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(width: 1, color: pointColor),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(15),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(width: 1, color: pointColor),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(15),
-                              ),
-                            ),
-                          ),
-                        ),
+                          );
+                        }),
                       ),
                     ),
                   ],
