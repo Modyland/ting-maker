@@ -4,7 +4,6 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/service/navigation_service.dart';
-import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/sheet/community_sheet.dart';
 
@@ -134,6 +133,7 @@ class CommunityController extends GetxController
     try {
       final newItems = await service.getNboSelect(
         limitSize,
+        personBox.get('person')!.id,
         idx: pageKey != 0 ? _pagingController.itemList?.last.idx : null,
       );
       if (newItems != null) {
@@ -151,9 +151,6 @@ class CommunityController extends GetxController
   }
 
   Future<void> goDetail(int idx) async {
-    OverlayManager.showOverlay(Get.overlayContext!);
-    final detail = await service.getNboDetail(idx, personBox.get('person')!.id);
-    Get.toNamed('/home/community_view', arguments: detail);
-    OverlayManager.hideOverlay();
+    Get.toNamed('/home/community_view', arguments: {'idx': idx});
   }
 }

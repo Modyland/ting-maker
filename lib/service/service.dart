@@ -39,23 +39,9 @@ class MainProvider extends GetConnect {
     return httpClient.get('nbo/nbo_Subject?length=$length');
   }
 
-  Future<NboDetail?> getNboDetail(int idx, String id) async {
-    final res = await httpClient.get('nbo/nboClick?idx=$idx&id=$id');
-    if (res.statusCode! <= 400) {
-      final data = json.decode(res.bodyString!);
-      final NboDetail detail = NboDetail.fromJson(data);
-      return detail;
-    } else {
-      return null;
-    }
-  }
-
-  Future<List<NboList>?> getNboSelect(int limit,
-      {String? id, String? keyword, int? idx}) async {
-    String url = 'nbo/nboSelect?limit=$limit';
-    if (id != null) {
-      url += '&id=$id';
-    }
+  Future<List<NboList>?> getNboSelect(int limit, String id,
+      {String? keyword, int? idx}) async {
+    String url = 'nbo/nboSelect?limit=$limit&id=$id';
     if (keyword != null) {
       url += '&keyword=$keyword';
     }
@@ -72,7 +58,29 @@ class MainProvider extends GetConnect {
   }
 
   Future<Response> nboInsert(Map data) async {
-    return httpClient.post('/nbo/api_post', body: data)
+    return httpClient.post('nbo/api_post', body: data)
       ..timeout(const Duration(seconds: 10));
+  }
+
+  Future<NboDetail?> getNboDetail(int idx, String id) async {
+    final res = await httpClient.get('nbo/nboClick?idx=$idx&id=$id');
+    if (res.statusCode! <= 400) {
+      final data = json.decode(res.bodyString!);
+      final NboDetail detail = NboDetail.fromJson(data);
+      return detail;
+    } else {
+      return null;
+    }
+  }
+
+  Future<Response> nboCommentInsert(Map data) async {
+    return httpClient.post('nbo/api_commentPost', body: data)
+      ..timeout(const Duration(seconds: 10));
+
+// kind = commentInsert,
+// id: body.id,
+// postNum: body.postNum,
+// aka: body.aka,
+// content: body.content
   }
 }

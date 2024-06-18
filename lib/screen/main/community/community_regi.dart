@@ -32,7 +32,7 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
           Expanded(
             child: Form(
               child: Padding(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                 child: ListView(
                   children: [
                     Obx(() => subjectSelectButton()),

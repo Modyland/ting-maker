@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ting_maker/controller/community/community_view_controller.dart';
 import 'package:ting_maker/main.dart';
+import 'package:ting_maker/model/comment.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
 import 'package:ting_maker/util/time.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -53,7 +54,6 @@ Container nboDetailProfile(NboDetail item) {
           children: [
             CircleAvatar(
               radius: 25,
-              backgroundColor: pointColor.withAlpha(100),
               backgroundImage: markerImg(item.idx),
             ),
             const SizedBox(width: 7),
@@ -77,7 +77,7 @@ Container nboDetailProfile(NboDetail item) {
 
 Container nboDetailContent(NboDetail item, CommunityViewController controller) {
   return Container(
-    padding: EdgeInsets.symmetric(vertical: MyApp.height * 0.015),
+    padding: EdgeInsets.only(top: MyApp.height * 0.015),
     decoration: BoxDecoration(
       border: Border(
         bottom: BorderSide(width: 1, color: grey300),
@@ -99,31 +99,86 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
           FutureBuilder<Map<String, Object>>(
             future: controller.getLoadContentImage(item, idx),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                    child: CircularProgressIndicator(color: pointColor));
-              } else if (snapshot.hasData) {
+              if (snapshot.hasData) {
                 final image = snapshot.data!['image'] as ImageProvider;
                 final info = snapshot.data!['info'] as ImageInfo;
-                return AspectRatio(
-                  aspectRatio: info.image.width / info.image.height,
-                  child: Container(
-                    margin:
-                        const EdgeInsets.only(bottom: 10, left: 5, right: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(15)),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: image,
+                return Container(
+                  margin: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+                  child: Card(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: info.image.width / info.image.height,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(15)),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: image,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 );
               } else {
-                return const Center(child: Text('이미지 불러오기 오류'));
+                return Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: CircularProgressIndicator(color: pointColor),
+                  ),
+                );
               }
             },
           ),
+      ],
+    ),
+  );
+}
+
+Container nboDetailComment(NboDetail item) {
+  return Container(
+    padding: const EdgeInsets.all(8),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            Text('댓글 ${item.commentDto.length}'),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Container nboCommentProfile(Comment item) {
+  return Container(
+    padding: EdgeInsets.only(top: MyApp.height * 0.015),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundImage: markerImg(item.idx),
+            ),
+            const SizedBox(width: 7),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(item.aka,
+                    style: TextStyle(color: grey500, fontSize: 14, height: 1)),
+                const SizedBox(height: 3),
+                Text(getTimeDiff(item.writetime),
+                    style: TextStyle(color: grey400, fontSize: 12, height: 1)),
+              ],
+            )
+          ],
+        )
       ],
     ),
   );
