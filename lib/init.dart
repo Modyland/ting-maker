@@ -136,6 +136,6 @@ Future<void> getSubjectList() async {
     }
   } catch (err) {
     log('$err', name: 'Subject');
-    noTitleSnackbar('잠시 후 다시 이용해 주세요.');
+    noTitleSnackbar(MyApp.normalErrorMsg);
   }
 }

@@ -81,7 +81,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
         }
       }
     } catch (err) {
-      noTitleSnackbar('잠시 후 다시 이용해 주세요.');
+      noTitleSnackbar(MyApp.normalErrorMsg);
     }
   }
 

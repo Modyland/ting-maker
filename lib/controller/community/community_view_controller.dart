@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
 import 'package:ting_maker/service/service.dart';
+import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 class CommunityViewController extends GetxController {
   final TextEditingController commentController = TextEditingController();
@@ -62,5 +65,25 @@ class CommunityViewController extends GetxController {
     );
     final info = await completer.future;
     return {'image': image, 'info': info};
+  }
+
+  Future<void> commentSubmit() async {
+    try {
+      if (commentController.text != '') {
+        final req = {
+          'kind': 'commentInsert',
+          'id': personBox.get('person')!.id,
+          'postNum': getDetail!.idx,
+          'aka': personBox.get('person')!.aka,
+          'content': commentController.text
+        };
+        //반환값 null옴
+        final res = await service.nboCommentInsert(req);
+        final data = json.decode(res.body);
+        log('${res.body}');
+      }
+    } catch (err) {
+      noTitleSnackbar(MyApp.normalErrorMsg);
+    }
   }
 }

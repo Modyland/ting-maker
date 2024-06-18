@@ -65,6 +65,7 @@ class MyApp extends StatefulWidget {
 
   static double height = Get.height;
   static double width = Get.width;
+  static const normalErrorMsg = '잠시 후 다시 이용해 주세요.';
 
   @override
   State<MyApp> createState() => _MyAppState();

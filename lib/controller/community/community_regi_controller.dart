@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -96,12 +97,14 @@ class CommunityRegiController extends GetxController {
   }
 
   Future<void> loadImages(List<XFile> files) async {
+    OverlayManager.showOverlay(Get.overlayContext!);
     for (final item in files) {
       final bytes = await item.readAsBytes();
       if (regiImage.length < 5) {
         regiImage.add(bytes);
       }
     }
+    OverlayManager.hideOverlay();
   }
 
   Future<void> registerSubmit() async {
@@ -124,8 +127,10 @@ class CommunityRegiController extends GetxController {
         CommunityController.to.getPagingController.refresh();
         noTitleSnackbar('게시글이 등록되었습니다.', time: 2);
       }
+      //이미지넣으면 무조건 null
     } catch (err) {
-      noTitleSnackbar('잠시 후 다시 이용해 주세요.');
+      log('$err', name: 'NboRegister');
+      noTitleSnackbar(MyApp.normalErrorMsg);
     } finally {
       OverlayManager.hideOverlay();
     }

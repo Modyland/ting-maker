@@ -79,11 +79,6 @@ Container nboDetailProfile(NboDetail item, bool loading) {
 Container nboDetailContent(NboDetail item, CommunityViewController controller) {
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
-    decoration: BoxDecoration(
-      border: Border(
-        bottom: BorderSide(width: 1, color: grey300),
-      ),
-    ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -154,6 +149,12 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
 Container nboDetailComment(NboDetail item) {
   return Container(
     padding: const EdgeInsets.all(8),
+    decoration: BoxDecoration(
+      border: Border(
+        top: BorderSide(width: 1, color: grey300),
+        bottom: BorderSide(width: 1, color: grey300),
+      ),
+    ),
     child: Column(
       children: [
         Row(
@@ -171,6 +172,11 @@ Container nboDetailComment(NboDetail item) {
 Container nboCommentProfile(Comment item) {
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
+    decoration: BoxDecoration(
+      border: Border(
+        bottom: BorderSide(width: 1, color: grey200),
+      ),
+    ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -195,7 +201,13 @@ Container nboCommentProfile(Comment item) {
             )
           ],
         ),
-        Text(item.content),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            item.content,
+            style: const TextStyle(color: Colors.black, height: 1),
+          ),
+        ),
       ],
     ),
   );

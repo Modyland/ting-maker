@@ -34,7 +34,7 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
             children: [
               Expanded(
                 child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                    padding: const EdgeInsets.all(8),
                     child: Obx(
                       () => Skeletonizer(
                         enabled: controller.getIsLoading,
@@ -89,7 +89,9 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                                       highlightColor: Colors.transparent,
                                       icon: const Icon(Icons.send),
                                       color: pointColor,
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        await controller.commentSubmit();
+                                      },
                                     )
                                   : null,
                               border: OutlineInputBorder(

@@ -166,7 +166,7 @@ class CustomNaverMapController extends GetxController {
         await personBox.put('person', NavigationProvider.to.getPerson);
       }
     } catch (err) {
-      noTitleSnackbar('잠시 후 다시 이용해 주세요.');
+      noTitleSnackbar(MyApp.normalErrorMsg);
     }
 
     final region = await nowCameraRegion();

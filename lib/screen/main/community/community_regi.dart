@@ -91,6 +91,7 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
