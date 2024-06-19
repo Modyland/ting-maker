@@ -13,11 +13,11 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
     return Obx(() {
       final currentPosition = controller.getCurrentPosition;
       const initTarget = NLatLng(37.9699574603738, 128.7609243929731);
-      if (controller.getIsLoading && currentPosition == null) {
+      if (currentPosition == null) {
         return Container(
           width: double.infinity,
           height: double.infinity,
-          color: Colors.black54,
+          color: Colors.white,
           alignment: Alignment.center,
           child: Image.asset('assets/image/loading.gif'),
         );
@@ -26,20 +26,24 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
           southWest: NLatLng(31.43, 122.37),
           northEast: NLatLng(44.35, 132.0),
         );
-        NCameraPosition initCamera = const NCameraPosition(
-          target: initTarget,
-          zoom: 16,
-        );
+        NCameraPosition initCamera =
+            const NCameraPosition(target: initTarget, zoom: 16);
         return Stack(
           children: [
+            if (controller.getIsLoading)
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.white,
+                alignment: Alignment.center,
+                child: Image.asset('assets/image/loading.gif'),
+              ),
             NaverMap(
               options: NaverMapViewOptions(
                 locale: const Locale('ko'),
                 extent: extentBounds,
                 initialCameraPosition: initCamera,
-                activeLayerGroups: [
-                  NLayerGroup.building,
-                ],
+                activeLayerGroups: [NLayerGroup.building],
                 minZoom: 11,
                 maxZoom: 21,
                 zoomGesturesFriction: 0.3,

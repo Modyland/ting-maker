@@ -15,7 +15,7 @@ class ClassListWidget extends StatelessWidget {
     return Container(
       height: 98,
       decoration: BoxDecoration(
-        color: const Color(0XAAD4D4D4),
+        color: pointColor.withAlpha(100),
         border: Border.all(
           color: grey300,
           width: 1,

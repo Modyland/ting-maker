@@ -54,14 +54,15 @@ class CustomNaverMapController extends GetxController {
   set setVisible(int v) => visible(v);
 
   IO.Socket socket = IO.io(
-      MainProvider.base,
-      IO.OptionBuilder()
-          .setTransports(['websocket'])
-          .disableAutoConnect()
-          .setReconnectionDelay(5)
-          .setReconnectionDelayMax(10)
-          .setReconnectionAttempts(999)
-          .build());
+    MainProvider.base,
+    IO.OptionBuilder()
+        .setTransports(['websocket'])
+        .disableAutoConnect()
+        .setReconnectionDelay(5)
+        .setReconnectionDelayMax(10)
+        .setReconnectionAttempts(999)
+        .build(),
+  );
 
   @override
   void onInit() {
@@ -413,7 +414,7 @@ class CustomNaverMapController extends GetxController {
         await getMapController?.addOverlayAll(markers);
         await getMapController?.forceRefresh();
         if (!getIsLoading) {
-          Future.delayed(Durations.short4, () => isLoading(false));
+          await Future.delayed(Durations.short4, () => isLoading(false));
         }
         // Set<NMarker> currentMarkers = getMarkers.toSet();
         // Set<NMarker> newData = markers.toSet();
