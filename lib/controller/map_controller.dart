@@ -413,7 +413,7 @@ class CustomNaverMapController extends GetxController {
         await getMapController?.clearOverlays(type: NOverlayType.marker);
         await getMapController?.addOverlayAll(markers);
         await getMapController?.forceRefresh();
-        if (!getIsLoading) {
+        if (getIsLoading) {
           await Future.delayed(Durations.short4, () => isLoading(false));
         }
         // Set<NMarker> currentMarkers = getMarkers.toSet();

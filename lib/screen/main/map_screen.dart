@@ -30,14 +30,6 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
             const NCameraPosition(target: initTarget, zoom: 16);
         return Stack(
           children: [
-            if (controller.getIsLoading)
-              Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Colors.white,
-                alignment: Alignment.center,
-                child: Image.asset('assets/image/loading.gif'),
-              ),
             NaverMap(
               options: NaverMapViewOptions(
                 locale: const Locale('ko'),
@@ -75,6 +67,20 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                 // 실내 지도 층 변경시
               },
             ),
+            if (controller.getIsLoading)
+              Positioned(
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.white,
+                  alignment: Alignment.center,
+                  child: Image.asset('assets/image/loading.gif'),
+                ),
+              ),
             Positioned(
               bottom: 10,
               right: 10,

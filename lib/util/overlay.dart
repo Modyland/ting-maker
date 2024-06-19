@@ -5,7 +5,9 @@ class OverlayManager {
   static final OverlayEntry _overlayEntry = OverlayEntry(
     builder: (context) {
       return Container(
-        color: Colors.black54,
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.white,
         alignment: Alignment.center,
         child: Image.asset('assets/image/loading.gif'),
       );
