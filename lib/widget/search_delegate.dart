@@ -1,8 +1,38 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ting_maker/main.dart';
 
 class CustomSearchDelegate extends SearchDelegate<String> {
-  final List<String> searchList = [];
+  final searchData = searchBox.values.toList();
+
+  final List<String> searchList = [
+    "Apple",
+    "Banana",
+    "Cherry",
+    "Date",
+    "Fig",
+    "Grapes",
+    "Kiwi",
+    "Lemon",
+    "Mango",
+    "Orange",
+    "Papaya",
+    "Raspberry",
+    "Strawberry",
+    "Tomato",
+    "Watermelon",
+  ];
+
+  void searchSave(String value) {
+    searchBox.putAt(searchData.length, value);
+  }
+
+  List<String> test(String query) {
+    log(query);
+    return [];
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -25,6 +55,12 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   }
 
   @override
+  void showResults(BuildContext context) {
+    super.showResults(context);
+    close(context, 'test');
+  }
+
+  @override
   Widget buildResults(BuildContext context) {
     final List<String> searchResults = searchList
         .where((item) => item.toLowerCase().contains(query.toLowerCase()))
@@ -35,6 +71,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         return ListTile(
           title: Text(searchResults[index]),
           onTap: () {
+            // Handle the selected search result.
             close(context, searchResults[index]);
           },
         );
@@ -51,7 +88,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
             .toList();
 
     if (query.isEmpty) {
-      return const Text('123');
+      return Text(searchData.toString());
     }
 
     return ListView.builder(
@@ -61,6 +98,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
           title: Text(suggestionList[index]),
           onTap: () {
             query = suggestionList[index];
+            // Show the search results based on the selected suggestion.
           },
         );
       },

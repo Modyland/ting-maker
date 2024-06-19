@@ -45,6 +45,7 @@ late Map<String, dynamic> deviceInfo;
 final service = Get.find<MainProvider>();
 var personBox = Hive.box<Person>('person');
 var utilBox = Hive.box('util');
+var searchBox = Hive.box('search');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

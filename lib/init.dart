@@ -90,6 +90,7 @@ Future<void> initStorage() async {
   await Hive.initFlutter();
   await Hive.openBox<Person>('person');
   await Hive.openBox('util');
+  await Hive.openBox('search');
   sqliteBase = SqliteBase();
 }
 

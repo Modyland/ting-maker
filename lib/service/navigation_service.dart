@@ -113,7 +113,7 @@ class NavigationProvider extends GetxService {
               children: [
                 IconButton(
                   onPressed: () async {
-                    final result = await showSearch(
+                    await showSearch(
                       context: Get.context!,
                       delegate: CustomSearchDelegate(),
                     );
@@ -135,7 +135,7 @@ class NavigationProvider extends GetxService {
                 icon: const Icon(Icons.arrow_back)),
             IconButton(
               onPressed: () async {
-                final result = await showSearch(
+                await showSearch(
                   context: Get.context!,
                   delegate: CustomSearchDelegate(),
                 );
