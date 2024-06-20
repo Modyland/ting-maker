@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:ting_maker/controller/community/community_view_controller.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/comment.dart';
@@ -12,6 +14,66 @@ TextStyle titleStyle =
 
 TextStyle contentStyle =
     const TextStyle(fontSize: 15, height: 1, color: Colors.black);
+
+Skeleton nboProfileIcon(int idx, double size, double radius) {
+  return Skeleton.replace(
+    replacement: ClipRRect(
+      borderRadius: BorderRadius.circular(size),
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: const ColoredBox(color: Colors.white),
+      ),
+    ),
+    child: CircleAvatar(
+      radius: radius,
+      backgroundImage: markerImg(idx),
+    ),
+  );
+}
+
+Column nboProfileId(String aka, String writeTime, {bool small = false}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      Text(aka,
+          style:
+              TextStyle(color: grey500, fontSize: small ? 12 : 14, height: 1)),
+      const SizedBox(height: 3),
+      Text(getTimeDiff(writeTime),
+          style:
+              TextStyle(color: grey400, fontSize: small ? 10 : 12, height: 1)),
+    ],
+  );
+}
+
+Container nboDetailImg({ImageInfo? info, ImageProvider<Object>? image}) {
+  return Container(
+    margin: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+    child: Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: AspectRatio(
+        aspectRatio:
+            info != null ? info.image.width / info.image.height : 4 / 3,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(15)),
+            image: image != null
+                ? DecorationImage(
+                    fit: BoxFit.cover,
+                    image: image,
+                  )
+                : null,
+          ),
+        ),
+      ),
+    ),
+  );
+}
 
 Align nboDetailSubjectBadge(NboDetail item) {
   return Align(
@@ -45,30 +107,16 @@ Align nboDetailSubjectBadge(NboDetail item) {
   );
 }
 
-Container nboDetailProfile(NboDetail item, bool loading) {
+Container nboDetailProfile(NboDetail item) {
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
     child: Column(
       children: [
         Row(
           children: [
-            CircleAvatar(
-              radius: 25,
-              backgroundColor: Colors.transparent,
-              backgroundImage: markerImg(item.idx),
-            ),
+            nboProfileIcon(item.idx, 50, 25),
             const SizedBox(width: 7),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(item.aka,
-                    style: TextStyle(color: grey500, fontSize: 14, height: 1)),
-                const SizedBox(height: 3),
-                Text(getTimeDiff(item.writetime),
-                    style: TextStyle(color: grey400, fontSize: 12, height: 1)),
-              ],
-            )
+            nboProfileId(item.aka, item.writetime)
           ],
         )
       ],
@@ -98,46 +146,9 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
               if (snapshot.hasData) {
                 final image = snapshot.data!['image'] as ImageProvider;
                 final info = snapshot.data!['info'] as ImageInfo;
-                return Container(
-                  margin: const EdgeInsets.fromLTRB(5, 0, 5, 10),
-                  child: Card(
-                    color: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: AspectRatio(
-                      aspectRatio: info.image.width / info.image.height,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(15)),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: image,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
+                return nboDetailImg(info: info, image: image);
               } else {
-                return Container(
-                  margin: const EdgeInsets.fromLTRB(5, 0, 5, 10),
-                  child: Card(
-                    color: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: AspectRatio(
-                      aspectRatio: 1 / 1,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
+                return nboDetailImg();
               }
             },
           ),
@@ -151,8 +162,7 @@ Container nboDetailComment(NboDetail item) {
     padding: const EdgeInsets.all(8),
     decoration: BoxDecoration(
       border: Border(
-        top: BorderSide(width: 1, color: grey300),
-        bottom: BorderSide(width: 1, color: grey300),
+        top: BorderSide(width: 3, color: grey300),
       ),
     ),
     child: Column(
@@ -173,45 +183,102 @@ Container nboDetailComment(NboDetail item) {
 Container nboCommentProfile(Comment item, int index, int length) {
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
-    decoration: BoxDecoration(
-      border: Border(
-        bottom: index == length - 1
-            ? BorderSide.none
-            : BorderSide(width: 1, color: grey200),
-      ),
-    ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.transparent,
-              backgroundImage: markerImg(item.idx),
-            ),
+            nboProfileIcon(item.idx, 40, 20),
             const SizedBox(width: 7),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(item.aka,
-                    style: TextStyle(color: grey500, fontSize: 14, height: 1)),
-                const SizedBox(height: 3),
-                Text(getTimeDiff(item.writetime),
-                    style: TextStyle(color: grey400, fontSize: 12, height: 1)),
-              ],
-            )
+            nboProfileId(item.aka, item.writetime),
           ],
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
           child: Text(
             item.content,
             style: const TextStyle(color: Colors.black, height: 1),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 4, 0, 0),
+          child: Text.rich(
+              maxLines: 1,
+              TextSpan(children: [
+                TextSpan(
+                    text: '답글 달기',
+                    style: TextStyle(color: grey400, fontSize: 12, height: 1),
+                    recognizer: TapGestureRecognizer()..onTap = () {}),
+              ])),
+        ),
+        if (item.comments.isNotEmpty)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: nboCommentReple(item.comments),
+          )
       ],
     ),
   );
+}
+
+List<Widget> nboCommentReple(List<Comments> comments) {
+  final List<Widget> commentWidgets = [];
+  if (comments.length <= 3) {
+    for (var i = 0; i < comments.length; i++) {
+      commentWidgets.add(Padding(
+        padding:
+            EdgeInsets.fromLTRB(10, 4, 0, comments.length - 1 == i ? 0 : 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                nboProfileIcon(comments[i].idx, 30, 15),
+                const SizedBox(width: 7),
+                nboProfileId(comments[i].aka, comments[i].writetime,
+                    small: true)
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 4, 0, 0),
+              child: Text(
+                comments[i].content,
+                style: const TextStyle(
+                    fontSize: 13, color: Colors.black, height: 1),
+              ),
+            ),
+          ],
+        ),
+      ));
+    }
+  } else {
+    for (var i = 0; i < comments.length; i++) {
+      commentWidgets.add(Padding(
+        padding:
+            EdgeInsets.fromLTRB(10, 4, 0, comments.length - 1 == i ? 0 : 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                nboProfileIcon(comments[i].idx, 30, 15),
+                const SizedBox(width: 7),
+                nboProfileId(comments[i].aka, comments[i].writetime,
+                    small: true)
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 4, 0, 0),
+              child: Text(
+                comments[i].content,
+                style: const TextStyle(
+                    fontSize: 13, color: Colors.black, height: 1),
+              ),
+            ),
+          ],
+        ),
+      ));
+    }
+  }
+  return commentWidgets;
 }

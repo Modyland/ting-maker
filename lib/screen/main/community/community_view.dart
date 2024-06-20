@@ -34,7 +34,7 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
             children: [
               Expanded(
                 child: Padding(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                     child: Obx(
                       () => Skeletonizer(
                         enabled: controller.getIsLoading,
@@ -43,7 +43,7 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                         child: ListView(
                           children: [
                             nboDetailSubjectBadge(item),
-                            nboDetailProfile(item, controller.getIsLoading),
+                            nboDetailProfile(item),
                             nboDetailContent(item, controller),
                             nboDetailComment(item)
                           ],

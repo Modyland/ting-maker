@@ -75,7 +75,10 @@ class MainProvider extends GetConnect {
     return httpClient.post('nbo/api_post', body: data);
   }
 
-  Future<Response> nboCommentInsert(Map data) async {
-    return httpClient.post('nbo/api_commentPost', body: data);
+  Future<dynamic> nboCommentInsert(Map data) async {
+    final res = await httpClient.post('nbo/api_commentPost', body: data);
+    if (res.statusCode! <= 400) {
+      final data = json.decode(res.bodyString!);
+    }
   }
 }

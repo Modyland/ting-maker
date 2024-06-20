@@ -33,7 +33,9 @@ class CommunityViewController extends GetxController {
 
   Future<void> detailInit() async {
     final item = await service.getNboDetailSelect(
-        getArgs['idx'], personBox.get('person')!.id);
+      getArgs['idx'],
+      personBox.get('person')!.id,
+    );
     detail(item!);
     if (item.img.isEmpty) {
       await Future.delayed(Durations.short2, () => isLoading(false));
@@ -41,9 +43,7 @@ class CommunityViewController extends GetxController {
   }
 
   Future<Map<String, Object>> getLoadContentImage(
-    NboDetail item,
-    int idx,
-  ) async {
+      NboDetail item, int idx) async {
 //     /commentImgSelect // 댓글
 //      /cmtCmtImgSelect  //대댓글
     final image = ExtendedImage.network(
@@ -78,9 +78,7 @@ class CommunityViewController extends GetxController {
           'aka': personBox.get('person')!.aka,
           'content': commentController.text
         };
-        //반환값 null옴
         final res = await service.nboCommentInsert(req);
-        log('${res.body}');
       }
     } catch (err) {
       log('$err');
