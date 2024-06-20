@@ -10,6 +10,7 @@ class NboDetail {
   final String subject;
   final String title;
   final String content;
+  final int commentes;
   final List<int> img;
   final List<Comment> comment;
 
@@ -23,6 +24,7 @@ class NboDetail {
     required this.subject,
     required this.title,
     required this.content,
+    required this.commentes,
     required this.img,
     required this.comment,
   });
@@ -38,6 +40,7 @@ class NboDetail {
       subject: json['subject'],
       title: json['title'],
       content: json['content'],
+      commentes: json['commentes'],
       img: List<int>.from(json['imgIdxArr']),
       comment: (json['commentDto'] as List<dynamic>)
           .map((item) => Comment.fromJson(item))
@@ -56,6 +59,7 @@ class NboDetail {
       'subject': subject,
       'title': title,
       'content': content,
+      'commentes': commentes,
       'imgIdxArr': img,
       'commentDto': comment,
     };

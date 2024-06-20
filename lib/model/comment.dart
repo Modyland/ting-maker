@@ -8,6 +8,7 @@ class Comment {
   final int likes;
   final String content;
   final int isImg;
+  final int commentes;
   final List<Comments> comments;
 
   Comment({
@@ -20,6 +21,7 @@ class Comment {
     required this.likes,
     required this.content,
     required this.isImg,
+    required this.commentes,
     required this.comments,
   });
 
@@ -34,6 +36,7 @@ class Comment {
       likes: json['likes'],
       content: json['content'],
       isImg: json['isImg'],
+      commentes: json['commentes'],
       comments: (json['comments'] as List<dynamic>)
           .map((item) => Comments.fromJson(item))
           .toList(),
@@ -51,6 +54,7 @@ class Comment {
       'likes': likes,
       'content': content,
       'isImg': isImg,
+      'commentes': commentes,
       'comments': comments,
     };
   }
