@@ -112,6 +112,7 @@ class CommunityRegiController extends GetxController {
       final req = {
         "kind": "nboInsert",
         "id": NavigationProvider.to.getPerson.id,
+        'useridx': NavigationProvider.to.getPerson.idx,
         "aka": NavigationProvider.to.getPerson.aka,
         "vilege": CustomNaverMapController.to.getReverseGeocoding,
         "subject": getSubject,

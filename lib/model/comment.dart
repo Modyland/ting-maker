@@ -1,5 +1,6 @@
 class Comment {
   final int idx;
+  final int useridx;
   final String writetime;
   final String id;
   final int postNum;
@@ -11,6 +12,7 @@ class Comment {
 
   Comment({
     required this.id,
+    required this.useridx,
     required this.postNum,
     required this.idx,
     required this.writetime,
@@ -24,6 +26,7 @@ class Comment {
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
       id: json['id'],
+      useridx: json['useridx'],
       postNum: json['postNum'],
       idx: json['idx'],
       writetime: json['writetime'],
@@ -40,6 +43,7 @@ class Comment {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'useridx': useridx,
       'postNum': postNum,
       'idx': idx,
       'writetime': writetime,
@@ -54,6 +58,7 @@ class Comment {
 
 class Comments {
   final int idx;
+  final int useridx;
   final String id;
   final String writetime;
   final int nboNum;
@@ -66,6 +71,7 @@ class Comments {
 
   Comments({
     required this.idx,
+    required this.useridx,
     required this.id,
     required this.writetime,
     required this.nboNum,
@@ -80,6 +86,7 @@ class Comments {
   factory Comments.fromJson(Map<String, dynamic> json) {
     return Comments(
       idx: json['idx'],
+      useridx: json['useridx'],
       id: json['id'],
       writetime: json['writetime'],
       nboNum: json['nboNum'],
@@ -95,6 +102,7 @@ class Comments {
   Map<String, dynamic> toJson() {
     return {
       'idx': idx,
+      'useridx': useridx,
       'id': id,
       'writetime': writetime,
       'nboNum': nboNum,

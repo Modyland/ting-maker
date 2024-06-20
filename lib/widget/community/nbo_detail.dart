@@ -114,7 +114,7 @@ Container nboDetailProfile(NboDetail item) {
       children: [
         Row(
           children: [
-            nboProfileIcon(item.idx, 50, 25),
+            nboProfileIcon(item.useridx, 50, 25),
             const SizedBox(width: 7),
             nboProfileId(item.aka, item.writetime)
           ],
@@ -188,7 +188,7 @@ Container nboCommentProfile(Comment item, int index, int length) {
       children: [
         Row(
           children: [
-            nboProfileIcon(item.idx, 40, 20),
+            nboProfileIcon(item.useridx, 40, 20),
             const SizedBox(width: 7),
             nboProfileId(item.aka, item.writetime),
           ],
@@ -221,38 +221,29 @@ Container nboCommentProfile(Comment item, int index, int length) {
   );
 }
 
-List<Widget> nboCommentReple(List<Comments> comments) {
+List<Widget> nboCommentReple(List<Comments> comments, {int maxComments = 3}) {
   final List<Widget> commentWidgets = [];
-  if (comments.length <= 3) {
-    for (var i = 0; i < comments.length; i++) {
-      commentWidgets.add(Padding(
-        padding:
-            EdgeInsets.fromLTRB(10, 4, 0, comments.length - 1 == i ? 0 : 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                nboProfileIcon(comments[i].idx, 30, 15),
-                const SizedBox(width: 7),
-                nboProfileId(comments[i].aka, comments[i].writetime,
-                    small: true)
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(4, 4, 0, 0),
-              child: Text(
-                comments[i].content,
-                style: const TextStyle(
-                    fontSize: 13, color: Colors.black, height: 1),
-              ),
-            ),
-          ],
+  final int numComments = comments.length;
+  if (numComments > maxComments) {
+    commentWidgets.add(
+      Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: GestureDetector(
+          onTap: () {
+            // 더보기 버튼 클릭 시 추가 comments 보여주는 로직 구현
+          },
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('더보기', style: TextStyle(color: Colors.blue)),
+              Icon(Icons.arrow_drop_down, color: Colors.blue),
+            ],
+          ),
         ),
-      ));
-    }
+      ),
+    );
   } else {
-    for (var i = 0; i < comments.length; i++) {
+    for (var i = 0; i < numComments; i++) {
       commentWidgets.add(Padding(
         padding:
             EdgeInsets.fromLTRB(10, 4, 0, comments.length - 1 == i ? 0 : 4),
@@ -261,7 +252,7 @@ List<Widget> nboCommentReple(List<Comments> comments) {
           children: [
             Row(
               children: [
-                nboProfileIcon(comments[i].idx, 30, 15),
+                nboProfileIcon(comments[i].useridx, 30, 15),
                 const SizedBox(width: 7),
                 nboProfileId(comments[i].aka, comments[i].writetime,
                     small: true)
@@ -280,5 +271,6 @@ List<Widget> nboCommentReple(List<Comments> comments) {
       ));
     }
   }
+
   return commentWidgets;
 }

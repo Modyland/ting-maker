@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_list.dart';
+import 'package:ting_maker/service/navigation_service.dart';
 
 class CommunityNoticeSingleController extends GetxController {
   final limitSize = 10;
@@ -30,7 +31,7 @@ class CommunityNoticeSingleController extends GetxController {
     try {
       final newItems = await service.getNboSelect(
         limitSize,
-        personBox.get('person')!.id,
+        NavigationProvider.to.getPerson.id,
         keyword: getId,
         idx: pageKey != 0 ? _pagingController.itemList?.last.idx : null,
       );

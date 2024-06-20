@@ -133,7 +133,7 @@ class CommunityController extends GetxController
     try {
       final newItems = await service.getNboSelect(
         limitSize,
-        personBox.get('person')!.id,
+        NavigationProvider.to.getPerson.id,
         idx: pageKey != 0 ? _pagingController.itemList?.last.idx : null,
       );
       if (newItems != null) {

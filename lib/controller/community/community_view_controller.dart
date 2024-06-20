@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
+import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
@@ -34,7 +35,7 @@ class CommunityViewController extends GetxController {
   Future<void> detailInit() async {
     final item = await service.getNboDetailSelect(
       getArgs['idx'],
-      personBox.get('person')!.id,
+      NavigationProvider.to.getPerson.id,
     );
     detail(item!);
     if (item.img.isEmpty) {
@@ -44,8 +45,8 @@ class CommunityViewController extends GetxController {
 
   Future<Map<String, Object>> getLoadContentImage(
       NboDetail item, int idx) async {
-//     /commentImgSelect // 댓글
-//      /cmtCmtImgSelect  //대댓글
+    //  ?   /commentImgSelect  // 댓글
+    //  ?   /cmtCmtImgSelect  //대댓글
     final image = ExtendedImage.network(
       '${MainProvider.base}nbo/nboImgSelect?imgIdx=$idx',
       cacheKey: 'nboImg_${item.idx}_$idx',
@@ -73,10 +74,12 @@ class CommunityViewController extends GetxController {
       if (commentController.text != '') {
         final req = {
           'kind': 'commentInsert',
-          'id': personBox.get('person')!.id,
+          'useridx': NavigationProvider.to.getPerson.idx,
+          'id': NavigationProvider.to.getPerson.id,
           'postNum': getDetail!.idx,
-          'aka': personBox.get('person')!.aka,
-          'content': commentController.text
+          'aka': NavigationProvider.to.getPerson.aka,
+          'content': commentController.text,
+          'img': null,
         };
         final res = await service.nboCommentInsert(req);
       }
@@ -84,5 +87,14 @@ class CommunityViewController extends GetxController {
       log('$err');
       noTitleSnackbar(MyApp.normalErrorMsg);
     }
+    // ! 대댓글
+    // {
+    //     id: body.id,
+    //     useridx: body.useridx,
+    //     nboNum: body.nboNum,
+    //     commentNum: body.commentNum,
+    //     aka: body.aka,
+    //     content: body.content,
+    // }
   }
 }

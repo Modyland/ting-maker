@@ -2,6 +2,7 @@ import 'package:ting_maker/model/comment.dart';
 
 class NboDetail {
   final int idx;
+  final int useridx;
   final String writetime;
   final String aka;
   final int likes;
@@ -14,6 +15,7 @@ class NboDetail {
 
   NboDetail({
     required this.idx,
+    required this.useridx,
     required this.writetime,
     required this.aka,
     required this.likes,
@@ -28,6 +30,7 @@ class NboDetail {
   factory NboDetail.fromJson(Map<String, dynamic> json) {
     return NboDetail(
       idx: json['idx'],
+      useridx: json['useridx'],
       writetime: json['writetime'],
       aka: json['aka'],
       likes: json['likes'],
@@ -45,6 +48,7 @@ class NboDetail {
   Map<String, dynamic> toJson() {
     return {
       'idx': idx,
+      'useridx': useridx,
       'writetime': writetime,
       'aka': aka,
       'likes': likes,
