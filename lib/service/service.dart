@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:get/get_connect/connect.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
@@ -12,7 +13,7 @@ class MainProvider extends GetConnect {
     httpClient
       ..baseUrl = base
       ..defaultContentType = 'application/json'
-      ..timeout = const Duration(seconds: 3);
+      ..timeout = const Duration(seconds: 5);
   }
 
   Future<Response> loginLog(Map data) async {
@@ -57,15 +58,12 @@ class MainProvider extends GetConnect {
     }
   }
 
-  Future<Response> nboInsert(Map data) async {
-    return httpClient.post('nbo/api_post', body: data)
-      ..timeout(const Duration(seconds: 10));
-  }
-
-  Future<NboDetail?> getNboDetail(int idx, String id) async {
+  Future<NboDetail?> getNboDetailSelect(int idx, String id) async {
     final res = await httpClient.get('nbo/nboClick?idx=$idx&id=$id');
+
     if (res.statusCode! <= 400) {
       final data = json.decode(res.bodyString!);
+      log('$data');
       final NboDetail detail = NboDetail.fromJson(data);
       return detail;
     } else {
@@ -73,14 +71,11 @@ class MainProvider extends GetConnect {
     }
   }
 
-  Future<Response> nboCommentInsert(Map data) async {
-    return httpClient.post('nbo/api_commentPost', body: data)
-      ..timeout(const Duration(seconds: 10));
+  Future<Response> nboInsert(Map data) async {
+    return httpClient.post('nbo/api_post', body: data);
+  }
 
-// kind = commentInsert,
-// id: body.id,
-// postNum: body.postNum,
-// aka: body.aka,
-// content: body.content
+  Future<Response> nboCommentInsert(Map data) async {
+    return httpClient.post('nbo/api_commentPost', body: data);
   }
 }

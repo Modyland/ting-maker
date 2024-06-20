@@ -6,6 +6,8 @@ class Comment {
   final String aka;
   final int likes;
   final String content;
+  final int isImg;
+  final List<Comments> comments;
 
   Comment({
     required this.id,
@@ -15,6 +17,8 @@ class Comment {
     required this.aka,
     required this.likes,
     required this.content,
+    required this.isImg,
+    required this.comments,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
@@ -26,6 +30,10 @@ class Comment {
       aka: json['aka'],
       likes: json['likes'],
       content: json['content'],
+      isImg: json['isImg'],
+      comments: (json['comments'] as List<dynamic>)
+          .map((item) => Comments.fromJson(item))
+          .toList(),
     );
   }
 
@@ -38,6 +46,64 @@ class Comment {
       'aka': aka,
       'likes': likes,
       'content': content,
+      'isImg': isImg,
+      'comments': comments,
+    };
+  }
+}
+
+class Comments {
+  final int idx;
+  final String id;
+  final String writetime;
+  final int nboNum;
+  final int commentNum;
+  final String aka;
+  final int likes;
+  final String content;
+  final int isImg;
+  final int pause;
+
+  Comments({
+    required this.idx,
+    required this.id,
+    required this.writetime,
+    required this.nboNum,
+    required this.commentNum,
+    required this.aka,
+    required this.likes,
+    required this.content,
+    required this.isImg,
+    required this.pause,
+  });
+
+  factory Comments.fromJson(Map<String, dynamic> json) {
+    return Comments(
+      idx: json['idx'],
+      id: json['id'],
+      writetime: json['writetime'],
+      nboNum: json['nboNum'],
+      commentNum: json['commentNum'],
+      aka: json['aka'],
+      likes: json['likes'],
+      content: json['content'],
+      isImg: json['isImg'],
+      pause: json['pause'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'idx': idx,
+      'id': id,
+      'writetime': writetime,
+      'nboNum': nboNum,
+      'commentNum': commentNum,
+      'aka': aka,
+      'likes': likes,
+      'content': content,
+      'isImg': isImg,
+      'pause': pause,
     };
   }
 }

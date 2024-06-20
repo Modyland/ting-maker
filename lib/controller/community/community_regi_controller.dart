@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/controller/map_controller.dart';
@@ -41,9 +41,9 @@ class CommunityRegiController extends GetxController {
 
     await showSubjectSheet(
       subjectList.where((e) => e != '주제' && e != '인기글').toList(),
-      (sub) async {
-        Get.back();
+      (sub) {
         setSubject = sub;
+        Get.back();
       },
     );
   }
@@ -77,7 +77,8 @@ class CommunityRegiController extends GetxController {
   }
 
   Future<void> getImageFromGallery() async {
-    final pickedFile = await picker.pickMultiImage(limit: 5, imageQuality: 50);
+    final List<XFile> pickedFile =
+        await picker.pickMultiImage(limit: 5, imageQuality: 30);
     if (pickedFile.length > 5) {
       noTitleSnackbar('최대 업로드 갯수는 5개 입니다.', time: 2);
     }
@@ -90,25 +91,23 @@ class CommunityRegiController extends GetxController {
 
   Future<void> getImageFromCamera() async {
     final XFile? pickedFile =
-        await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
+        await picker.pickImage(source: ImageSource.camera, imageQuality: 30);
     if (pickedFile != null) {
       regiImage.add(await pickedFile.readAsBytes());
     }
   }
 
   Future<void> loadImages(List<XFile> files) async {
-    OverlayManager.showOverlay(Get.overlayContext!);
     for (final item in files) {
-      final bytes = await item.readAsBytes();
+      final stream = item.openRead();
+      final bytes = await stream.toBytes();
       if (regiImage.length < 5) {
         regiImage.add(bytes);
       }
     }
-    OverlayManager.hideOverlay();
   }
 
   Future<void> registerSubmit() async {
-    OverlayManager.showOverlay(Get.overlayContext!);
     try {
       final req = {
         "kind": "nboInsert",
@@ -118,21 +117,25 @@ class CommunityRegiController extends GetxController {
         "subject": getSubject,
         "title": getTitle,
         "content": getContent,
-        "nboImg": regiImage.toList().isNotEmpty ? regiImage.toList() : null,
+        "nboImg": regiImage.toList().isNotEmpty ? regiImage.toList() : null
       };
+
       final res = await service.nboInsert(req);
       final data = json.decode(res.bodyString!);
+
       if (data) {
-        Get.back();
-        CommunityController.to.getPagingController.refresh();
-        noTitleSnackbar('게시글이 등록되었습니다.', time: 2);
+        await registerSuccess();
       }
-      //이미지넣으면 무조건 null
     } catch (err) {
-      log('$err', name: 'NboRegister');
       noTitleSnackbar(MyApp.normalErrorMsg);
     } finally {
       OverlayManager.hideOverlay();
     }
+  }
+
+  Future<void> registerSuccess() async {
+    Get.back();
+    CommunityController.to.getPagingController.refresh();
+    noTitleSnackbar('게시글이 등록되었습니다.', time: 2);
   }
 }

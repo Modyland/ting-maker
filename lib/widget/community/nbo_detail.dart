@@ -90,8 +90,8 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
           padding: EdgeInsets.symmetric(vertical: MyApp.height * 0.01),
           child: Text(item.content, style: contentStyle),
         ),
-        if (item.imgIdxArr.isNotEmpty) const SizedBox(height: 7),
-        for (var idx in item.imgIdxArr)
+        if (item.img.isNotEmpty) const SizedBox(height: 7),
+        for (var idx in item.img)
           FutureBuilder<Map<String, Object>>(
             future: controller.getLoadContentImage(item, idx),
             builder: (context, snapshot) {
@@ -159,22 +159,25 @@ Container nboDetailComment(NboDetail item) {
       children: [
         Row(
           children: [
-            Text('댓글 ${item.commentDto.length}'),
+            Text('댓글 ${item.comment.length}'),
           ],
         ),
-        if (item.commentDto.isNotEmpty)
-          for (var c in item.commentDto) nboCommentProfile(c)
+        if (item.comment.isNotEmpty)
+          for (var i = 0; i < item.comment.length; i++)
+            nboCommentProfile(item.comment[i], i, item.comment.length)
       ],
     ),
   );
 }
 
-Container nboCommentProfile(Comment item) {
+Container nboCommentProfile(Comment item, int index, int length) {
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
     decoration: BoxDecoration(
       border: Border(
-        bottom: BorderSide(width: 1, color: grey200),
+        bottom: index == length - 1
+            ? BorderSide.none
+            : BorderSide(width: 1, color: grey200),
       ),
     ),
     child: Column(

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 Future<void> showSubjectSheet(
   List<dynamic> list,
-  Future<void> Function(String sub) callback,
+  Function(String sub) callback,
 ) async {
   return await Get.bottomSheet(
     Container(
@@ -41,8 +41,8 @@ Future<void> showSubjectSheet(
                         '${list[idx]}',
                         style: const TextStyle(fontSize: 16),
                       ),
-                      onTap: () async {
-                        await callback(list[idx]);
+                      onTap: () {
+                        callback(list[idx]);
                       },
                     ),
                   );

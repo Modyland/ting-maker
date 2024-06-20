@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:extended_image/extended_image.dart';
@@ -33,10 +32,10 @@ class CommunityViewController extends GetxController {
   }
 
   Future<void> detailInit() async {
-    final item =
-        await service.getNboDetail(getArgs['idx'], personBox.get('person')!.id);
+    final item = await service.getNboDetailSelect(
+        getArgs['idx'], personBox.get('person')!.id);
     detail(item!);
-    if (item.imgIdxArr.isEmpty) {
+    if (item.img.isEmpty) {
       await Future.delayed(Durations.short2, () => isLoading(false));
     }
   }
@@ -45,6 +44,8 @@ class CommunityViewController extends GetxController {
     NboDetail item,
     int idx,
   ) async {
+//     /commentImgSelect // 댓글
+//      /cmtCmtImgSelect  //대댓글
     final image = ExtendedImage.network(
       '${MainProvider.base}nbo/nboImgSelect?imgIdx=$idx',
       cacheKey: 'nboImg_${item.idx}_$idx',
@@ -58,7 +59,7 @@ class CommunityViewController extends GetxController {
       ImageStreamListener((ImageInfo info, bool synchronousCall) {
         completer.complete(info);
         imgCount.value += 1;
-        if (imgCount.value == item.imgIdxArr.length) {
+        if (imgCount.value == item.img.length) {
           Future.delayed(Durations.short2, () => isLoading(false));
         }
       }),
@@ -79,10 +80,10 @@ class CommunityViewController extends GetxController {
         };
         //반환값 null옴
         final res = await service.nboCommentInsert(req);
-        final data = json.decode(res.body);
         log('${res.body}');
       }
     } catch (err) {
+      log('$err');
       noTitleSnackbar(MyApp.normalErrorMsg);
     }
   }

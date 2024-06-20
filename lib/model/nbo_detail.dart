@@ -9,8 +9,8 @@ class NboDetail {
   final String subject;
   final String title;
   final String content;
-  final List<int> imgIdxArr;
-  final List<Comment> commentDto;
+  final List<int> img;
+  final List<Comment> comment;
 
   NboDetail({
     required this.idx,
@@ -21,8 +21,8 @@ class NboDetail {
     required this.subject,
     required this.title,
     required this.content,
-    required this.imgIdxArr,
-    required this.commentDto,
+    required this.img,
+    required this.comment,
   });
 
   factory NboDetail.fromJson(Map<String, dynamic> json) {
@@ -35,9 +35,9 @@ class NboDetail {
       subject: json['subject'],
       title: json['title'],
       content: json['content'],
-      imgIdxArr: List<int>.from(json['imgIdxArr']),
-      commentDto: (json['commentDto'] as List<dynamic>)
-          .map((commentJson) => Comment.fromJson(commentJson))
+      img: List<int>.from(json['imgIdxArr']),
+      comment: (json['commentDto'] as List<dynamic>)
+          .map((item) => Comment.fromJson(item))
           .toList(),
     );
   }
@@ -52,8 +52,8 @@ class NboDetail {
       'subject': subject,
       'title': title,
       'content': content,
-      'imgIdxArr': imgIdxArr,
-      'commentDto': commentDto,
+      'imgIdxArr': img,
+      'commentDto': comment,
     };
   }
 }
