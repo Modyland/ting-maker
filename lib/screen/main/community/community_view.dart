@@ -41,11 +41,12 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                         enableSwitchAnimation: true,
                         justifyMultiLineText: false,
                         child: ListView(
+                          controller: controller.scrollController,
                           children: [
                             nboDetailSubjectBadge(item),
                             nboDetailProfile(item),
                             nboDetailContent(item, controller),
-                            nboDetailComment(item)
+                            nboDetailComment(item, controller)
                           ],
                         ),
                       ),
@@ -78,9 +79,14 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                             smartDashesType: SmartDashesType.enabled,
                             keyboardType: TextInputType.text,
                             maxLines: null,
+                            onSubmitted: (v) async {
+                              await controller.commentSubmit();
+                            },
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.all(10),
-                              hintText: '댓글을 입력하세요',
+                              hintText: controller.getReple
+                                  ? '답변을 입력해주세요.'
+                                  : '댓글을 입력해주세요.',
                               filled: true,
                               fillColor: pointColor.withAlpha(20),
                               suffixIcon: isFocus
@@ -120,6 +126,25 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                         }),
                       ),
                     ),
+                    if (controller.getReple)
+                      IconButton(
+                        iconSize: 24,
+                        constraints: const BoxConstraints(
+                            maxWidth: 40,
+                            maxHeight: 40,
+                            minHeight: 40,
+                            minWidth: 40),
+                        padding: const EdgeInsets.all(0),
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        onPressed: () {
+                          controller.cancelReple();
+                        },
+                        icon: Icon(
+                          Icons.close,
+                          color: grey400,
+                        ),
+                      ),
                   ],
                 ),
               ),

@@ -10,7 +10,6 @@ class Comment {
   final int isImg;
   final int commentCount;
   final List<Comments> comments;
-
   Comment({
     required this.idx,
     required this.userIdx,
@@ -71,7 +70,7 @@ class Comments {
   final int likes;
   final String content;
   final int isImg;
-  final int pause;
+  final int? pause;
 
   Comments({
     required this.idx,
@@ -84,7 +83,7 @@ class Comments {
     required this.likes,
     required this.content,
     required this.isImg,
-    required this.pause,
+    this.pause,
   });
 
   factory Comments.fromJson(Map<String, dynamic> json) {

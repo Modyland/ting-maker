@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:ting_maker/controller/community/community_view_controller.dart';
@@ -157,7 +156,7 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
   );
 }
 
-Container nboDetailComment(NboDetail item) {
+Container nboDetailComment(NboDetail item, CommunityViewController controller) {
   return Container(
     padding: const EdgeInsets.all(8),
     decoration: BoxDecoration(
@@ -172,15 +171,27 @@ Container nboDetailComment(NboDetail item) {
             Text('댓글 ${item.commentCount}'),
           ],
         ),
-        if (item.comment.isNotEmpty)
-          for (var i = 0; i < item.comment.length; i++)
-            nboCommentProfile(item.comment[i], i, item.comment.length)
+        if (controller.sortingComment.isNotEmpty)
+          Column(
+            children: [
+              for (var c in controller.sortingComment)
+                nboCommentProfile(
+                  c,
+                  (int num, int idx) => controller.commentReple(num, idx),
+                  controller.sortingComments(
+                    controller.comments
+                        .firstWhere((item) => item['idx'] == c.idx)['data'],
+                  ),
+                )
+            ],
+          )
       ],
     ),
   );
 }
 
-Container nboCommentProfile(Comment item, int index, int length) {
+Container nboCommentProfile(
+    Comment item, Function(int, int) callback, List<Comments> data) {
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
     child: Column(
@@ -200,51 +211,38 @@ Container nboCommentProfile(Comment item, int index, int length) {
             style: const TextStyle(color: Colors.black, height: 1),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 0, 0),
-          child: Text.rich(
-              maxLines: 1,
-              TextSpan(children: [
-                TextSpan(
-                    text: '답글 달기',
-                    style: TextStyle(color: grey400, fontSize: 12, height: 1),
-                    recognizer: TapGestureRecognizer()..onTap = () {}),
-              ])),
+        GestureDetector(
+          onTap: () {
+            callback(item.idx, item.userIdx);
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 5, 0, 0),
+            child: Text('답글 달기',
+                style: TextStyle(color: grey400, fontSize: 12, height: 1)),
+          ),
         ),
-        if (item.comments.isNotEmpty)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: nboCommentReple(item.comments),
-          )
+        if (item.comments.isNotEmpty && data.isNotEmpty)
+          if (item.comments.length < 3)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: nboCommentReple(item.comments),
+            )
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: nboCommentReple(item.comments),
+            )
       ],
     ),
   );
 }
 
-List<Widget> nboCommentReple(List<Comments> comments, {int maxComments = 3}) {
+List<Widget> nboCommentReple(List<Comments> comments) {
   final List<Widget> commentWidgets = [];
   final int numComments = comments.length;
-  if (numComments > maxComments) {
+  for (var i = 0; i < numComments; i++) {
     commentWidgets.add(
       Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: GestureDetector(
-          onTap: () {
-            // 더보기 버튼 클릭 시 추가 comments 보여주는 로직 구현
-          },
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('더보기', style: TextStyle(color: Colors.blue)),
-              Icon(Icons.arrow_drop_down, color: Colors.blue),
-            ],
-          ),
-        ),
-      ),
-    );
-  } else {
-    for (var i = 0; i < numComments; i++) {
-      commentWidgets.add(Padding(
         padding:
             EdgeInsets.fromLTRB(10, 4, 0, comments.length - 1 == i ? 0 : 4),
         child: Column(
@@ -268,8 +266,8 @@ List<Widget> nboCommentReple(List<Comments> comments, {int maxComments = 3}) {
             ),
           ],
         ),
-      ));
-    }
+      ),
+    );
   }
 
   return commentWidgets;

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/controller/community/community_regi_controller.dart';
+import 'package:ting_maker/util/image.dart';
 import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -80,8 +81,12 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
                 ),
               ],
             ),
-            onPressed: () {
-              controller.showImageOptions();
+            onPressed: () async {
+              await ImagePickerProvider.showImageOptions(
+                context,
+                controller.regiImage,
+                maxLength: 5,
+              );
             },
           ),
         ],
