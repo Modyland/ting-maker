@@ -114,9 +114,9 @@ Container nboDetailProfile(NboDetail item) {
       children: [
         Row(
           children: [
-            nboProfileIcon(item.useridx, 50, 25),
+            nboProfileIcon(item.userIdx, 50, 25),
             const SizedBox(width: 7),
-            nboProfileId(item.aka, item.writetime)
+            nboProfileId(item.aka, item.writeTime)
           ],
         )
       ],
@@ -169,7 +169,7 @@ Container nboDetailComment(NboDetail item) {
       children: [
         Row(
           children: [
-            Text('댓글 ${item.comment.length}'),
+            Text('댓글 ${item.commentCount}'),
           ],
         ),
         if (item.comment.isNotEmpty)
@@ -188,9 +188,9 @@ Container nboCommentProfile(Comment item, int index, int length) {
       children: [
         Row(
           children: [
-            nboProfileIcon(item.useridx, 40, 20),
+            nboProfileIcon(item.userIdx, 40, 20),
             const SizedBox(width: 7),
-            nboProfileId(item.aka, item.writetime),
+            nboProfileId(item.aka, item.writeTime),
           ],
         ),
         Padding(
@@ -252,9 +252,9 @@ List<Widget> nboCommentReple(List<Comments> comments, {int maxComments = 3}) {
           children: [
             Row(
               children: [
-                nboProfileIcon(comments[i].useridx, 30, 15),
+                nboProfileIcon(comments[i].userIdx, 30, 15),
                 const SizedBox(width: 7),
-                nboProfileId(comments[i].aka, comments[i].writetime,
+                nboProfileId(comments[i].aka, comments[i].writeTime,
                     small: true)
               ],
             ),
