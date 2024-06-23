@@ -2,8 +2,8 @@ class NboList {
   final int idx;
   final String writetime;
   final String aka;
-  final int likes;
-  final int commentes;
+  int likes;
+  int commentes;
   final String vilege;
   final String subject;
   final String title;

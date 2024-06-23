@@ -33,6 +33,15 @@ class CommunityViewController extends GetxController {
   NboDetail? get getDetail => detail.value;
   bool get getIsLoading => isLoading.value;
   bool get getCommentFocus => isFocusing.value;
+
+  void addCommentCount() {
+    detail.update((v) => v!.commentCount += 1);
+  }
+
+  void addLikes() {
+    detail.update((v) => v!.likes += 1);
+  }
+
   bool get getReple {
     if (repleData['commentIdx'] == -1 && repleData['userIdx'] == -1) {
       return false;
@@ -179,6 +188,7 @@ class CommunityViewController extends GetxController {
             }),
           );
         }
+        addCommentCount();
         commentController.clear();
       }
     } catch (err) {
@@ -205,6 +215,23 @@ class CommunityViewController extends GetxController {
         SystemChannels.textInput.invokeMethod('TextInput.show');
       }
     });
+  }
+
+  Future<void> updateLike(String kind, int idx) async {
+    final Map<String, dynamic> req = {
+      'kind': '',
+      'id': NavigationProvider.to.getPerson.id,
+    };
+    req['kind'] = kind;
+    if (kind == 'insertNbo' || kind == 'deleteNbo') {
+      req['nbo_idx'] = idx;
+    } else if (kind == 'insertComment_likes' || kind == 'deleteComment_likes') {
+      req['comment_idx'] = idx;
+    } else {
+      req['cmtCmt_idx'] = idx;
+    }
+
+    final res = await service.updateLikes(req);
   }
 
   // void hideKeyboard() {

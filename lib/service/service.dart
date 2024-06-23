@@ -97,25 +97,8 @@ class MainProvider extends GetConnect {
     }
     return null;
   }
+
+  Future<Response> updateLikes(Map data) async {
+    return httpClient.post('likes/api_getdata', body: data);
+  }
 }
-
-//! likes/api_getdata 
-
-// kind 값은 
-// insertNbo_likes
-// insertComment_likes
-// insertCmtcmt_likes
-// deleteNbo_likes
-// deleteComment_likes
-// deleteCmtcmt_likes
-
-// 게시판 쪽은  nbo_idx 값만 
-// 댓글은 comment_idx 값만
-// 대댓글은 cmtCmt_idx 값만 보내주시면 되요
-
-  // kind: string;
-  // id: string;
-  // nbo_idx: number;
-  // comment_idx: number;
-  // cmtCmt_idx: number;
-  // writetime: string;

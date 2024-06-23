@@ -5,14 +5,14 @@ class NboDetail {
   final int userIdx;
   final String writeTime;
   final String aka;
-  final int likes;
+  int likes;
   final String vilege;
   final String subject;
   final String title;
   final String content;
   final List<int> img;
+  int commentCount;
   final List<Comment> comment;
-  final int commentCount;
 
   NboDetail({
     required this.idx,

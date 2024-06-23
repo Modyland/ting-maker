@@ -140,6 +140,7 @@ class CommunityController extends GetxController
         final isLastPage = newItems.length < limitSize;
         if (isLastPage) {
           _pagingController.appendLastPage(newItems);
+          // 데이터 만들고 그거 추가
         } else {
           final nextPageKey = pageKey + 1;
           _pagingController.appendPage(newItems, nextPageKey);
