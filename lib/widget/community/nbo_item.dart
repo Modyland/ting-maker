@@ -1,6 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:ting_maker/icons/tingicons_icons.dart';
+import 'package:ting_maker/icons/ting_icons_icons.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/time.dart';
@@ -74,13 +74,13 @@ InkWell nboItem(
                   children: [
                     Row(
                       children: [
-                        Icon(Tingicons.heart, color: grey400, size: 16),
+                        Icon(TingIcons.favorite, color: grey400, size: 16),
                         Text('\t${item.likes}', style: contentStyle),
                       ],
                     ),
                     Row(
                       children: [
-                        Icon(Tingicons.comment, color: grey400, size: 16),
+                        Icon(Icons.comment, color: grey400, size: 16),
                         Text('\t${item.commentes}', style: contentStyle),
                       ],
                     ),

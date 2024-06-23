@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:ting_maker/controller/community/community_view_controller.dart';
-import 'package:ting_maker/icons/tingicons_icons.dart';
+import 'package:ting_maker/icons/ting_icons_icons.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/comment.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
@@ -153,7 +153,7 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
               }
             },
           ),
-        IconButton(onPressed: () {}, icon: const Icon(Tingicons.heart)),
+        IconButton(onPressed: () {}, icon: const Icon(TingIcons.favorite)),
         const SizedBox(height: 7),
       ],
     ),
