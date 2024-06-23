@@ -85,9 +85,14 @@ class CommunityViewController extends GetxController {
         detail(item);
         comment.addAll(item.comment);
         for (var comment in item.comment) {
-          comments.add(RxMap({'idx': comment.idx, 'data': comment.comments}));
+          comments.add(
+            RxMap({
+              'idx': comment.idx,
+              'data': comment.comments,
+              'showCount': 3,
+            }),
+          );
         }
-        log('$comments');
         if (item.img.isEmpty) {
           await Future.delayed(Durations.short2, () => isLoading(false));
         }
@@ -99,8 +104,8 @@ class CommunityViewController extends GetxController {
 
   Future<Map<String, Object>> getLoadContentImage(
       NboDetail item, int idx) async {
-    //  ?   /commentImgSelect  // 댓글
-    //  ?   /cmtCmtImgSelect  //대댓글
+    //?   /commentImgSelect // 댓글
+    //?   /cmtCmtImgSelect  // 대댓글
     final image = ExtendedImage.network(
       '${MainProvider.base}nbo/nboImgSelect?imgIdx=$idx',
       cacheKey: 'nboImg_${item.idx}_$idx',
@@ -111,16 +116,30 @@ class CommunityViewController extends GetxController {
 
     final Completer<ImageInfo> completer = Completer();
     image.resolve(const ImageConfiguration()).addListener(
-      ImageStreamListener((ImageInfo info, bool synchronousCall) {
+      ImageStreamListener((ImageInfo info, bool synchronousCall) async {
         completer.complete(info);
         imgCount.value += 1;
         if (imgCount.value == item.img.length) {
-          Future.delayed(Durations.short2, () => isLoading(false));
+          await Future.delayed(Durations.short2, () => isLoading(false));
         }
       }),
     );
     final info = await completer.future;
     return {'image': image, 'info': info};
+  }
+
+  RxMap<String, dynamic> getCommentReple(int idx) =>
+      comments.firstWhere((item) => item['idx'] == idx);
+
+  void showCommentsAdd(int idx) {
+    final data = getCommentReple(idx);
+    final maxCount = (data['data'] as List).length;
+    final addCount = maxCount - data['showCount'];
+    if (addCount > 10) {
+      data['showCount'] += 10;
+    } else {
+      data['showCount'] += 10;
+    }
   }
 
   Future<void> commentSubmit() async {
@@ -138,10 +157,8 @@ class CommunityViewController extends GetxController {
             'img': regiImage.toList().isNotEmpty ? regiImage.toList() : null,
           };
           final res = await service.nboCommentSecondInsert(req);
-          (comments.firstWhere((item) => item['idx'] == res!.commentNum)['data']
-                  as List)
-              .add(res);
-          cancelReple();
+          (getCommentReple(res!.commentNum)['data'] as List).add(res);
+          await Future.delayed(Durations.short2, () => cancelReple());
         } else {
           final req = {
             'kind': 'commentInsert',
@@ -154,6 +171,13 @@ class CommunityViewController extends GetxController {
           };
           final res = await service.nboCommentInsert(req);
           comment.add(res!);
+          comments.add(
+            RxMap({
+              'idx': res.idx,
+              'data': res.comments,
+              'showCount': 3,
+            }),
+          );
         }
         commentController.clear();
       }

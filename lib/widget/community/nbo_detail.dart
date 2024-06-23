@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:ting_maker/controller/community/community_view_controller.dart';
+import 'package:ting_maker/icons/tingicons_icons.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/comment.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
@@ -137,7 +140,6 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
           padding: EdgeInsets.symmetric(vertical: MyApp.height * 0.01),
           child: Text(item.content, style: contentStyle),
         ),
-        if (item.img.isNotEmpty) const SizedBox(height: 7),
         for (var idx in item.img)
           FutureBuilder<Map<String, Object>>(
             future: controller.getLoadContentImage(item, idx),
@@ -151,6 +153,8 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
               }
             },
           ),
+        IconButton(onPressed: () {}, icon: const Icon(Tingicons.heart)),
+        const SizedBox(height: 7),
       ],
     ),
   );
@@ -176,13 +180,12 @@ Container nboDetailComment(NboDetail item, CommunityViewController controller) {
             children: [
               for (var c in controller.sortingComment)
                 nboCommentProfile(
-                  c,
-                  (int num, int idx) => controller.commentReple(num, idx),
-                  controller.sortingComments(
-                    controller.comments
-                        .firstWhere((item) => item['idx'] == c.idx)['data'],
-                  ),
-                )
+                    c,
+                    controller.sortingComments(
+                        controller.getCommentReple(c.idx)['data']),
+                    controller.getCommentReple(c.idx)['showCount'],
+                    (int num, int idx) => controller.commentReple(num, idx),
+                    () => controller.showCommentsAdd(c.idx))
             ],
           )
       ],
@@ -191,7 +194,12 @@ Container nboDetailComment(NboDetail item, CommunityViewController controller) {
 }
 
 Container nboCommentProfile(
-    Comment item, Function(int, int) callback, List<Comments> data) {
+  Comment item,
+  List<Comments> data,
+  int showCount,
+  Function(int, int) callback,
+  VoidCallback countAdd,
+) {
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
     child: Column(
@@ -217,34 +225,33 @@ Container nboCommentProfile(
           },
           child: Padding(
             padding: const EdgeInsets.fromLTRB(8, 5, 0, 0),
-            child: Text('답글 달기',
-                style: TextStyle(color: grey400, fontSize: 12, height: 1)),
+            child: Text(
+              '답글 달기',
+              style: TextStyle(color: grey400, fontSize: 12, height: 1),
+            ),
           ),
         ),
         if (item.comments.isNotEmpty && data.isNotEmpty)
-          if (item.comments.length < 3)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: nboCommentReple(item.comments),
-            )
-          else
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: nboCommentReple(item.comments),
-            )
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: nboCommentReple(data, showCount, countAdd),
+          )
       ],
     ),
   );
 }
 
-List<Widget> nboCommentReple(List<Comments> comments) {
+List<Widget> nboCommentReple(
+  List<Comments> comments,
+  int showCount,
+  VoidCallback countAdd,
+) {
   final List<Widget> commentWidgets = [];
   final int numComments = comments.length;
-  for (var i = 0; i < numComments; i++) {
+  for (var i = 0; i < min(showCount, numComments); i++) {
     commentWidgets.add(
       Padding(
-        padding:
-            EdgeInsets.fromLTRB(10, 4, 0, comments.length - 1 == i ? 0 : 4),
+        padding: EdgeInsets.fromLTRB(10, 4, 0, i == numComments - 1 ? 0 : 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -269,6 +276,24 @@ List<Widget> nboCommentReple(List<Comments> comments) {
       ),
     );
   }
-
+  if (numComments > showCount) {
+    commentWidgets.add(
+      Padding(
+        padding: const EdgeInsets.fromLTRB(10, 2, 0, 0),
+        child: GestureDetector(
+          onTap: () {
+            countAdd();
+          },
+          child: Text(
+            '이전 ${numComments - min(showCount, numComments)}개 답글 보기',
+            style: TextStyle(
+              fontSize: 12,
+              color: pointColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
   return commentWidgets;
 }
