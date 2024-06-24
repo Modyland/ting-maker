@@ -103,7 +103,7 @@ class CommunityViewController extends GetxController {
           );
         }
         if (item.img.isEmpty) {
-          await Future.delayed(Durations.short2, () => isLoading(false));
+          Future.delayed(Durations.short2, () => isLoading(false));
         }
       }
     } catch (err) {
@@ -129,7 +129,7 @@ class CommunityViewController extends GetxController {
         completer.complete(info);
         imgCount.value += 1;
         if (imgCount.value == item.img.length) {
-          await Future.delayed(Durations.short2, () => isLoading(false));
+          Future.delayed(Durations.short2, () => isLoading(false));
         }
       }),
     );
@@ -167,7 +167,7 @@ class CommunityViewController extends GetxController {
           };
           final res = await service.nboCommentSecondInsert(req);
           (getCommentReple(res!.commentNum)['data'] as List).add(res);
-          await Future.delayed(Durations.short2, () => cancelReple());
+          cancelReple();
         } else {
           final req = {
             'kind': 'commentInsert',

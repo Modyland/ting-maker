@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/community/nbo_item.dart';
 
-class NboListWidget extends StatelessWidget {
+class NboListWidget extends GetView {
   const NboListWidget({
     super.key,
     required this.controller,
   });
 
+  @override
   final CommunityController controller;
 
   @override

@@ -71,16 +71,17 @@ InkWell nboItem(
                 if (item.isImg == 1) nboFirstImg(item),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Row(
                       children: [
-                        Icon(TingIcons.favorite, color: grey400, size: 16),
+                        Icon(TingIcons.favorite, color: grey400, size: 13),
                         Text('\t${item.likes}', style: contentStyle),
                       ],
                     ),
                     Row(
                       children: [
-                        Icon(Icons.comment, color: grey400, size: 16),
+                        Icon(Icons.comment, color: grey400, size: 13),
                         Text('\t${item.commentes}', style: contentStyle),
                       ],
                     ),
