@@ -5,7 +5,7 @@ class Comment {
   final String id;
   final int postNum;
   final String aka;
-  final int likes;
+  int likes;
   final String content;
   final int isImg;
   final int commentCount;
@@ -67,7 +67,7 @@ class Comments {
   final int nboNum;
   final int commentNum;
   final String aka;
-  final int likes;
+  int likes;
   final String content;
   final int isImg;
   final int? pause;

@@ -7,6 +7,7 @@ import 'package:ting_maker/icons/ting_icons_icons.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/comment.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
+import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/util/time.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/marker_img.dart';
@@ -127,6 +128,8 @@ Container nboDetailProfile(NboDetail item) {
 }
 
 Container nboDetailContent(NboDetail item, CommunityViewController controller) {
+  final list = NavigationProvider.to.getNboLikes;
+  bool isLike = list.contains(item.idx);
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
     child: Column(
@@ -153,7 +156,19 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
               }
             },
           ),
-        IconButton(onPressed: () {}, icon: const Icon(TingIcons.favorite)),
+        if (isLike)
+          IconButton(
+              color: pointColor,
+              onPressed: () {
+                controller.updateLike('deleteNbo_likes', false, 0);
+              },
+              icon: const Icon(TingIcons.favorite))
+        else
+          IconButton(
+              onPressed: () {
+                controller.updateLike('insertNbo_likes', true, 0);
+              },
+              icon: const Icon(TingIcons.favorite_border)),
         const SizedBox(height: 7),
       ],
     ),
@@ -175,17 +190,25 @@ Container nboDetailComment(NboDetail item, CommunityViewController controller) {
             Text('댓글 ${item.commentCount}'),
           ],
         ),
-        if (controller.sortingComment.isNotEmpty)
+        if (controller.comment.isNotEmpty)
           Column(
             children: [
-              for (var c in controller.sortingComment)
+              for (var c in controller.comment)
                 nboCommentProfile(
-                    c,
-                    controller.sortingComments(
-                        controller.getCommentReple(c.idx)['data']),
-                    controller.getCommentReple(c.idx)['showCount'],
-                    (int num, int idx) => controller.commentReple(num, idx),
-                    () => controller.showCommentsAdd(c.idx))
+                  c,
+                  controller.getCommentReple(c.idx)['data'],
+                  controller.getCommentReple(c.idx)['showCount'],
+                  (int num, int idx) => controller.commentReple(num, idx),
+                  () => controller.showCommentsAdd(c.idx),
+                  () => controller.updateLike('insertComment_likes', true, 1,
+                      commentIdx: c.idx),
+                  () => controller.updateLike('deleteComment_likes', false, 1,
+                      commentIdx: c.idx),
+                  (i) => controller.updateLike('insertCmtcmt_likes', true, 2,
+                      commentIdx: c.idx, repleIdx: i),
+                  (i) => controller.updateLike('deleteCmtcmt_likes', false, 2,
+                      commentIdx: c.idx, repleIdx: i),
+                )
             ],
           )
       ],
@@ -199,7 +222,13 @@ Container nboCommentProfile(
   int showCount,
   Function(int, int) callback,
   VoidCallback countAdd,
+  VoidCallback addLike,
+  VoidCallback removeLike,
+  Function(int) addRepleLike,
+  Function(int) removeRepleLike,
 ) {
+  final list = NavigationProvider.to.getCommentLikes;
+  bool isLike = list.contains(item.idx);
   return Container(
     padding: EdgeInsets.only(top: MyApp.height * 0.015),
     child: Column(
@@ -219,22 +248,61 @@ Container nboCommentProfile(
             style: const TextStyle(color: Colors.black, height: 1),
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            callback(item.idx, item.userIdx);
-          },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 5, 0, 0),
-            child: Text(
-              '답글 달기',
-              style: TextStyle(color: grey400, fontSize: 12, height: 1),
-            ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 4, 0, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () => isLike ? removeLike() : addLike(),
+                child: isLike
+                    ? Row(
+                        children: [
+                          Icon(TingIcons.favorite, color: pointColor, size: 12),
+                          const SizedBox(width: 2),
+                          Text(
+                            '좋아요 ${item.likes}',
+                            style: TextStyle(
+                                color: pointColor, fontSize: 12, height: 1),
+                          )
+                        ],
+                      )
+                    : Row(
+                        children: [
+                          Icon(TingIcons.favorite_border,
+                              color: grey400, size: 12),
+                          const SizedBox(width: 2),
+                          Text(
+                            '좋아요 ${item.likes}',
+                            style: TextStyle(
+                                color: grey400, fontSize: 12, height: 1),
+                          )
+                        ],
+                      ),
+              ),
+              const SizedBox(width: 4),
+              GestureDetector(
+                onTap: () {
+                  callback(item.idx, item.userIdx);
+                },
+                child: Text(
+                  '답글 달기',
+                  style: TextStyle(color: grey400, fontSize: 12, height: 1),
+                ),
+              ),
+            ],
           ),
         ),
         if (item.comments.isNotEmpty && data.isNotEmpty)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: nboCommentReple(data, showCount, countAdd),
+            children: nboCommentReple(
+              data,
+              showCount,
+              countAdd,
+              (i) => addRepleLike(i),
+              (i) => removeRepleLike(i),
+            ),
           )
       ],
     ),
@@ -245,13 +313,17 @@ List<Widget> nboCommentReple(
   List<Comments> comments,
   int showCount,
   VoidCallback countAdd,
+  Function(int) addRepleLike,
+  Function(int) removeRepleLike,
 ) {
+  final list = NavigationProvider.to.getRepleLikes;
   final List<Widget> commentWidgets = [];
   final int numComments = comments.length;
   for (var i = 0; i < min(showCount, numComments); i++) {
+    bool isLike = list.contains(comments[i].idx);
     commentWidgets.add(
       Padding(
-        padding: EdgeInsets.fromLTRB(10, 4, 0, i == numComments - 1 ? 0 : 4),
+        padding: EdgeInsets.fromLTRB(12, 4, 0, i == numComments - 1 ? 0 : 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -271,6 +343,38 @@ List<Widget> nboCommentReple(
                     fontSize: 13, color: Colors.black, height: 1),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 2, 0, 0),
+              child: GestureDetector(
+                onTap: () => isLike
+                    ? removeRepleLike(comments[i].idx)
+                    : addRepleLike(comments[i].idx),
+                child: isLike
+                    ? Row(
+                        children: [
+                          Icon(TingIcons.favorite, color: pointColor, size: 11),
+                          const SizedBox(width: 2),
+                          Text(
+                            '좋아요 ${comments[i].likes}',
+                            style: TextStyle(
+                                color: pointColor, fontSize: 11, height: 1),
+                          )
+                        ],
+                      )
+                    : Row(
+                        children: [
+                          Icon(TingIcons.favorite_border,
+                              color: grey400, size: 11),
+                          const SizedBox(width: 2),
+                          Text(
+                            '좋아요 ${comments[i].likes}',
+                            style: TextStyle(
+                                color: grey400, fontSize: 11, height: 1),
+                          )
+                        ],
+                      ),
+              ),
+            ),
           ],
         ),
       ),
@@ -279,7 +383,7 @@ List<Widget> nboCommentReple(
   if (numComments > showCount) {
     commentWidgets.add(
       Padding(
-        padding: const EdgeInsets.fromLTRB(10, 2, 0, 0),
+        padding: const EdgeInsets.fromLTRB(14, 2, 0, 0),
         child: GestureDetector(
           onTap: () {
             countAdd();

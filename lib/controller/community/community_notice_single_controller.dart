@@ -1,16 +1,18 @@
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 
 class CommunityNoticeSingleController extends GetxController {
-  final limitSize = 10;
   static CommunityNoticeSingleController get to => Get.find();
   final Rx<String> id = Rx(Get.arguments);
-  final PagingController<int, NboList> _pagingController =
+  final RxList<Rx<NboList>> nboList = RxList<Rx<NboList>>([]);
+  final PagingController<int, Rx<NboList>> _pagingController =
       PagingController(firstPageKey: 0);
-  PagingController<int, NboList> get getPagingController => _pagingController;
+  PagingController<int, Rx<NboList>> get getPagingController =>
+      _pagingController;
   String get getId => id.value;
 
   @override
@@ -30,18 +32,22 @@ class CommunityNoticeSingleController extends GetxController {
   Future<void> _fetchPage(int pageKey) async {
     try {
       final newItems = await service.getNboSelect(
-        limitSize,
+        CommunityController.to.limitSize,
         NavigationProvider.to.getPerson.id,
         keyword: getId,
-        idx: pageKey != 0 ? _pagingController.itemList?.last.idx : null,
+        idx: pageKey != 0 ? _pagingController.itemList?.last.value.idx : null,
       );
       if (newItems != null) {
-        final isLastPage = newItems.length < limitSize;
+        nboList.addAll(newItems.map((e) => e.obs));
+        final startIndex = pageKey * CommunityController.to.limitSize;
+        final endIndex = startIndex + newItems.length;
+        final data = nboList.sublist(startIndex, endIndex);
+        final isLastPage = newItems.length < CommunityController.to.limitSize;
         if (isLastPage) {
-          _pagingController.appendLastPage(newItems);
+          _pagingController.appendLastPage(data);
         } else {
           final nextPageKey = pageKey + 1;
-          _pagingController.appendPage(newItems, nextPageKey);
+          _pagingController.appendPage(data, nextPageKey);
         }
       }
     } catch (error) {
@@ -50,6 +56,7 @@ class CommunityNoticeSingleController extends GetxController {
   }
 
   Future<void> goDetail(int idx) async {
-    Get.toNamed('/home/community_view', arguments: {'idx': idx});
+    Get.toNamed('/home/community_view',
+        arguments: {'idx': idx, 'to': 'community_notice'});
   }
 }

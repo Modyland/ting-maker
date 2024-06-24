@@ -1,5 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ting_maker/icons/ting_icons_icons.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/service/service.dart';
@@ -60,36 +61,38 @@ InkWell nboItem(
               ],
             ),
           ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: item.isImg == 1
-                  ? MainAxisAlignment.spaceBetween
-                  : MainAxisAlignment.end,
-              children: [
-                if (item.isImg == 1) nboFirstImg(item),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(TingIcons.favorite, color: grey400, size: 13),
-                        Text('\t${item.likes}', style: contentStyle),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Icon(Icons.comment, color: grey400, size: 13),
-                        Text('\t${item.commentes}', style: contentStyle),
-                      ],
-                    ),
-                  ],
-                )
-              ],
+          Obx(
+            () => Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: item.isImg == 1
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.end,
+                children: [
+                  if (item.isImg == 1) nboFirstImg(item),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(TingIcons.favorite, color: grey400, size: 13),
+                          Text('\t${item.likes.obs}', style: contentStyle),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.comment, color: grey400, size: 13),
+                          Text('\t${item.commentes.obs}', style: contentStyle),
+                        ],
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
+          )
         ],
       ),
     ),

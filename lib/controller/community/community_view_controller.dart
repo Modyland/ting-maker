@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:ting_maker/controller/community/community_notice_single_controller.dart';
+import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/comment.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
@@ -14,11 +16,9 @@ import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 class CommunityViewController extends GetxController {
-  final picker = ImagePicker();
   final TextEditingController commentController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final FocusNode commentFocus = FocusNode();
-
   final Rx<Map<String, dynamic>> args = Rx(Get.arguments);
   final Rx<NboDetail?> detail = Rx(null);
   final RxList<Comment> comment = RxList([]);
@@ -34,12 +34,31 @@ class CommunityViewController extends GetxController {
   bool get getIsLoading => isLoading.value;
   bool get getCommentFocus => isFocusing.value;
 
-  void addCommentCount() {
+  void changeCommentCount(bool flag) {
     detail.update((v) => v!.commentCount += 1);
+    final listIdx = CommunityController.to.nboList
+        .indexWhere((item) => item.value.idx == detail.value?.idx);
+    CommunityController.to.nboList[listIdx]
+        .update((v) => v!.commentes += flag ? 1 : -1);
+    if (args.value['to'] == 'community_notice') {
+      final listIdx = CommunityNoticeSingleController.to.nboList
+          .indexWhere((item) => item.value.idx == detail.value?.idx);
+      CommunityNoticeSingleController.to.nboList[listIdx]
+          .update((v) => v!.commentes += flag ? 1 : -1);
+    }
   }
 
-  void addLikes() {
-    detail.update((v) => v!.likes += 1);
+  void changeLikeCount(bool flag) {
+    final listIdx = CommunityController.to.nboList
+        .indexWhere((item) => item.value.idx == detail.value?.idx);
+    CommunityController.to.nboList[listIdx]
+        .update((v) => v!.likes += flag ? 1 : -1);
+    if (args.value['to'] == 'community_notice') {
+      final listIdx = CommunityNoticeSingleController.to.nboList
+          .indexWhere((item) => item.value.idx == detail.value?.idx);
+      CommunityNoticeSingleController.to.nboList[listIdx]
+          .update((v) => v!.likes += flag ? 1 : -1);
+    }
   }
 
   bool get getReple {
@@ -47,34 +66,6 @@ class CommunityViewController extends GetxController {
       return false;
     }
     return true;
-  }
-
-  List<Comment> get sortingComment {
-    final data = comment.toList()
-      ..sort((a, b) {
-        int likeCompare = a.likes.compareTo(b.likes);
-        if (likeCompare == 0) {
-          final aDateTime = DateTime.parse(a.writeTime.replaceAll(' ', 'T'));
-          final bDateTime = DateTime.parse(b.writeTime.replaceAll(' ', 'T'));
-          return bDateTime.compareTo(aDateTime);
-        }
-        return likeCompare;
-      });
-    return data;
-  }
-
-  List<Comments> sortingComments(List<Comments> co) {
-    final data = co
-      ..sort((a, b) {
-        int likeCompare = a.likes.compareTo(b.likes);
-        if (likeCompare == 0) {
-          final aDateTime = DateTime.parse(a.writeTime.replaceAll(' ', 'T'));
-          final bDateTime = DateTime.parse(b.writeTime.replaceAll(' ', 'T'));
-          return bDateTime.compareTo(aDateTime);
-        }
-        return likeCompare;
-      });
-    return data;
   }
 
   @override
@@ -86,6 +77,8 @@ class CommunityViewController extends GetxController {
 
   Future<void> detailInit() async {
     try {
+      comment.clear();
+      comments.clear();
       final item = await service.getNboDetailSelect(
         getArgs['idx'],
         NavigationProvider.to.getPerson.id,
@@ -188,7 +181,7 @@ class CommunityViewController extends GetxController {
             }),
           );
         }
-        addCommentCount();
+        changeCommentCount(true);
         commentController.clear();
       }
     } catch (err) {
@@ -217,27 +210,62 @@ class CommunityViewController extends GetxController {
     });
   }
 
-  Future<void> updateLike(String kind, int idx) async {
-    final Map<String, dynamic> req = {
-      'kind': '',
-      'id': NavigationProvider.to.getPerson.id,
-    };
-    req['kind'] = kind;
-    if (kind == 'insertNbo' || kind == 'deleteNbo') {
-      req['nbo_idx'] = idx;
-    } else if (kind == 'insertComment_likes' || kind == 'deleteComment_likes') {
-      req['comment_idx'] = idx;
-    } else {
-      req['cmtCmt_idx'] = idx;
+  Future<void> updateLike(
+    String kind,
+    bool isInsert,
+    int flag, {
+    int? commentIdx,
+    int? repleIdx,
+  }) async {
+    try {
+      final Map<String, dynamic> req = {
+        'kind': '',
+        'id': NavigationProvider.to.getPerson.id,
+        'nbo_idx': getDetail!.idx,
+      };
+      req['kind'] = kind;
+      if (kind == 'insertComment_likes' || kind == 'deleteComment_likes') {
+        req['comment_idx'] = commentIdx;
+      } else {
+        req['comment_idx'] = commentIdx;
+        req['cmtCmt_idx'] = repleIdx;
+      }
+
+      final res = await service.updateLikes(req);
+      final data = json.decode(res.bodyString!);
+      if (data) {
+        if (isInsert) {
+          if (flag == 0) {
+            NavigationProvider.to.nboLikes.add(getDetail!.idx);
+            changeLikeCount(true);
+          } else if (flag == 1) {
+            NavigationProvider.to.commentLikes.add(commentIdx);
+            comment.firstWhere((item) => item.idx == commentIdx).likes += 1;
+          } else {
+            NavigationProvider.to.repleLikes.add(repleIdx);
+            final data = getCommentReple(commentIdx!)['data'] as List<Comments>;
+            data.firstWhere((item) => item.idx == repleIdx).likes += 1;
+          }
+        } else {
+          if (flag == 0) {
+            NavigationProvider.to.nboLikes
+                .removeWhere((item) => item == getDetail!.idx);
+            changeLikeCount(false);
+          } else if (flag == 1) {
+            NavigationProvider.to.commentLikes
+                .removeWhere((item) => item == commentIdx);
+            comment.firstWhere((item) => item.idx == commentIdx).likes -= 1;
+          } else {
+            NavigationProvider.to.repleLikes
+                .removeWhere((item) => item == repleIdx);
+            final data = getCommentReple(commentIdx!)['data'] as List<Comments>;
+            data.firstWhere((item) => item.idx == repleIdx).likes -= 1;
+          }
+        }
+      }
+    } catch (err) {
+      log(err.toString());
+      noTitleSnackbar(MyApp.normalErrorMsg);
     }
-
-    final res = await service.updateLikes(req);
   }
-
-  // void hideKeyboard() {
-  //   FocusScope.of(Get.context!).unfocus();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     SystemChannels.textInput.invokeMethod('TextInput.hide');
-  //   });
-  // }
 }

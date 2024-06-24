@@ -14,11 +14,31 @@ enum Navigation { naverMap, community, place, chatting, info }
 
 class NavigationProvider extends GetxService {
   static NavigationProvider get to => Get.find();
-
-  RxInt currentIndex = 0.obs;
+  final Rx<int> currentIndex = Rx<int>(0);
   final Rx<Person> person = Rx<Person>(personBox.get('person')!);
+  final RxList nboLikes = RxList([]);
+  final RxList commentLikes = RxList([]);
+  final RxList repleLikes = RxList([]);
 
   Person get getPerson => person.value;
+  RxList get getNboLikes => nboLikes;
+  RxList get getCommentLikes => commentLikes;
+  RxList get getRepleLikes => repleLikes;
+
+  @override
+  void onReady() async {
+    super.onReady();
+    await getLikeList();
+  }
+
+  Future<void> getLikeList() async {
+    final req = {'kind': 'Check_Likes', 'id': getPerson.id};
+
+    final res = await service.updateLikes(req);
+    nboLikes(res.body['nboLikes']);
+    commentLikes(res.body['commentLikes']);
+    repleLikes(res.body['cmtCmtLikes']);
+  }
 
   void changeIndex(int idx) {
     currentIndex(idx);

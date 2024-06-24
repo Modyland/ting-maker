@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/controller/community_controller.dart';
+import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/community/class_list.dart';
-import 'package:ting_maker/widget/community/nbo_list.dart';
+import 'package:ting_maker/widget/community/nbo_item.dart';
 import 'package:ting_maker/widget/community/subject_list.dart';
 
 class CommunityScreen extends GetView<CommunityController> {
@@ -34,7 +36,7 @@ class CommunityScreen extends GetView<CommunityController> {
                     children: [
                       ClassListWidget(controller: controller),
                       SubjectListWidget(controller: controller),
-                      Flexible(child: NboListWidget(controller: controller))
+                      Flexible(child: nboInfiniteList())
                     ],
                   ),
                   Positioned(
@@ -67,6 +69,53 @@ class CommunityScreen extends GetView<CommunityController> {
                 ),
               );
             }
+          },
+        ),
+      ),
+    );
+  }
+
+  RefreshIndicator nboInfiniteList() {
+    return RefreshIndicator(
+      color: pointColor,
+      onRefresh: () async {
+        controller.nboList.clear();
+        controller.getPagingController.refresh();
+      },
+      child: PagedListView(
+        shrinkWrap: true,
+        physics: const AlwaysScrollableScrollPhysics(),
+        pagingController: controller.getPagingController,
+        builderDelegate: PagedChildBuilderDelegate<Rx<NboList>>(
+          itemBuilder: (context, item, idx) {
+            return Obx(() => nboItem(context, item.value, controller.goDetail));
+          },
+          firstPageProgressIndicatorBuilder: (context) {
+            return Center(
+              child: CircularProgressIndicator(color: pointColor),
+            );
+          },
+          newPageProgressIndicatorBuilder: (context) {
+            return Center(
+              child: CircularProgressIndicator(color: pointColor),
+            );
+          },
+          firstPageErrorIndicatorBuilder: (context) {
+            return Center(
+              child: TextButton(
+                onPressed: () => controller.getPagingController.refresh(),
+                child: const Text('다시 시도'),
+              ),
+            );
+          },
+          newPageErrorIndicatorBuilder: (context) {
+            return Center(
+              child: TextButton(
+                onPressed: () =>
+                    controller.getPagingController.retryLastFailedRequest(),
+                child: const Text('다시 시도'),
+              ),
+            );
           },
         ),
       ),

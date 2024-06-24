@@ -18,6 +18,7 @@ class CommunityNoticeSingleScreen
       body: RefreshIndicator(
         color: pointColor,
         onRefresh: () async {
+          controller.nboList.clear();
           controller.getPagingController.refresh();
         },
         child: Column(
@@ -47,9 +48,10 @@ class CommunityNoticeSingleScreen
                 shrinkWrap: true,
                 physics: const AlwaysScrollableScrollPhysics(),
                 pagingController: controller.getPagingController,
-                builderDelegate: PagedChildBuilderDelegate<NboList>(
+                builderDelegate: PagedChildBuilderDelegate<Rx<NboList>>(
                   itemBuilder: (context, item, idx) {
-                    return nboItem(context, item, controller.goDetail);
+                    return Obx(() =>
+                        nboItem(context, item.value, controller.goDetail));
                   },
                   firstPageProgressIndicatorBuilder: (context) {
                     return Center(

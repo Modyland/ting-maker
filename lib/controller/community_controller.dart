@@ -18,10 +18,11 @@ class CommunityController extends GetxController
   final Rx<TabState> nowTab = TabState.all.obs;
   final Rx<PageState> pageState = PageState.noticePage.obs;
   final Rx<List> subjectList = Rx<List>(utilBox.get('subject')!);
-  final PagingController<int, NboList> _pagingController = PagingController(
-    firstPageKey: 0,
-  );
-  PagingController<int, NboList> get getPagingController => _pagingController;
+  final RxList<Rx<NboList>> nboList = RxList<Rx<NboList>>([]);
+  final PagingController<int, Rx<NboList>> _pagingController =
+      PagingController(firstPageKey: 0);
+  PagingController<int, Rx<NboList>> get getPagingController =>
+      _pagingController;
   TabState get getTab => nowTab.value;
   bool get isClassPage =>
       NavigationProvider.to.currentIndex.value == Navigation.community.index &&
@@ -134,15 +135,19 @@ class CommunityController extends GetxController
       final newItems = await service.getNboSelect(
         limitSize,
         NavigationProvider.to.getPerson.id,
-        idx: pageKey != 0 ? _pagingController.itemList?.last.idx : null,
+        idx: pageKey != 0 ? _pagingController.itemList?.last.value.idx : null,
       );
       if (newItems != null) {
+        nboList.addAll(newItems.map((e) => e.obs));
+        final startIndex = pageKey * limitSize;
+        final endIndex = startIndex + newItems.length;
+        final data = nboList.sublist(startIndex, endIndex);
         final isLastPage = newItems.length < limitSize;
         if (isLastPage) {
-          _pagingController.appendLastPage(newItems);
+          _pagingController.appendLastPage(data);
         } else {
           final nextPageKey = pageKey + 1;
-          _pagingController.appendPage(newItems, nextPageKey);
+          _pagingController.appendPage(data, nextPageKey);
         }
       }
     } catch (error) {
@@ -151,6 +156,7 @@ class CommunityController extends GetxController
   }
 
   Future<void> goDetail(int idx) async {
-    Get.toNamed('/home/community_view', arguments: {'idx': idx});
+    Get.toNamed('/home/community_view',
+        arguments: {'idx': idx, 'to': 'community'});
   }
 }
