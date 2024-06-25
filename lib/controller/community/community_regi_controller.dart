@@ -16,7 +16,7 @@ class CommunityRegiController extends GetxController {
   Rx<String> regiSubject = Rx<String>('');
   Rx<String> regiTitle = Rx<String>('');
   Rx<String> regiContent = Rx<String>('');
-  RxList<Uint8List> regiImage = RxList<Uint8List>();
+  RxList<Uint8List> regiImage = RxList<Uint8List>([]);
 
   String get getSubject => regiSubject.value;
   String get getTitle => regiTitle.value;
@@ -63,7 +63,7 @@ class CommunityRegiController extends GetxController {
       final data = json.decode(res.bodyString!);
 
       if (data) {
-        await registerSuccess();
+        registerSuccess();
       }
     } catch (err) {
       noTitleSnackbar(MyApp.normalErrorMsg);
@@ -72,9 +72,10 @@ class CommunityRegiController extends GetxController {
     }
   }
 
-  Future<void> registerSuccess() async {
-    Get.back();
+  void registerSuccess() {
+    CommunityController.to.nboList.clear();
     CommunityController.to.getPagingController.refresh();
+    Get.back();
     noTitleSnackbar('게시글이 등록되었습니다.', time: 2);
   }
 }

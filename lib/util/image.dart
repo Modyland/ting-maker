@@ -71,7 +71,8 @@ class ImagePickerProvider {
       final XFile? pickedFile =
           await picker.pickImage(source: ImageSource.gallery, imageQuality: 30);
       if (pickedFile != null) {
-        list.add(await pickedFile.readAsBytes());
+        Uint8List data = await pickedFile.readAsBytes();
+        list.add(data);
       }
     }
   }
@@ -80,7 +81,8 @@ class ImagePickerProvider {
     final XFile? pickedFile =
         await picker.pickImage(source: ImageSource.camera, imageQuality: 30);
     if (pickedFile != null) {
-      list.add(await pickedFile.readAsBytes());
+      Uint8List data = await pickedFile.readAsBytes();
+      list.add(data);
     }
   }
 

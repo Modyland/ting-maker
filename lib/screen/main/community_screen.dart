@@ -64,7 +64,7 @@ class CommunityScreen extends GetView<CommunityController> {
               return Container(
                 child: Column(
                   children: [
-                    controller.tabBar(),
+                    tabBar(),
                   ],
                 ),
               );
@@ -72,6 +72,32 @@ class CommunityScreen extends GetView<CommunityController> {
           },
         ),
       ),
+    );
+  }
+
+  TabBar tabBar() {
+    return TabBar(
+      controller: controller.tabController,
+      overlayColor: const WidgetStatePropertyAll(
+        Colors.transparent,
+      ),
+      indicatorColor: pointColor,
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicatorWeight: 2,
+      labelColor: Colors.black,
+      labelStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelColor: grey300,
+      unselectedLabelStyle: const TextStyle(
+        fontSize: 14,
+      ),
+      tabs: const [
+        Tab(text: "전체 모임"),
+        Tab(text: "모임 일정"),
+        Tab(text: "내 모임"),
+      ],
     );
   }
 

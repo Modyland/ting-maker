@@ -97,64 +97,56 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
   Container imageInput() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(
-                controller.regiImage.length,
-                (v) {
-                  return Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 8, top: 8),
-                        height: 80,
-                        width: 80,
-                        clipBehavior: Clip.none,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                          image: DecorationImage(
-                            image: MemoryImage(
-                              controller.regiImage[v],
-                            ),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 2,
-                        right: 0,
-                        child: InkWell(
-                          onTap: () {
-                            controller.regiImage.removeAt(v);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              color: grey500,
-                              borderRadius: BorderRadius.circular(
-                                50,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.close,
-                              color: grey100,
-                              size: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List.generate(
+            controller.regiImage.length,
+            (index) => imageItem(index),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget imageItem(int index) {
+    return Stack(
+      alignment: Alignment.topRight,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(right: 8, top: 8),
+          height: 80,
+          width: 80,
+          clipBehavior: Clip.none,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(width: 1, color: pointColor),
+            image: DecorationImage(
+              image: MemoryImage(controller.regiImage[index]),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Positioned(
+          top: 2,
+          right: 0,
+          child: InkWell(
+            onTap: () => controller.regiImage.removeAt(index),
+            child: Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: grey500,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Icon(
+                Icons.close,
+                color: grey100,
+                size: 14,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

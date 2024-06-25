@@ -156,19 +156,19 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
               }
             },
           ),
-        if (isLike)
-          IconButton(
-              color: pointColor,
-              onPressed: () {
-                controller.updateLike('deleteNbo_likes', false, 0);
-              },
-              icon: const Icon(TingIcons.favorite))
-        else
-          IconButton(
-              onPressed: () {
-                controller.updateLike('insertNbo_likes', true, 0);
-              },
-              icon: const Icon(TingIcons.favorite_border)),
+        GestureDetector(
+          onTap: () {
+            if (isLike) {
+              controller.updateLike('deleteNbo_likes', false, 0);
+            } else {
+              controller.updateLike('insertNbo_likes', true, 0);
+            }
+          },
+          child: Icon(
+            isLike ? TingIcons.favorite : TingIcons.favorite_border,
+            color: isLike ? pointColor : grey400,
+          ),
+        ),
         const SizedBox(height: 7),
       ],
     ),
@@ -198,7 +198,8 @@ Container nboDetailComment(NboDetail item, CommunityViewController controller) {
                   c,
                   controller.getCommentReple(c.idx)['data'],
                   controller.getCommentReple(c.idx)['showCount'],
-                  (int num, int idx) => controller.commentReple(num, idx),
+                  (int num, int idx, String aka) =>
+                      controller.commentReple(num, idx, aka),
                   () => controller.showCommentsAdd(c.idx),
                   () => controller.updateLike('insertComment_likes', true, 1,
                       commentIdx: c.idx),
@@ -208,6 +209,7 @@ Container nboDetailComment(NboDetail item, CommunityViewController controller) {
                       commentIdx: c.idx, repleIdx: i),
                   (i) => controller.updateLike('deleteCmtcmt_likes', false, 2,
                       commentIdx: c.idx, repleIdx: i),
+                  controller.getLoadCommentImage,
                 )
             ],
           )
@@ -216,16 +218,37 @@ Container nboDetailComment(NboDetail item, CommunityViewController controller) {
   );
 }
 
+Column nboCommentImg(String type, int idx, Function callback) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      FutureBuilder<Map<String, Object>>(
+        future: callback(type, idx),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final image = snapshot.data!['image'] as ImageProvider;
+            final info = snapshot.data!['info'] as ImageInfo;
+            return nboDetailImg(info: info, image: image);
+          } else {
+            return nboDetailImg();
+          }
+        },
+      ),
+    ],
+  );
+}
+
 Container nboCommentProfile(
   Comment item,
   List<Comments> data,
   int showCount,
-  Function(int, int) callback,
+  Function(int, int, String) callback,
   VoidCallback countAdd,
   VoidCallback addLike,
   VoidCallback removeLike,
   Function(int) addRepleLike,
   Function(int) removeRepleLike,
+  Function imgCallback,
 ) {
   final list = NavigationProvider.to.getCommentLikes;
   bool isLike = list.contains(item.idx);
@@ -241,57 +264,54 @@ Container nboCommentProfile(
             nboProfileId(item.aka, item.writeTime),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-          child: Text(
-            item.content,
-            style: const TextStyle(color: Colors.black, height: 1),
+        if (item.content.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+            child: Text(
+              item.content,
+              style: const TextStyle(color: Colors.black, height: 1),
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 0, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () => isLike ? removeLike() : addLike(),
-                child: isLike
-                    ? Row(
-                        children: [
-                          Icon(TingIcons.favorite, color: pointColor, size: 12),
-                          const SizedBox(width: 2),
-                          Text(
-                            '좋아요 ${item.likes}',
-                            style: TextStyle(
-                                color: pointColor, fontSize: 12, height: 1),
-                          )
-                        ],
-                      )
-                    : Row(
-                        children: [
-                          Icon(TingIcons.favorite_border,
-                              color: grey400, size: 12),
-                          const SizedBox(width: 2),
-                          Text(
-                            '좋아요 ${item.likes}',
-                            style: TextStyle(
-                                color: grey400, fontSize: 12, height: 1),
-                          )
-                        ],
+        if (item.isImg == 1) nboCommentImg('comment', item.idx, imgCallback),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () => isLike ? removeLike() : addLike(),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8, 4, 0, 0),
+                child: Row(
+                  children: [
+                    if (isLike)
+                      Icon(TingIcons.favorite, color: pointColor, size: 12)
+                    else
+                      Icon(TingIcons.favorite_border, color: grey400, size: 12),
+                    const SizedBox(width: 2),
+                    Text(
+                      '좋아요 ${item.likes}',
+                      style: TextStyle(
+                        color: isLike ? pointColor : grey400,
+                        fontSize: 12,
+                        height: 1,
                       ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 4),
-              GestureDetector(
-                onTap: () {
-                  callback(item.idx, item.userIdx);
-                },
+            ),
+            GestureDetector(
+              onTap: () {
+                callback(item.idx, item.userIdx, item.aka);
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(4, 4, 0, 0),
                 child: Text(
                   '답글 달기',
                   style: TextStyle(color: grey400, fontSize: 12, height: 1),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         if (item.comments.isNotEmpty && data.isNotEmpty)
           Column(
@@ -302,6 +322,7 @@ Container nboCommentProfile(
               countAdd,
               (i) => addRepleLike(i),
               (i) => removeRepleLike(i),
+              imgCallback,
             ),
           )
       ],
@@ -315,6 +336,7 @@ List<Widget> nboCommentReple(
   VoidCallback countAdd,
   Function(int) addRepleLike,
   Function(int) removeRepleLike,
+  Function imgCallback,
 ) {
   final list = NavigationProvider.to.getRepleLikes;
   final List<Widget> commentWidgets = [];
@@ -335,44 +357,40 @@ List<Widget> nboCommentReple(
                     small: true)
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(4, 4, 0, 0),
-              child: Text(
-                comments[i].content,
-                style: const TextStyle(
-                    fontSize: 13, color: Colors.black, height: 1),
+            if (comments[i].content.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(4, 4, 0, 0),
+                child: Text(
+                  comments[i].content,
+                  style: const TextStyle(
+                      fontSize: 13, color: Colors.black, height: 1),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(4, 2, 0, 0),
-              child: GestureDetector(
-                onTap: () => isLike
-                    ? removeRepleLike(comments[i].idx)
-                    : addRepleLike(comments[i].idx),
-                child: isLike
-                    ? Row(
-                        children: [
-                          Icon(TingIcons.favorite, color: pointColor, size: 11),
-                          const SizedBox(width: 2),
-                          Text(
-                            '좋아요 ${comments[i].likes}',
-                            style: TextStyle(
-                                color: pointColor, fontSize: 11, height: 1),
-                          )
-                        ],
-                      )
-                    : Row(
-                        children: [
-                          Icon(TingIcons.favorite_border,
-                              color: grey400, size: 11),
-                          const SizedBox(width: 2),
-                          Text(
-                            '좋아요 ${comments[i].likes}',
-                            style: TextStyle(
-                                color: grey400, fontSize: 11, height: 1),
-                          )
-                        ],
+            if (comments[i].isImg == 1)
+              nboCommentImg('reple', comments[i].idx, imgCallback),
+            GestureDetector(
+              onTap: () => isLike
+                  ? removeRepleLike(comments[i].idx)
+                  : addRepleLike(comments[i].idx),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(4, 2, 0, 0),
+                child: Row(
+                  children: [
+                    if (isLike)
+                      Icon(TingIcons.favorite, color: pointColor, size: 11)
+                    else
+                      Icon(TingIcons.favorite_border, color: grey400, size: 11),
+                    const SizedBox(width: 2),
+                    Text(
+                      '좋아요 ${comments[i].likes}',
+                      style: TextStyle(
+                        color: isLike ? pointColor : grey400,
+                        fontSize: 11,
+                        height: 1,
                       ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

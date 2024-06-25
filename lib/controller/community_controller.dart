@@ -4,7 +4,6 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/service/navigation_service.dart';
-import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/sheet/community_sheet.dart';
 
 enum PageState { noticePage, classPage }
@@ -47,31 +46,6 @@ class CommunityController extends GetxController
     {'id': '9'},
     {'id': '10'},
   ];
-  TabBar tabBar() {
-    return TabBar(
-      controller: tabController,
-      overlayColor: const WidgetStatePropertyAll(
-        Colors.transparent,
-      ),
-      indicatorColor: pointColor,
-      indicatorSize: TabBarIndicatorSize.tab,
-      indicatorWeight: 2,
-      labelColor: Colors.black,
-      labelStyle: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
-      unselectedLabelColor: grey300,
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 14,
-      ),
-      tabs: const [
-        Tab(text: "전체 모임"),
-        Tab(text: "모임 일정"),
-        Tab(text: "내 모임"),
-      ],
-    );
-  }
 
   @override
   void onInit() {

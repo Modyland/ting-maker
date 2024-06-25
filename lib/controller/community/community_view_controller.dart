@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +26,22 @@ class CommunityViewController extends GetxController {
   final Rx<bool> isLoading = Rx(true);
   final Rx<bool> isFocusing = Rx(false);
   final RxList<Uint8List> regiImage = RxList<Uint8List>([]);
-  final RxMap<String, int> repleData = RxMap({'commentIdx': -1, 'userIdx': -1});
+  final RxMap<String, dynamic> repleData =
+      RxMap({'commentIdx': -1, 'userIdx': -1, 'aka': ''});
 
   Map<String, dynamic> get getArgs => args.value;
   NboDetail? get getDetail => detail.value;
   bool get getIsLoading => isLoading.value;
   bool get getCommentFocus => isFocusing.value;
+  bool get getReple =>
+      repleData['commentIdx'] != -1 && repleData['userIdx'] != -1;
+
+  @override
+  void onReady() async {
+    super.onReady();
+    await detailInit();
+    commentFocus.addListener(() => isFocusing(commentFocus.hasFocus));
+  }
 
   void changeCommentCount(bool flag) {
     detail.update((v) => v!.commentCount += 1);
@@ -59,20 +68,6 @@ class CommunityViewController extends GetxController {
       CommunityNoticeSingleController.to.nboList[listIdx]
           .update((v) => v!.likes += flag ? 1 : -1);
     }
-  }
-
-  bool get getReple {
-    if (repleData['commentIdx'] == -1 && repleData['userIdx'] == -1) {
-      return false;
-    }
-    return true;
-  }
-
-  @override
-  void onReady() async {
-    super.onReady();
-    await detailInit();
-    commentFocus.addListener(() => isFocusing(commentFocus.hasFocus));
   }
 
   Future<void> detailInit() async {
@@ -106,8 +101,6 @@ class CommunityViewController extends GetxController {
 
   Future<Map<String, Object>> getLoadContentImage(
       NboDetail item, int idx) async {
-    //?   /commentImgSelect // 댓글
-    //?   /cmtCmtImgSelect  // 대댓글
     final image = ExtendedImage.network(
       '${MainProvider.base}nbo/nboImgSelect?imgIdx=$idx',
       cacheKey: 'nboImg_${item.idx}_$idx',
@@ -130,6 +123,26 @@ class CommunityViewController extends GetxController {
     return {'image': image, 'info': info};
   }
 
+  Future<Map<String, Object>> getLoadCommentImage(String type, int idx) async {
+    final url = type == 'comment' ? 'commentImgSelect' : 'cmtCmtImgSelect';
+    final image = ExtendedImage.network(
+      '${MainProvider.base}nbo/$url?imgIdx=$idx',
+      cacheKey: '${type}_$idx',
+      imageCacheName: '${type}_$idx',
+      cacheMaxAge: const Duration(days: 3),
+      fit: BoxFit.cover,
+    ).image;
+
+    final Completer<ImageInfo> completer = Completer();
+    image.resolve(const ImageConfiguration()).addListener(
+      ImageStreamListener((ImageInfo info, bool synchronousCall) async {
+        completer.complete(info);
+      }),
+    );
+    final info = await completer.future;
+    return {'image': image, 'info': info};
+  }
+
   RxMap<String, dynamic> getCommentReple(int idx) =>
       comments.firstWhere((item) => item['idx'] == idx);
 
@@ -146,7 +159,7 @@ class CommunityViewController extends GetxController {
 
   Future<void> commentSubmit() async {
     try {
-      if (commentController.text != '') {
+      if (commentController.text.isNotEmpty || regiImage.isNotEmpty) {
         if (getReple) {
           final req = {
             "kind": 'cmtCmtInsert',
@@ -183,21 +196,21 @@ class CommunityViewController extends GetxController {
         }
         changeCommentCount(true);
         commentController.clear();
+        regiImage.clear();
       }
     } catch (err) {
-      log('$err');
       noTitleSnackbar(MyApp.normalErrorMsg);
     }
   }
 
-  void commentReple(int commentNum, int userIdx) {
-    repleData({'commentIdx': commentNum, 'userIdx': userIdx});
+  void commentReple(int commentNum, int userIdx, String aka) {
+    repleData({'commentIdx': commentNum, 'userIdx': userIdx, 'aka': aka});
     commentFocus.requestFocus();
     showKeyboard();
   }
 
   void cancelReple() {
-    repleData({'commentIdx': -1, 'userIdx': -1});
+    repleData({'commentIdx': -1, 'userIdx': -1, 'aka': ''});
   }
 
   void showKeyboard() {
@@ -218,54 +231,72 @@ class CommunityViewController extends GetxController {
     int? repleIdx,
   }) async {
     try {
-      final Map<String, dynamic> req = {
-        'kind': '',
+      final req = {
+        'kind': kind,
         'id': NavigationProvider.to.getPerson.id,
         'nbo_idx': getDetail!.idx,
+        if (kind == 'insertComment_likes' || kind == 'deleteComment_likes')
+          'comment_idx': commentIdx,
+        if (kind == 'insertCmtcmt_likes' || kind == 'deleteCmtcmt_likes')
+          'comment_idx': commentIdx,
+        'cmtCmt_idx': repleIdx,
       };
-      req['kind'] = kind;
-      if (kind == 'insertComment_likes' || kind == 'deleteComment_likes') {
-        req['comment_idx'] = commentIdx;
-      } else {
-        req['comment_idx'] = commentIdx;
-        req['cmtCmt_idx'] = repleIdx;
-      }
 
       final res = await service.updateLikes(req);
       final data = json.decode(res.bodyString!);
       if (data) {
-        if (isInsert) {
-          if (flag == 0) {
-            NavigationProvider.to.nboLikes.add(getDetail!.idx);
-            changeLikeCount(true);
-          } else if (flag == 1) {
-            NavigationProvider.to.commentLikes.add(commentIdx);
-            comment.firstWhere((item) => item.idx == commentIdx).likes += 1;
-          } else {
-            NavigationProvider.to.repleLikes.add(repleIdx);
-            final data = getCommentReple(commentIdx!)['data'] as List<Comments>;
-            data.firstWhere((item) => item.idx == repleIdx).likes += 1;
-          }
-        } else {
-          if (flag == 0) {
-            NavigationProvider.to.nboLikes
-                .removeWhere((item) => item == getDetail!.idx);
-            changeLikeCount(false);
-          } else if (flag == 1) {
-            NavigationProvider.to.commentLikes
-                .removeWhere((item) => item == commentIdx);
-            comment.firstWhere((item) => item.idx == commentIdx).likes -= 1;
-          } else {
-            NavigationProvider.to.repleLikes
-                .removeWhere((item) => item == repleIdx);
-            final data = getCommentReple(commentIdx!)['data'] as List<Comments>;
-            data.firstWhere((item) => item.idx == repleIdx).likes -= 1;
-          }
-        }
+        _updateLikeList(kind, isInsert, flag, commentIdx, repleIdx);
       }
     } catch (err) {
-      log(err.toString());
       noTitleSnackbar(MyApp.normalErrorMsg);
+    }
+  }
+
+  void _updateLikeList(
+    String kind,
+    bool isInsert,
+    int flag,
+    int? commentIdx,
+    int? repleIdx,
+  ) {
+    if (flag == 0) {
+      _updateNboLikes(isInsert, getDetail!.idx);
+    } else if (flag == 1) {
+      _updateCommentLikes(isInsert, commentIdx);
+    } else {
+      _updateRepleLikes(isInsert, commentIdx, repleIdx);
+    }
+  }
+
+  void _updateNboLikes(bool isInsert, int nboIdx) {
+    if (isInsert) {
+      NavigationProvider.to.nboLikes.add(nboIdx);
+      changeLikeCount(true);
+    } else {
+      NavigationProvider.to.nboLikes.remove(nboIdx);
+      changeLikeCount(false);
+    }
+  }
+
+  void _updateCommentLikes(bool isInsert, int? commentIdx) {
+    if (isInsert) {
+      NavigationProvider.to.commentLikes.add(commentIdx);
+      comment.firstWhere((item) => item.idx == commentIdx).likes += 1;
+    } else {
+      NavigationProvider.to.commentLikes.remove(commentIdx);
+      comment.firstWhere((item) => item.idx == commentIdx).likes -= 1;
+    }
+  }
+
+  void _updateRepleLikes(bool isInsert, int? commentIdx, int? repleIdx) {
+    if (isInsert) {
+      NavigationProvider.to.repleLikes.add(repleIdx);
+      final data = getCommentReple(commentIdx!)['data'] as List<Comments>;
+      data.firstWhere((item) => item.idx == repleIdx).likes += 1;
+    } else {
+      NavigationProvider.to.repleLikes.remove(repleIdx);
+      final data = getCommentReple(commentIdx!)['data'] as List<Comments>;
+      data.firstWhere((item) => item.idx == repleIdx).likes -= 1;
     }
   }
 }

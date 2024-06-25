@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:ting_maker/controller/community/community_view_controller.dart';
+import 'package:ting_maker/util/image.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/community/nbo_detail.dart';
@@ -57,6 +58,73 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                         ),
                       )),
                 ),
+                if (controller.regiImage.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    width: double.infinity,
+                    height: 76,
+                    decoration: BoxDecoration(
+                      color: grey100,
+                      border: Border(
+                        top: BorderSide(color: grey200),
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(
+                          controller.regiImage.length,
+                          (v) {
+                            return Stack(
+                              alignment: Alignment.topRight,
+                              children: [
+                                Container(
+                                  margin:
+                                      const EdgeInsets.only(right: 4, top: 4),
+                                  height: 60,
+                                  width: 60,
+                                  clipBehavior: Clip.none,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border:
+                                        Border.all(width: 1, color: pointColor),
+                                    image: DecorationImage(
+                                      image:
+                                          MemoryImage(controller.regiImage[v]),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 2,
+                                  right: 0,
+                                  child: InkWell(
+                                    onTap: () {
+                                      controller.regiImage.removeAt(v);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                        color: grey500,
+                                        borderRadius: BorderRadius.circular(
+                                          50,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.close,
+                                        color: grey100,
+                                        size: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
                 Container(
                   width: double.infinity,
                   height: 52,
@@ -71,7 +139,12 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                     children: [
                       IconButton(
                         icon: Icon(Icons.image, color: grey400),
-                        onPressed: () {},
+                        onPressed: () async {
+                          await ImagePickerProvider.showImageOptions(
+                            context,
+                            controller.regiImage,
+                          );
+                        },
                       ),
                       Expanded(
                         child: Padding(
@@ -90,11 +163,14 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.all(10),
                                 hintText: controller.getReple
-                                    ? '답변을 입력해주세요.'
+                                    ? '답글을 남겨주세요.'
                                     : '댓글을 입력해주세요.',
                                 filled: true,
                                 fillColor: pointColor.withAlpha(20),
-                                suffixIcon: isFocus
+                                suffixIcon: isFocus ||
+                                        controller.regiImage.isNotEmpty ||
+                                        controller
+                                            .commentController.text.isNotEmpty
                                     ? IconButton(
                                         splashColor: Colors.transparent,
                                         highlightColor: Colors.transparent,
