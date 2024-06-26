@@ -29,6 +29,7 @@ class CommunityViewController extends GetxController {
   final Rx<bool> isLoading = Rx(true);
   final Rx<bool> isFocusing = Rx(false);
   final RxList<Uint8List> regiImage = RxList<Uint8List>([]);
+  final RxList<Uint8List> rawImageData = RxList<Uint8List>([]);
   final RxMap<String, dynamic> repleData =
       RxMap({'commentIdx': -1, 'userIdx': -1, 'aka': ''});
 
@@ -104,43 +105,46 @@ class CommunityViewController extends GetxController {
 
   Future<Map<String, Object>> getLoadContentImage(
       NboDetail item, int idx) async {
-    final image = ExtendedImage.network(
+    final image = ExtendedNetworkImageProvider(
       '${MainProvider.base}nbo/nboImgSelect?imgIdx=$idx',
       cacheKey: 'nboImg_${item.idx}_$idx',
       imageCacheName: 'nboImg_${item.idx}_$idx',
       cacheMaxAge: const Duration(days: 3),
-      fit: BoxFit.cover,
-    ).image;
-
+      cacheRawData: true,
+    );
     final Completer<ImageInfo> completer = Completer();
     image.resolve(const ImageConfiguration()).addListener(
-      ImageStreamListener((ImageInfo info, bool synchronousCall) async {
-        completer.complete(info);
-        imgCount.value += 1;
-        if (imgCount.value == item.img.length) {
-          Future.delayed(Durations.short2, () => isLoading(false));
-        }
-      }),
+      ImageStreamListener(
+        (ImageInfo info, bool synchronousCall) async {
+          completer.complete(info);
+          imgCount.value += 1;
+          if (imgCount.value == item.img.length) {
+            Future.delayed(Durations.short2, () => isLoading(false));
+          }
+        },
+      ),
     );
     final info = await completer.future;
+    rawImageData.add(image.rawImageData);
+
     return {'image': image, 'info': info};
   }
 
   Future<Map<String, Object>> getLoadCommentImage(String type, int idx) async {
     final url = type == 'comment' ? 'commentImgSelect' : 'cmtCmtImgSelect';
-    final image = ExtendedImage.network(
+    final image = ExtendedNetworkImageProvider(
       '${MainProvider.base}nbo/$url?imgIdx=$idx',
       cacheKey: '${type}_$idx',
       imageCacheName: '${type}_$idx',
       cacheMaxAge: const Duration(days: 3),
-      fit: BoxFit.cover,
-    ).image;
-
+    );
     final Completer<ImageInfo> completer = Completer();
     image.resolve(const ImageConfiguration()).addListener(
-      ImageStreamListener((ImageInfo info, bool synchronousCall) async {
-        completer.complete(info);
-      }),
+      ImageStreamListener(
+        (ImageInfo info, bool synchronousCall) async {
+          completer.complete(info);
+        },
+      ),
     );
     final info = await completer.future;
     return {'image': image, 'info': info};
@@ -306,6 +310,7 @@ class CommunityViewController extends GetxController {
     int? repleIdx,
   }) {
     late Future<void> Function() delCallback;
+    late Future<void> Function() updateCallback;
     String updateText = '댓글 수정하기';
     String deleteText = '댓글 삭제하기';
     if (isNbo == true) {
@@ -323,6 +328,13 @@ class CommunityViewController extends GetxController {
       delCallback = () => commentDelete(commentIdx);
     } else {
       delCallback = () => nboDelete();
+      updateCallback = () async =>
+          await Get.offAndToNamed('/home/community_regi', arguments: {
+            'subject': getDetail!.subject,
+            'title': getDetail!.title,
+            'content': getDetail!.content,
+            'img': getDetail!.img
+          });
     }
     FocusManager.instance.primaryFocus?.unfocus();
     showCupertinoModalPopup(
@@ -336,6 +348,7 @@ class CommunityViewController extends GetxController {
                   ),
                   onPressed: () async {
                     Get.back();
+                    await updateCallback();
                   },
                 ),
                 CupertinoActionSheetAction(
