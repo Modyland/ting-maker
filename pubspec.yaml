@@ -1,6 +1,4 @@
 name: ting_maker
-description: 'A new Flutter project.'
-publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -32,7 +30,7 @@ dependencies:
   permission_handler: ^11.3.1
 
   image_picker: ^1.0.8
-  crop_your_image: ^1.0.2
+  crop_your_image: ^1.1.0
   flutter_svg: ^2.0.10+1
   extended_image: ^8.2.0
 

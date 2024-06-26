@@ -54,16 +54,16 @@ class _ImageProfileState extends State<ImageProfile> {
             ? Permission.photos
             : Permission.storage;
 
-    bool check = await photoPermission.isDenied;
+    bool isDenied = await photoPermission.isDenied;
 
-    if (check) {
+    if (isDenied) {
       await photoPermission.request();
     }
 
     final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
+        await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
     if (pickedFile != null) {
-      _cropImage = await XFile(pickedFile.path).readAsBytes();
+      _cropImage = await pickedFile.readAsBytes();
       final finishCrop =
           await Get.toNamed('/image_crop', arguments: {'crop': _cropImage});
       if (finishCrop != null && finishCrop['crop'] is Uint8List) {

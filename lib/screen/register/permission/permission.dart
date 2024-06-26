@@ -46,7 +46,7 @@ class _PermissionScreenState extends State<PermissionScreen> {
     });
 
     if (isLocationGranted) {
-      Get.toNamed('/phone_check');
+      await Get.toNamed('/phone_check');
     } else {
       await openAppSettings();
     }

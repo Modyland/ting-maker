@@ -22,7 +22,11 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
   }
 
   void successCrop() {
-    _cropController.cropCircle();
+    try {
+      _cropController.cropCircle();
+    } catch (err) {
+      rethrow;
+    }
   }
 
   @override
@@ -36,13 +40,15 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
             Get.back(result: {'crop': image});
           },
           withCircleUi: true,
-          baseColor: pointColor,
+          baseColor: Colors.black45,
           maskColor: Colors.black45,
           progressIndicator:
               Center(child: CircularProgressIndicator(color: pointColor)),
-          cornerDotBuilder: (size, edgeAlignment) => DotControl(
-            color: pointColor,
-          ),
+          initialRectBuilder: (viewportRect, imageRect) {
+            return viewportRect;
+          },
+          cornerDotBuilder: (size, edgeAlignment) =>
+              DotControl(color: pointColor),
           clipBehavior: Clip.hardEdge,
         ),
         Positioned(
