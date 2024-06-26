@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void loginService() async {
-    FocusScope.of(context).requestFocus(FocusNode());
+    FocusManager.instance.primaryFocus?.unfocus();
     try {
       final Map<String, dynamic> requestData = {
         'kind': 'login',
@@ -190,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             onPressed: () {
-                              FocusScope.of(context).requestFocus(FocusNode());
+                              FocusManager.instance.primaryFocus?.unfocus();
                               loginService();
                             },
                             child: Center(
@@ -220,8 +220,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () async {
-                                      FocusScope.of(context)
-                                          .requestFocus(FocusNode());
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
                                       await Get.toNamed('/service_agree');
                                     },
                                 )

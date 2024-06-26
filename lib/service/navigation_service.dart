@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,12 +34,16 @@ class NavigationProvider extends GetxService {
   }
 
   Future<void> getLikeList() async {
-    final req = {'kind': 'Check_Likes', 'id': getPerson.id};
+    try {
+      final req = {'kind': 'Check_Likes', 'id': getPerson.id};
 
-    final res = await service.updateLikes(req);
-    nboLikes(res.body['nboLikes']);
-    commentLikes(res.body['commentLikes']);
-    repleLikes(res.body['cmtCmtLikes']);
+      final res = await service.updateLikes(req);
+      nboLikes(res.body['nboLikes']);
+      commentLikes(res.body['commentLikes']);
+      repleLikes(res.body['cmtCmtLikes']);
+    } catch (err) {
+      log(err.toString());
+    }
   }
 
   void changeIndex(int idx) {
@@ -132,6 +138,7 @@ class NavigationProvider extends GetxService {
             Row(
               children: [
                 IconButton(
+                  splashRadius: 15,
                   onPressed: () async {
                     await showSearch(
                       context: Get.context!,
@@ -141,8 +148,13 @@ class NavigationProvider extends GetxService {
                   icon: const Icon(TingIcons.search),
                 ),
                 IconButton(
-                    onPressed: () {}, icon: const Icon(TingIcons.favorite)),
-                IconButton(onPressed: () {}, icon: const Icon(TingIcons.bell)),
+                    splashRadius: 15,
+                    onPressed: () {},
+                    icon: const Icon(TingIcons.favorite)),
+                IconButton(
+                    splashRadius: 15,
+                    onPressed: () {},
+                    icon: const Icon(TingIcons.bell)),
               ],
             )
           ],
@@ -152,9 +164,11 @@ class NavigationProvider extends GetxService {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
+                splashRadius: 15,
                 onPressed: () => CommunityController.to.initialPage(),
                 icon: const Icon(Icons.arrow_back)),
             IconButton(
+              splashRadius: 15,
               onPressed: () async {
                 await showSearch(
                   context: Get.context!,

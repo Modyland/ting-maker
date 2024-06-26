@@ -38,6 +38,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
+        splashRadius: 15,
         icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
@@ -49,6 +50,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
+      splashRadius: 15,
       icon: const Icon(Icons.arrow_back),
       onPressed: () => Get.back(),
     );

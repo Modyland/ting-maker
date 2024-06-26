@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,8 @@ import 'package:ting_maker/model/comment.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/service/service.dart';
+import 'package:ting_maker/util/overlay.dart';
+import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 class CommunityViewController extends GetxController {
@@ -43,17 +46,17 @@ class CommunityViewController extends GetxController {
     commentFocus.addListener(() => isFocusing(commentFocus.hasFocus));
   }
 
-  void changeCommentCount(bool flag) {
-    detail.update((v) => v!.commentCount += 1);
+  void changeCommentCount(bool flag, int len) {
+    detail.update((v) => v!.commentCount += flag ? len : -len);
     final listIdx = CommunityController.to.nboList
         .indexWhere((item) => item.value.idx == detail.value?.idx);
     CommunityController.to.nboList[listIdx]
-        .update((v) => v!.commentes += flag ? 1 : -1);
+        .update((v) => v!.commentes += flag ? len : -len);
     if (args.value['to'] == 'community_notice') {
       final listIdx = CommunityNoticeSingleController.to.nboList
           .indexWhere((item) => item.value.idx == detail.value?.idx);
       CommunityNoticeSingleController.to.nboList[listIdx]
-          .update((v) => v!.commentes += flag ? 1 : -1);
+          .update((v) => v!.commentes += flag ? len : -len);
     }
   }
 
@@ -171,8 +174,8 @@ class CommunityViewController extends GetxController {
             'content': commentController.text,
             'img': regiImage.toList().isNotEmpty ? regiImage.toList() : null,
           };
-          final res = await service.nboCommentSecondInsert(req);
-          (getCommentReple(res!.commentNum)['data'] as List).add(res);
+          final res = await service.nboCommentSecondInsert(req) as Comments;
+          (getCommentReple(res.commentNum)['data'] as List<Comments>).add(res);
           cancelReple();
         } else {
           final req = {
@@ -184,17 +187,13 @@ class CommunityViewController extends GetxController {
             'content': commentController.text,
             'img': regiImage.toList().isNotEmpty ? regiImage.toList() : null,
           };
-          final res = await service.nboCommentInsert(req);
-          comment.add(res!);
+          final res = await service.nboCommentInsert(req) as Comment;
+          comment.add(res);
           comments.add(
-            RxMap({
-              'idx': res.idx,
-              'data': res.comments,
-              'showCount': 3,
-            }),
+            RxMap({'idx': res.idx, 'data': res.comments, 'showCount': 3}),
           );
         }
-        changeCommentCount(true);
+        changeCommentCount(true, 1);
         commentController.clear();
         regiImage.clear();
       }
@@ -297,6 +296,125 @@ class CommunityViewController extends GetxController {
       NavigationProvider.to.repleLikes.remove(repleIdx);
       final data = getCommentReple(commentIdx!)['data'] as List<Comments>;
       data.firstWhere((item) => item.idx == repleIdx).likes -= 1;
+    }
+  }
+
+  void showMenuPopup({
+    bool? isNbo,
+    bool? isParent,
+    int? commentIdx,
+    int? repleIdx,
+  }) {
+    late Future<void> Function() delCallback;
+    String updateText = '댓글 수정하기';
+    String deleteText = '댓글 삭제하기';
+    if (isNbo == true) {
+      updateText = '게시글 수정하기';
+      deleteText = '게시글 삭제하기';
+    } else {
+      if (isParent == false) {
+        updateText = '답글 수정하기';
+        deleteText = '답글 삭제하기';
+      }
+    }
+    if (repleIdx != null) {
+      delCallback = () => repleDelete(repleIdx, commentIdx!);
+    } else if (commentIdx != null) {
+      delCallback = () => commentDelete(commentIdx);
+    } else {
+      delCallback = () => nboDelete();
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
+    showCupertinoModalPopup(
+        context: Get.context!,
+        builder: (context) => CupertinoActionSheet(
+              actions: [
+                CupertinoActionSheetAction(
+                  child: Text(
+                    updateText,
+                    style: TextStyle(color: grey500),
+                  ),
+                  onPressed: () async {
+                    Get.back();
+                  },
+                ),
+                CupertinoActionSheetAction(
+                  child: Text(
+                    deleteText,
+                    style: TextStyle(color: errColor),
+                  ),
+                  onPressed: () async {
+                    Get.back();
+                    if (isNbo == true) {
+                      OverlayManager.showOverlay(Get.overlayContext!);
+                    }
+                    await delCallback();
+                  },
+                ),
+              ],
+            ));
+  }
+
+  Future<void> nboDelete() async {
+    try {
+      final req = {
+        'kind': 'nboDelete',
+        'idx': getDetail!.idx,
+      };
+      final res = await service.nboInsert(req);
+      final data = json.decode(res.bodyString!);
+      if (data) {
+        CommunityController.to.nboList.clear();
+        CommunityController.to.getPagingController.refresh();
+        Get.back();
+        noTitleSnackbar('게시글이 삭제되었습니다.', time: 2);
+      }
+    } catch (err) {
+      noTitleSnackbar(MyApp.normalErrorMsg);
+    } finally {
+      OverlayManager.hideOverlay();
+    }
+  }
+
+  Future<void> commentDelete(int idx) async {
+    try {
+      final req = {
+        'kind': 'commentDelete',
+        'idx': idx,
+        'postNum': getDetail!.idx,
+      };
+      final res = await service.nboCommentInsert(req) as Response;
+      final data = json.decode(res.bodyString!);
+      if (data) {
+        comment.removeWhere((item) => item.idx == idx);
+        final comments = getCommentReple(idx)['data'] as List<Comments>;
+        final deleteLength = comments.length + 1;
+        changeCommentCount(false, deleteLength);
+      }
+    } catch (err) {
+      noTitleSnackbar(MyApp.normalErrorMsg);
+    }
+  }
+
+  Future<void> repleDelete(int idx, int commentIdx) async {
+    try {
+      final req = {
+        'kind': 'cmtCmtDelete',
+        'idx': idx,
+        'nboNum': getDetail!.idx,
+        'commentNum': commentIdx,
+      };
+      final res = await service.nboCommentSecondInsert(req) as Response;
+      final data = json.decode(res.bodyString!);
+      if (data) {
+        final comments = getCommentReple(commentIdx)['data'] as List<Comments>;
+        final copy = List<Comments>.from(comments);
+        copy.removeWhere((item) => item.idx == idx);
+        getCommentReple(commentIdx)['data'] = copy;
+        changeCommentCount(false, 1);
+      }
+    } catch (err) {
+      noTitleSnackbar(MyApp.normalErrorMsg);
     }
   }
 }

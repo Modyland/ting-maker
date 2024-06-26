@@ -196,8 +196,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                                 day = value.length == 2;
                                 isNextCheck();
                                 if (year && month && day) {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
+                                  FocusManager.instance.primaryFocus?.unfocus();
                                 }
                               },
                               validator: (value) {

@@ -210,6 +210,10 @@ Container nboDetailComment(NboDetail item, CommunityViewController controller) {
                   (i) => controller.updateLike('deleteCmtcmt_likes', false, 2,
                       commentIdx: c.idx, repleIdx: i),
                   controller.getLoadCommentImage,
+                  () => controller.showMenuPopup(
+                      isParent: true, commentIdx: c.idx),
+                  (i) => controller.showMenuPopup(
+                      isParent: false, commentIdx: c.idx, repleIdx: i),
                 )
             ],
           )
@@ -249,6 +253,8 @@ Container nboCommentProfile(
   Function(int) addRepleLike,
   Function(int) removeRepleLike,
   Function imgCallback,
+  Function showModal,
+  Function(int) showModalChild,
 ) {
   final list = NavigationProvider.to.getCommentLikes;
   bool isLike = list.contains(item.idx);
@@ -262,6 +268,21 @@ Container nboCommentProfile(
             nboProfileIcon(item.userIdx, 40, 20),
             const SizedBox(width: 7),
             nboProfileId(item.aka, item.writeTime),
+            const Spacer(),
+            if (NavigationProvider.to.getPerson.idx == item.userIdx)
+              IconButton(
+                constraints: const BoxConstraints(
+                  maxHeight: 40,
+                ),
+                splashRadius: 15,
+                onPressed: () {
+                  showModal();
+                },
+                icon: Icon(
+                  Icons.more_vert,
+                  color: grey400,
+                ),
+              )
           ],
         ),
         if (item.content.isNotEmpty)
@@ -323,6 +344,7 @@ Container nboCommentProfile(
               (i) => addRepleLike(i),
               (i) => removeRepleLike(i),
               imgCallback,
+              (i) => showModalChild(i),
             ),
           )
       ],
@@ -337,6 +359,7 @@ List<Widget> nboCommentReple(
   Function(int) addRepleLike,
   Function(int) removeRepleLike,
   Function imgCallback,
+  Function(int) showModalChild,
 ) {
   final list = NavigationProvider.to.getRepleLikes;
   final List<Widget> commentWidgets = [];
@@ -353,8 +376,27 @@ List<Widget> nboCommentReple(
               children: [
                 nboProfileIcon(comments[i].userIdx, 30, 15),
                 const SizedBox(width: 7),
-                nboProfileId(comments[i].aka, comments[i].writeTime,
-                    small: true)
+                nboProfileId(
+                  comments[i].aka,
+                  comments[i].writeTime,
+                  small: true,
+                ),
+                const Spacer(),
+                IconButton(
+                  padding: const EdgeInsets.all(4),
+                  constraints: const BoxConstraints(
+                    maxHeight: 30,
+                  ),
+                  iconSize: 17,
+                  splashRadius: 15,
+                  onPressed: () {
+                    showModalChild(comments[i].idx);
+                  },
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: grey400,
+                  ),
+                )
               ],
             ),
             if (comments[i].content.isNotEmpty)

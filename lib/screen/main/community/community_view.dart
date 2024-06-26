@@ -26,8 +26,11 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: Obx(
-              () => registerAppbar(
-                  '동네생활 글쓰기', controller.getDetail?.aka != '', () {}),
+              () => viewAppbar(
+                controller.getDetail!.title,
+                controller.getDetail!.userIdx,
+                () => controller.showMenuPopup(isNbo: true),
+              ),
             ),
           ),
           body: RefreshIndicator(
@@ -47,6 +50,7 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                           enableSwitchAnimation: true,
                           justifyMultiLineText: false,
                           child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
                             controller: controller.scrollController,
                             children: [
                               nboDetailSubjectBadge(item),
@@ -138,6 +142,7 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
+                        splashRadius: 15,
                         icon: Icon(Icons.image, color: grey400),
                         onPressed: () async {
                           await ImagePickerProvider.showImageOptions(
@@ -172,8 +177,7 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                                         controller
                                             .commentController.text.isNotEmpty
                                     ? IconButton(
-                                        splashColor: Colors.transparent,
-                                        highlightColor: Colors.transparent,
+                                        splashRadius: 15,
                                         icon: const Icon(Icons.send),
                                         color: pointColor,
                                         onPressed: () async {

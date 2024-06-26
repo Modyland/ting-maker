@@ -61,6 +61,7 @@ InputDecoration inputDecoration(
       hintText: hint,
       suffixIcon: suffix == true
           ? IconButton(
+              splashRadius: 15,
               onPressed: () {
                 suffixCallback!();
               },

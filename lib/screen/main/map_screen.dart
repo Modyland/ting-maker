@@ -67,6 +67,25 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                 // 실내 지도 층 변경시
               },
             ),
+            Positioned(
+              bottom: 10,
+              right: 10,
+              child: Card(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                shadowColor: grey300,
+                elevation: 4,
+                child: IconButton(
+                  splashRadius: 15,
+                  icon: const Icon(Icons.my_location_outlined),
+                  onPressed: () async {
+                    await controller.moveCurrentPositionCamera();
+                  },
+                ),
+              ),
+            ),
             if (controller.getIsLoading)
               Positioned(
                 top: 0,
@@ -81,24 +100,6 @@ class NaverMapScreen extends GetView<CustomNaverMapController> {
                   child: Image.asset('assets/image/loading.gif'),
                 ),
               ),
-            Positioned(
-              bottom: 10,
-              right: 10,
-              child: Card(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                shadowColor: grey300,
-                elevation: 4,
-                child: IconButton(
-                  icon: const Icon(Icons.my_location_outlined),
-                  onPressed: () async {
-                    await controller.moveCurrentPositionCamera();
-                  },
-                ),
-              ),
-            ),
           ],
         );
       }

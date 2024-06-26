@@ -58,7 +58,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
   }
 
   Future<void> phoneCheckCallback() async {
-    FocusScope.of(context).requestFocus(FocusNode());
+    FocusManager.instance.primaryFocus?.unfocus();
     try {
       final res = await service.phoneCheck2(
         registerData['phone'],

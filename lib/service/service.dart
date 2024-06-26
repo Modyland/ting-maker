@@ -74,28 +74,34 @@ class MainProvider extends GetConnect {
     return httpClient.post('nbo/api_post', body: data);
   }
 
-  Future<Comment?> nboCommentInsert(Map data) async {
+  Future<dynamic> nboCommentInsert(Map data) async {
     final res = await httpClient.post('nbo/api_commentPost', body: data);
-    if (res.statusCode! <= 400) {
-      final data = json.decode(res.bodyString!);
-      data['likes'] = 0;
-      data['commentes'] = 0;
-      data['comments'] = [];
-      final Comment comment = Comment.fromJson(data);
-      return comment;
+    if (data['kind'] == 'commentInsert') {
+      if (res.statusCode! <= 400) {
+        final data = json.decode(res.bodyString!);
+        data['likes'] = 0;
+        data['commentes'] = 0;
+        data['comments'] = [];
+        final Comment comment = Comment.fromJson(data);
+        return comment;
+      }
+    } else {
+      return res;
     }
-    return null;
   }
 
-  Future<Comments?> nboCommentSecondInsert(Map data) async {
+  Future<dynamic> nboCommentSecondInsert(Map data) async {
     final res = await httpClient.post('nbo/api_cmtCmtPost', body: data);
-    if (res.statusCode! <= 400) {
-      final data = json.decode(res.bodyString!);
-      data['likes'] = 0;
-      final Comments comments = Comments.fromJson(data);
-      return comments;
+    if (data['kind'] == 'cmtCmtInsert') {
+      if (res.statusCode! <= 400) {
+        final data = json.decode(res.bodyString!);
+        data['likes'] = 0;
+        final Comments comments = Comments.fromJson(data);
+        return comments;
+      }
+    } else {
+      return res;
     }
-    return null;
   }
 
   Future<Response> updateLikes(Map data) async {

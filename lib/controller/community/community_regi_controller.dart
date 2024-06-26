@@ -13,11 +13,14 @@ import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 class CommunityRegiController extends GetxController {
   static CommunityRegiController get to => Get.find();
+  final Rx<Map<String, dynamic>?> args = Rx(Get.arguments);
+
   Rx<String> regiSubject = Rx<String>('');
   Rx<String> regiTitle = Rx<String>('');
   Rx<String> regiContent = Rx<String>('');
   RxList<Uint8List> regiImage = RxList<Uint8List>([]);
 
+  Map<String, dynamic>? get getArgs => args.value;
   String get getSubject => regiSubject.value;
   String get getTitle => regiTitle.value;
   String get getContent => regiContent.value;
@@ -29,7 +32,9 @@ class CommunityRegiController extends GetxController {
   @override
   void onReady() async {
     super.onReady();
-    await showSubjectSheetList();
+    if (getArgs == null) {
+      await showSubjectSheetList();
+    }
   }
 
   Future<void> showSubjectSheetList() async {

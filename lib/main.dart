@@ -126,7 +126,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         axisDirection: AxisDirection.down,
         color: Colors.transparent,
         child: GestureDetector(
-          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: GetMaterialApp(
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(context),

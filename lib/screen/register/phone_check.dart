@@ -29,7 +29,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
   }
 
   Future<void> phoneCheckCallback() async {
-    FocusScope.of(context).requestFocus(FocusNode());
+    FocusManager.instance.primaryFocus?.unfocus();
     try {
       final res = await service.phoneCheck(
           _phoneCheckEditing.text, registerData == null ? true : false);
