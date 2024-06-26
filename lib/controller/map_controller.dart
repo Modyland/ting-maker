@@ -315,10 +315,7 @@ class CustomNaverMapController extends GetxController {
       );
   }
 
-  Future<void> clusterMarkers(
-    Set<NMarker> markers,
-    double zoomLevel,
-  ) async {
+  Future<void> clusterMarkers(Set<NMarker> markers, double zoomLevel) async {
     num clusterRadius = await compute(calculateClusterRadius, zoomLevel);
     List<Cluster> clusters = [];
     if (markers.isNotEmpty) {
