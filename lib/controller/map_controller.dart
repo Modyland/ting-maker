@@ -418,7 +418,6 @@ class CustomNaverMapController extends GetxController {
         }
         // Set<NMarker> currentMarkers = getMarkers.toSet();
         // Set<NMarker> newData = markers.toSet();
-
         // final retainedMarkers = currentMarkers
         //     .where((cm) => newData.any((nd) => nd.info.id == cm.info.id))
         //     .toSet();

@@ -333,7 +333,7 @@ class CommunityViewController extends GetxController {
             'subject': getDetail!.subject,
             'title': getDetail!.title,
             'content': getDetail!.content,
-            'img': getDetail!.img
+            'img': rawImageData.toList()
           });
     }
     FocusManager.instance.primaryFocus?.unfocus();
@@ -341,16 +341,17 @@ class CommunityViewController extends GetxController {
         context: Get.context!,
         builder: (context) => CupertinoActionSheet(
               actions: [
-                CupertinoActionSheetAction(
-                  child: Text(
-                    updateText,
-                    style: TextStyle(color: grey500),
+                if (isNbo == true)
+                  CupertinoActionSheetAction(
+                    child: Text(
+                      updateText,
+                      style: TextStyle(color: grey500),
+                    ),
+                    onPressed: () async {
+                      Get.back();
+                      await updateCallback();
+                    },
                   ),
-                  onPressed: () async {
-                    Get.back();
-                    await updateCallback();
-                  },
-                ),
                 CupertinoActionSheetAction(
                   child: Text(
                     deleteText,
@@ -391,16 +392,17 @@ class CommunityViewController extends GetxController {
 
   Future<void> commentDelete(int idx) async {
     try {
+      final comments = getCommentReple(idx)['data'] as List<Comments>;
       final req = {
         'kind': 'commentDelete',
         'idx': idx,
         'postNum': getDetail!.idx,
+        'commentes': comments.length
       };
       final res = await service.nboCommentInsert(req) as Response;
       final data = json.decode(res.bodyString!);
       if (data) {
         comment.removeWhere((item) => item.idx == idx);
-        final comments = getCommentReple(idx)['data'] as List<Comments>;
         final deleteLength = comments.length + 1;
         changeCommentCount(false, deleteLength);
       }

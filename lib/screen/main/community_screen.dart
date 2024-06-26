@@ -4,7 +4,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/widget/common_style.dart';
-import 'package:ting_maker/widget/community/class_list.dart';
+// import 'package:ting_maker/widget/community/class_list.dart';
 import 'package:ting_maker/widget/community/nbo_item.dart';
 import 'package:ting_maker/widget/community/subject_list.dart';
 
@@ -34,7 +34,7 @@ class CommunityScreen extends GetView<CommunityController> {
                 children: [
                   Column(
                     children: [
-                      ClassListWidget(controller: controller),
+                      // ClassListWidget(controller: controller),
                       SubjectListWidget(controller: controller),
                       Flexible(child: nboInfiniteList())
                     ],
