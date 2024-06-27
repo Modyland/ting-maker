@@ -22,11 +22,7 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
   }
 
   void successCrop() {
-    try {
-      _cropController.cropCircle();
-    } catch (err) {
-      rethrow;
-    }
+    _cropController.cropCircle();
   }
 
   @override
@@ -45,7 +41,12 @@ class _ImageCropScreenState extends State<ImageCropScreen> {
           progressIndicator:
               Center(child: CircularProgressIndicator(color: pointColor)),
           initialRectBuilder: (viewportRect, imageRect) {
-            return viewportRect;
+            return Rect.fromLTWH(
+              viewportRect.width * 0.25,
+              viewportRect.height * 0.5 - viewportRect.height * 0.15,
+              viewportRect.width * 0.5,
+              viewportRect.height * 0.25,
+            );
           },
           cornerDotBuilder: (size, edgeAlignment) =>
               DotControl(color: pointColor),

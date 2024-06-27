@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
+import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
+import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -49,24 +51,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> isIdCheck() async {
-    final Map<String, dynamic> requestData = {
-      'kind': 'idDupe',
-      'id': _idEditingController.text,
-    };
-    final res = await service.tingApiGetdata(requestData);
-    final data = json.decode(res.bodyString!);
-    if (data is Map<String, dynamic> && data.containsKey('msg')) {
-      //0 아이디 중복
-      if (data['msg'] == 0) {
-        validCheck = 0;
+    try {
+      OverlayManager.showOverlay(context);
+      final Map<String, dynamic> requestData = {
+        'kind': 'idDupe',
+        'id': _idEditingController.text,
+      };
+      final res = await service.tingApiGetdata(requestData);
+      final data = json.decode(res.bodyString!);
+      if (data is Map<String, dynamic> && data.containsKey('msg')) {
+        //0 아이디 중복
+        if (data['msg'] == 0) {
+          validCheck = 0;
+        }
+        _accountFormkey.currentState!.validate();
+      } else {
+        if (data) {
+          validCheck = -1;
+          idCheck = true;
+          nextPage();
+        }
       }
-      _accountFormkey.currentState!.validate();
-    } else {
-      if (data) {
-        validCheck = -1;
-        idCheck = true;
-        nextPage();
-      }
+    } catch (err) {
+      noTitleSnackbar(MyApp.normalErrorMsg);
+    } finally {
+      OverlayManager.hideOverlay();
     }
   }
 

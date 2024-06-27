@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/cluster.dart';
-import 'package:ting_maker/widget/common_style.dart';
+// import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/dialog/profile_dialog.dart';
-import 'package:ting_maker/widget/marker_img.dart';
+// import 'package:ting_maker/widget/marker_img.dart';
 
 Future<void> showProfileSheet(List<dynamic> users, Cluster cluster) async {
   return await Get.bottomSheet(
@@ -30,10 +30,10 @@ Future<void> showProfileSheet(List<dynamic> users, Cluster cluster) async {
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: pointColor.withAlpha(100),
-                backgroundImage: markerImg(int.tryParse(userIdx)!),
-              ),
+              // leading: CircleAvatar(
+              //   backgroundColor: pointColor.withAlpha(100),
+              //   backgroundImage: markerImg(int.tryParse(userIdx)!),
+              // ),
               title: Text(
                 '${user['aka']}',
                 style: const TextStyle(fontSize: 16),

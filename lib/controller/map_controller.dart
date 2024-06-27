@@ -265,11 +265,24 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
-  Future<ImageInfo> fetchUserImage(int userIdx) async {
+  // Future<ImageInfo> fetchUserImage(int userIdx) async {
+  //   final image = markerImg(userIdx);
+
+  //   final Completer<ImageInfo> completer = Completer();
+  //   image.resolve(const ImageConfiguration()).addListener(
+  //     ImageStreamListener((ImageInfo info, bool synchronousCall) {
+  //       completer.complete(info);
+  //     }),
+  //   );
+
+  //   return completer.future;
+  // }
+
+  Future<ImageInfo> testUserImage(int userIdx) async {
     final image = markerImg(userIdx);
 
     final Completer<ImageInfo> completer = Completer();
-    image.resolve(const ImageConfiguration()).addListener(
+    image.image.resolve(const ImageConfiguration()).addListener(
       ImageStreamListener((ImageInfo info, bool synchronousCall) {
         completer.complete(info);
       }),
@@ -281,8 +294,8 @@ class CustomNaverMapController extends GetxController {
   Future<NMarker> createMarker(dynamic user) async {
     const double size = 36;
 
-    final ImageInfo imageInfo = await fetchUserImage(user['userIdx']);
-
+    // final ImageInfo imageInfo = await fetchUserImage(user['userIdx']);
+    final ImageInfo test = await testUserImage(user['userIdx']);
     // 이미지 로드가 완료된 후에 마커를 생성합니다.
     final userIcon = await NOverlayImage.fromWidget(
       widget: SizedBox(
@@ -295,7 +308,7 @@ class CustomNaverMapController extends GetxController {
                 : pointColor,
             backgroundColor: Colors.white,
             borderWidth: 2,
-            imageInfo: imageInfo,
+            imageInfo: test,
           ),
         ),
       ),

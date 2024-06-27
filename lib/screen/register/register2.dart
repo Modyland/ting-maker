@@ -94,7 +94,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                             },
                             child: const Text(
                               '\u{1F467}',
-                              style: TextStyle(fontSize: 100),
+                              style: TextStyle(fontSize: 80),
                             ),
                           ),
                         ),
@@ -107,7 +107,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                             },
                             child: const Text(
                               '\u{1F466}',
-                              style: TextStyle(fontSize: 100),
+                              style: TextStyle(fontSize: 80),
                             ),
                           ),
                         )

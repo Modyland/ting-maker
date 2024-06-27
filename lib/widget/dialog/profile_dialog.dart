@@ -14,7 +14,7 @@ Future<void> showProfileDialog(String idx) async {
           color: pointColor.withAlpha(100),
           image: DecorationImage(
             fit: BoxFit.contain,
-            image: markerImg(int.tryParse(idx)!),
+            image: markerImg(int.tryParse(idx)!).image,
           ),
         ),
       ),

@@ -9,7 +9,7 @@ import 'package:ting_maker/model/nbo_detail.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/util/time.dart';
 import 'package:ting_maker/widget/common_style.dart';
-import 'package:ting_maker/widget/marker_img.dart';
+// import 'package:ting_maker/widget/marker_img.dart';
 
 TextStyle titleStyle =
     const TextStyle(fontSize: 20, height: 1, color: Colors.black);
@@ -29,7 +29,7 @@ Skeleton nboProfileIcon(int idx, double size, double radius) {
     ),
     child: CircleAvatar(
       radius: radius,
-      backgroundImage: markerImg(idx),
+      // backgroundImage: markerImg(idx),
     ),
   );
 }

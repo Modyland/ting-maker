@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
+import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/util/regexp.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
@@ -31,6 +32,7 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
   Future<void> phoneCheckCallback() async {
     FocusManager.instance.primaryFocus?.unfocus();
     try {
+      OverlayManager.showOverlay(context);
       final res = await service.phoneCheck(
           _phoneCheckEditing.text, registerData == null ? true : false);
       final data = json.decode(res.bodyString!);
@@ -51,6 +53,8 @@ class _PhoneCheckScreenState extends State<PhoneCheckScreen> {
       }
     } catch (err) {
       noTitleSnackbar(MyApp.normalErrorMsg);
+    } finally {
+      OverlayManager.hideOverlay();
     }
   }
 

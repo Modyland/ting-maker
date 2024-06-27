@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ting_maker/main.dart';
+import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/widget/common_appbar.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/snackbar/snackbar.dart';
@@ -60,6 +61,7 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
   Future<void> phoneCheckCallback() async {
     FocusManager.instance.primaryFocus?.unfocus();
     try {
+      OverlayManager.showOverlay(context);
       final res = await service.phoneCheck2(
         registerData['phone'],
         _phoneCheckEditing2.text,
@@ -82,6 +84,8 @@ class _PhoneCheckScreen2State extends State<PhoneCheckScreen2> {
       }
     } catch (err) {
       noTitleSnackbar(MyApp.normalErrorMsg);
+    } finally {
+      OverlayManager.hideOverlay();
     }
   }
 
