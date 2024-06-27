@@ -34,50 +34,59 @@ Skeleton nboProfileIcon(int idx, double size, double radius) {
   );
 }
 
-Column nboProfileId(String aka, String writeTime, {bool small = false}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [
-      Text(aka,
+Widget nboProfileId(
+  String aka,
+  String writeTime,
+  double height, {
+  bool small = false,
+}) {
+  return SizedBox(
+    height: height,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text(
+          aka,
           style:
-              TextStyle(color: grey500, fontSize: small ? 12 : 14, height: 1)),
-      const SizedBox(height: 3),
-      Text(getTimeDiff(writeTime),
+              TextStyle(color: grey500, fontSize: small ? 12 : 15, height: 1),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          getTimeDiff(writeTime),
           style:
-              TextStyle(color: grey400, fontSize: small ? 10 : 12, height: 1)),
-    ],
+              TextStyle(color: grey400, fontSize: small ? 10 : 11, height: 1),
+        ),
+      ],
+    ),
   );
 }
 
-Container nboDetailImg({ImageInfo? info, ImageProvider<Object>? image}) {
-  return Container(
-    margin: const EdgeInsets.fromLTRB(5, 0, 5, 10),
-    child: Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: AspectRatio(
-        aspectRatio:
-            info != null ? info.image.width / info.image.height : 4 / 3,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(15)),
-            image: image != null
-                ? DecorationImage(
-                    fit: BoxFit.cover,
-                    image: image,
-                  )
-                : null,
-          ),
+Widget nboDetailImg({ImageInfo? info, ImageProvider<Object>? image}) {
+  return Card(
+    color: Colors.white,
+    margin: const EdgeInsets.all(0),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(15),
+    ),
+    child: AspectRatio(
+      aspectRatio: info != null ? info.image.width / info.image.height : 4 / 3,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
+          image: image != null
+              ? DecorationImage(
+                  fit: BoxFit.cover,
+                  image: image,
+                )
+              : null,
         ),
       ),
     ),
   );
 }
 
-Align nboDetailSubjectBadge(NboDetail item) {
+Widget nboDetailSubjectBadge(NboDetail item) {
   return Align(
     alignment: Alignment.centerLeft,
     child: Container(
@@ -87,7 +96,7 @@ Align nboDetailSubjectBadge(NboDetail item) {
         minHeight: 0,
       ),
       decoration: BoxDecoration(
-        color: grey300,
+        color: grey300.withAlpha(150),
         borderRadius: const BorderRadius.all(
           Radius.circular(12),
         ),
@@ -118,7 +127,7 @@ Container nboDetailProfile(NboDetail item) {
           children: [
             nboProfileIcon(item.userIdx, 50, 25),
             const SizedBox(width: 7),
-            nboProfileId(item.aka, item.writeTime)
+            nboProfileId(item.aka, item.writeTime, 50)
           ],
         )
       ],
@@ -140,20 +149,24 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
         ),
         Container(
           padding: EdgeInsets.symmetric(vertical: MyApp.height * 0.01),
+          margin: const EdgeInsets.only(bottom: 15),
           child: Text(item.content, style: contentStyle),
         ),
         for (var idx in item.img)
-          FutureBuilder<Map<String, Object>>(
-            future: controller.getLoadContentImage(item, idx),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final image = snapshot.data!['image'] as ImageProvider;
-                final info = snapshot.data!['info'] as ImageInfo;
-                return nboDetailImg(info: info, image: image);
-              } else {
-                return nboDetailImg();
-              }
-            },
+          Padding(
+            padding: const EdgeInsets.only(bottom: 15),
+            child: FutureBuilder<Map<String, Object>>(
+              future: controller.getLoadContentImage(item, idx),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final image = snapshot.data!['image'] as ImageProvider;
+                  final info = snapshot.data!['info'] as ImageInfo;
+                  return nboDetailImg(info: info, image: image);
+                } else {
+                  return nboDetailImg();
+                }
+              },
+            ),
           ),
         GestureDetector(
           onTap: () {
@@ -168,7 +181,7 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
             color: isLike ? pointColor : grey400,
           ),
         ),
-        const SizedBox(height: 7),
+        const SizedBox(height: 15),
       ],
     ),
   );
@@ -176,10 +189,10 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
 
 Container nboDetailComment(NboDetail item, CommunityViewController controller) {
   return Container(
-    padding: const EdgeInsets.all(8),
+    padding: const EdgeInsets.symmetric(vertical: 15),
     decoration: BoxDecoration(
       border: Border(
-        top: BorderSide(width: 3, color: grey300),
+        top: BorderSide(width: 6, color: grey300.withAlpha(100)),
       ),
     ),
     child: Column(
@@ -266,7 +279,7 @@ Container nboCommentProfile(
           children: [
             nboProfileIcon(item.userIdx, 40, 20),
             const SizedBox(width: 7),
-            nboProfileId(item.aka, item.writeTime),
+            nboProfileId(item.aka, item.writeTime, 40),
             const Spacer(),
             if (NavigationProvider.to.getPerson.idx == item.userIdx)
               IconButton(
@@ -286,7 +299,7 @@ Container nboCommentProfile(
         ),
         if (item.content.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+            padding: const EdgeInsets.fromLTRB(47, 8, 0, 0),
             child: Text(
               item.content,
               style: const TextStyle(color: Colors.black, height: 1),
@@ -295,11 +308,12 @@ Container nboCommentProfile(
         if (item.isImg == 1) nboCommentImg('comment', item.idx, imgCallback),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             GestureDetector(
               onTap: () => isLike ? removeLike() : addLike(),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 4, 0, 0),
+                padding: const EdgeInsets.fromLTRB(47, 8, 0, 8),
                 child: Row(
                   children: [
                     if (isLike)
@@ -312,7 +326,7 @@ Container nboCommentProfile(
                       '좋아요 ${item.likes}',
                       style: TextStyle(
                         color: isLike ? pointColor : grey400,
-                        fontSize: 12,
+                        fontSize: 11,
                         height: 1,
                       ),
                     ),
@@ -325,10 +339,10 @@ Container nboCommentProfile(
                 callback(item.idx, item.userIdx, item.aka);
               },
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(4, 4, 0, 0),
+                padding: const EdgeInsets.fromLTRB(6, 0, 0, 0),
                 child: Text(
                   '답글 달기',
-                  style: TextStyle(color: grey400, fontSize: 12, height: 1),
+                  style: TextStyle(color: grey400, fontSize: 11, height: 1),
                 ),
               ),
             ),
@@ -368,7 +382,7 @@ List<Widget> nboCommentReple(
     bool isLike = list.contains(comments[i].idx);
     commentWidgets.add(
       Padding(
-        padding: EdgeInsets.fromLTRB(12, 4, 0, i == numComments - 1 ? 0 : 4),
+        padding: EdgeInsets.fromLTRB(47, 4, 0, i == numComments - 1 ? 0 : 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -379,29 +393,28 @@ List<Widget> nboCommentReple(
                 nboProfileId(
                   comments[i].aka,
                   comments[i].writeTime,
+                  30,
                   small: true,
                 ),
                 const Spacer(),
-                IconButton(
-                  padding: const EdgeInsets.all(4),
-                  constraints: const BoxConstraints(
-                    maxHeight: 30,
-                  ),
-                  iconSize: 17,
-                  splashRadius: 15,
-                  onPressed: () {
-                    showModalChild(comments[i].idx);
-                  },
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: grey400,
-                  ),
-                )
+                if (NavigationProvider.to.getPerson.idx == comments[i].idx)
+                  IconButton(
+                    padding: const EdgeInsets.all(4),
+                    constraints: const BoxConstraints(
+                      maxHeight: 30,
+                    ),
+                    iconSize: 17,
+                    splashRadius: 15,
+                    onPressed: () {
+                      showModalChild(comments[i].idx);
+                    },
+                    icon: Icon(Icons.more_vert, color: grey400),
+                  )
               ],
             ),
             if (comments[i].content.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.fromLTRB(4, 4, 0, 0),
+                padding: const EdgeInsets.fromLTRB(37, 6, 0, 0),
                 child: Text(
                   comments[i].content,
                   style: const TextStyle(
@@ -409,13 +422,16 @@ List<Widget> nboCommentReple(
                 ),
               ),
             if (comments[i].isImg == 1)
-              nboCommentImg('reple', comments[i].idx, imgCallback),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(37, 6, 0, 0),
+                child: nboCommentImg('reple', comments[i].idx, imgCallback),
+              ),
             GestureDetector(
               onTap: () => isLike
                   ? removeRepleLike(comments[i].idx)
                   : addRepleLike(comments[i].idx),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(4, 2, 0, 0),
+                padding: const EdgeInsets.fromLTRB(37, 6, 0, 3),
                 child: Row(
                   children: [
                     if (isLike)
@@ -427,10 +443,9 @@ List<Widget> nboCommentReple(
                     Text(
                       '좋아요 ${comments[i].likes}',
                       style: TextStyle(
-                        color: isLike ? pointColor : grey400,
-                        fontSize: 11,
-                        height: 1,
-                      ),
+                          color: isLike ? pointColor : grey400,
+                          fontSize: 11,
+                          height: 1),
                     ),
                   ],
                 ),

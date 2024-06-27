@@ -42,7 +42,7 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
               children: [
                 Expanded(
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                       child: Obx(
                         () => Skeletonizer(
                           enabled: controller.getIsLoading,
@@ -152,7 +152,8 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                       ),
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(4),
+                          padding: const EdgeInsets.only(
+                              top: 4, bottom: 4, left: 4, right: 8),
                           child: Obx(() {
                             final isFocus = controller.getCommentFocus;
                             return TextField(
@@ -188,21 +189,21 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
                                   borderSide:
                                       BorderSide(width: 1, color: pointColor),
                                   borderRadius: const BorderRadius.all(
-                                    Radius.circular(15),
+                                    Radius.circular(25),
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderSide:
                                       BorderSide(width: 1, color: pointColor),
                                   borderRadius: const BorderRadius.all(
-                                    Radius.circular(15),
+                                    Radius.circular(25),
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide:
                                       BorderSide(width: 1, color: pointColor),
                                   borderRadius: const BorderRadius.all(
-                                    Radius.circular(15),
+                                    Radius.circular(25),
                                   ),
                                 ),
                               ),

@@ -115,10 +115,10 @@ class CustomNaverMapController extends GetxController {
 
   void socketInit() {
     socket.onConnect((_) async {
-      Log.f('connect');
+      Log.f('Connect');
     });
     socket.onDisconnect((_) {
-      Log.e('disconnect');
+      Log.e('Disconnect');
     });
     socket.on('join', (data) {
       socketId(data);
@@ -178,15 +178,23 @@ class CustomNaverMapController extends GetxController {
   }
 
   Future<void> checkUsers(List<dynamic> data) async {
+    data = data.map((item) {
+      if (item.containsKey('imgupDate') && item['imgupDate'] is String) {
+        item['imgupDate'] = item['imgupDate'].replaceAll(' ', 'T');
+      }
+      return item;
+    }).toList();
     Set<dynamic> currentUsers = getUsers.toSet();
     Set<dynamic> newData = data.toSet();
-
     final retainedUsers = currentUsers
-        .where((cu) => newData.any((nd) => nd['userIdx'] == cu['userIdx']))
+        .where((cu) => newData.any((nd) =>
+            nd['userIdx'] == cu['userIdx'] &&
+            nd['imgupDate'] == cu['imgupDate']))
         .toSet();
     final addedUsers = newData
-        .where(
-            (nd) => !currentUsers.any((cu) => cu['userIdx'] == nd['userIdx']))
+        .where((nd) => !currentUsers.any((cu) =>
+            cu['userIdx'] == nd['userIdx'] &&
+            nd['imgupDate'] == cu['imgupDate']))
         .toList();
 
     _users.value = retainedUsers.union(addedUsers.toSet()).toList();
@@ -199,8 +207,12 @@ class CustomNaverMapController extends GetxController {
         'lat': getCurrentPosition?.latitude,
         'lng': getCurrentPosition?.longitude,
       },
+      'imgupDate':
+          NavigationProvider.to.getPerson.imgupDate.replaceAll(' ', 'T'),
       'visible': 1
     });
+
+    log('${_users.value.first}');
     final zoom = await nowCameraZoom();
     await zoomChange(zoom);
   }
@@ -265,24 +277,11 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
-  // Future<ImageInfo> fetchUserImage(int userIdx) async {
-  //   final image = markerImg(userIdx);
-
-  //   final Completer<ImageInfo> completer = Completer();
-  //   image.resolve(const ImageConfiguration()).addListener(
-  //     ImageStreamListener((ImageInfo info, bool synchronousCall) {
-  //       completer.complete(info);
-  //     }),
-  //   );
-
-  //   return completer.future;
-  // }
-
-  Future<ImageInfo> testUserImage(int userIdx) async {
-    final image = markerImg(userIdx);
+  Future<ImageInfo> fetchUserImage(int userIdx, String date) async {
+    final image = markerImg(userIdx, date);
 
     final Completer<ImageInfo> completer = Completer();
-    image.image.resolve(const ImageConfiguration()).addListener(
+    image.resolve(const ImageConfiguration()).addListener(
       ImageStreamListener((ImageInfo info, bool synchronousCall) {
         completer.complete(info);
       }),
@@ -293,9 +292,7 @@ class CustomNaverMapController extends GetxController {
 
   Future<NMarker> createMarker(dynamic user) async {
     const double size = 36;
-
-    // final ImageInfo imageInfo = await fetchUserImage(user['userIdx']);
-    final ImageInfo test = await testUserImage(user['userIdx']);
+    final imageInfo = await fetchUserImage(user['userIdx'], user['imgupDate']);
     // 이미지 로드가 완료된 후에 마커를 생성합니다.
     final userIcon = await NOverlayImage.fromWidget(
       widget: SizedBox(
@@ -308,7 +305,7 @@ class CustomNaverMapController extends GetxController {
                 : pointColor,
             backgroundColor: Colors.white,
             borderWidth: 2,
-            imageInfo: test,
+            imageInfo: imageInfo,
           ),
         ),
       ),
@@ -318,7 +315,7 @@ class CustomNaverMapController extends GetxController {
     return NMarker(
       id: NavigationProvider.to.getPerson.idx == user['userIdx']
           ? 'iam'
-          : '${user['userIdx']}',
+          : '${user['userIdx']}_${user['imgupDate']}',
       icon: userIcon,
       position: NLatLng(
         user['position']['lat'],
@@ -326,7 +323,8 @@ class CustomNaverMapController extends GetxController {
       ),
     )..setOnTapListener(
         (overlay) async {
-          await showProfileDialog(user['userIdx'].toString());
+          await showProfileDialog(
+              user['userIdx'].toString(), user['imgupDate']);
         },
       );
   }

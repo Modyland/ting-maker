@@ -18,7 +18,7 @@ class SubjectListWidget extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: grey300,
+            color: grey300.withAlpha(150),
             width: 1,
           ),
         ),

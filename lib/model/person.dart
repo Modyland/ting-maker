@@ -17,8 +17,8 @@ class Person {
   @HiveField(5)
   int visible;
   @HiveField(6)
-  String? profile;
-  @HiveField(7)
+  String imgupDate;
+  @HiveField(6)
   String? aka;
 
   Person({
@@ -28,7 +28,7 @@ class Person {
     required this.birth,
     required this.gender,
     required this.visible,
-    this.profile,
+    required this.imgupDate,
     this.aka,
   });
 
@@ -40,7 +40,7 @@ class Person {
       birth: json['birth'],
       gender: json['gender'],
       visible: json['visible'],
-      profile: json['profile'],
+      imgupDate: json['imgupDate'],
       aka: json['aka'],
     );
   }

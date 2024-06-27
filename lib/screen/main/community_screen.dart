@@ -40,7 +40,7 @@ class CommunityScreen extends GetView<CommunityController> {
                     ],
                   ),
                   Positioned(
-                    bottom: 10,
+                    bottom: 15,
                     right: 20,
                     child: TextButton(
                       style: TextButton.styleFrom(

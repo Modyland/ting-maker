@@ -90,10 +90,7 @@ AppBar homeAppbar(
         flexibleSpace: SizedBox(
           width: double.infinity,
           height: kToolbarHeight,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-            child: child,
-          ),
+          child: child,
         ),
       );
     case Navigation.community:

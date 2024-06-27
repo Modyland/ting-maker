@@ -52,13 +52,13 @@ class NavigationProvider extends GetxService {
 
   Widget mapAppbarButton(String text, Future Function() onTap) {
     return Container(
-      height: 28,
+      height: 24,
       decoration: enableButton,
       child: MaterialButton(
         animationDuration: Durations.short4,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
         ),
         onPressed: () {
           onTap();
@@ -66,7 +66,8 @@ class NavigationProvider extends GetxService {
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 14, color: Colors.white),
+            style:
+                const TextStyle(fontSize: 14, color: Colors.white, height: 1.2),
           ),
         ),
       ),
@@ -74,50 +75,58 @@ class NavigationProvider extends GetxService {
   }
 
   Widget mapAppbar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(left: 10, bottom: 3),
-              child: Text(
-                CustomNaverMapController.to.getReverseGeocoding,
-                style: const TextStyle(
-                    fontSize: 14, color: Colors.black87, height: 1),
-              ),
-            ),
-            Row(
+    return SizedBox(
+      height: kToolbarHeight,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(left: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                mapAppbarButton(
-                    '인구해변',
-                    () async =>
-                        await CustomNaverMapController.to.moveFirstHole()),
-                const SizedBox(width: 8),
-                mapAppbarButton(
-                    '서피비치',
-                    () async =>
-                        await CustomNaverMapController.to.moveSecondHole()),
+                Text(
+                  CustomNaverMapController.to.getReverseGeocoding,
+                  style: const TextStyle(
+                      fontSize: 14, color: Colors.black87, height: 1),
+                ),
+                Row(
+                  children: [
+                    mapAppbarButton(
+                        '인구해변',
+                        () async =>
+                            await CustomNaverMapController.to.moveFirstHole()),
+                    const SizedBox(width: 8),
+                    mapAppbarButton(
+                        '서피비치',
+                        () async =>
+                            await CustomNaverMapController.to.moveSecondHole()),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-        AnimatedToggleSwitch.size(
-          height: 26,
-          borderWidth: 2,
-          indicatorSize: const Size.fromWidth(24),
-          current: CustomNaverMapController.to.getVisible,
-          values: const [1, 0],
-          onTap: (i) => CustomNaverMapController.to.visibleUpdate(),
-          styleBuilder: (value) => ToggleStyle(
-              indicatorColor: Colors.white,
-              backgroundColor: value == 1 ? pointColor : grey300,
-              borderColor: value == 1
-                  ? pointColor.withOpacity(0.5)
-                  : grey300.withOpacity(0.5)),
-        ),
-      ],
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: AnimatedToggleSwitch.size(
+              height: 26,
+              borderWidth: 2,
+              indicatorSize: const Size.fromWidth(24),
+              current: CustomNaverMapController.to.getVisible,
+              values: const [1, 0],
+              onTap: (i) => CustomNaverMapController.to.visibleUpdate(),
+              styleBuilder: (value) => ToggleStyle(
+                  indicatorColor: Colors.white,
+                  backgroundColor: value == 1 ? pointColor : grey300,
+                  borderColor: value == 1
+                      ? pointColor.withOpacity(0.5)
+                      : grey300.withOpacity(0.5)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -126,6 +135,7 @@ class NavigationProvider extends GetxService {
       case PageState.noticePage:
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               margin: const EdgeInsets.only(left: 10, bottom: 3),

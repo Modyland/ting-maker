@@ -14,12 +14,12 @@ class Cluster {
     longitudeSum = longitude;
   }
 
-  void addMarker(NMarker marker, String userIdx) {
+  void addMarker(NMarker marker, String key) {
     count++;
     latitudeSum += marker.position.latitude;
     longitudeSum += marker.position.longitude;
     markers.add(marker);
-    idxs.add(userIdx);
+    idxs.add(key);
   }
 
   NLatLng get averageLocation {

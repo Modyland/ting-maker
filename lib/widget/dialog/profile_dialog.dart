@@ -4,7 +4,7 @@ import 'package:ting_maker/main.dart';
 import 'package:ting_maker/widget/common_style.dart';
 import 'package:ting_maker/widget/marker_img.dart';
 
-Future<void> showProfileDialog(String idx) async {
+Future<void> showProfileDialog(String idx, String date) async {
   return await Get.dialog(
     Center(
       child: Container(
@@ -14,7 +14,7 @@ Future<void> showProfileDialog(String idx) async {
           color: pointColor.withAlpha(100),
           image: DecorationImage(
             fit: BoxFit.contain,
-            image: markerImg(int.tryParse(idx)!).image,
+            image: markerImg(int.tryParse(idx)!, date),
           ),
         ),
       ),
