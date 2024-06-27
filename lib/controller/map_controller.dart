@@ -199,7 +199,6 @@ class CustomNaverMapController extends GetxController {
         'lat': getCurrentPosition?.latitude,
         'lng': getCurrentPosition?.longitude,
       },
-      'imgupDate': 'iam',
       'visible': 1
     });
     final zoom = await nowCameraZoom();
@@ -266,8 +265,8 @@ class CustomNaverMapController extends GetxController {
     }
   }
 
-  Future<ImageInfo> fetchUserImage(int userIdx, String date) async {
-    final image = markerImg(userIdx, date: date);
+  Future<ImageInfo> fetchUserImage(int userIdx) async {
+    final image = markerImg(userIdx);
 
     final Completer<ImageInfo> completer = Completer();
     image.resolve(const ImageConfiguration()).addListener(
@@ -282,8 +281,7 @@ class CustomNaverMapController extends GetxController {
   Future<NMarker> createMarker(dynamic user) async {
     const double size = 36;
 
-    final ImageInfo imageInfo =
-        await fetchUserImage(user['userIdx'], user['imgupDate']);
+    final ImageInfo imageInfo = await fetchUserImage(user['userIdx']);
 
     // 이미지 로드가 완료된 후에 마커를 생성합니다.
     final userIcon = await NOverlayImage.fromWidget(
@@ -307,7 +305,7 @@ class CustomNaverMapController extends GetxController {
     return NMarker(
       id: NavigationProvider.to.getPerson.idx == user['userIdx']
           ? 'iam'
-          : '${user['userIdx']}_${user['imgupDate']}',
+          : '${user['userIdx']}',
       icon: userIcon,
       position: NLatLng(
         user['position']['lat'],

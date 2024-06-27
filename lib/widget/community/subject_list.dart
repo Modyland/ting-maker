@@ -53,7 +53,7 @@ class SubjectListWidget extends StatelessWidget {
                         )
                       : Row(
                           children: [
-                            const Icon(Icons.subject_rounded),
+                            const Icon(Icons.menu),
                             SubjectTextWidget(
                               controller: controller,
                               idx: idx,

@@ -27,7 +27,6 @@ class CommunityViewScreen extends GetView<CommunityViewController> {
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: Obx(
               () => viewAppbar(
-                controller.getDetail!.title,
                 controller.getDetail!.userIdx,
                 () => controller.showMenuPopup(isNbo: true),
               ),

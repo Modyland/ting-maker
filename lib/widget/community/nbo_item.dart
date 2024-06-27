@@ -1,7 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/icons/ting_icons_icons.dart';
 import 'package:ting_maker/model/nbo_list.dart';
 import 'package:ting_maker/service/service.dart';
 import 'package:ting_maker/util/time.dart';
@@ -67,7 +66,7 @@ InkWell nboItem(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: item.isImg == 1
-                    ? MainAxisAlignment.spaceBetween
+                    ? MainAxisAlignment.spaceAround
                     : MainAxisAlignment.end,
                 children: [
                   if (item.isImg == 1) nboFirstImg(item),
@@ -77,7 +76,7 @@ InkWell nboItem(
                     children: [
                       Row(
                         children: [
-                          Icon(TingIcons.favorite, color: grey400, size: 13),
+                          Icon(Icons.thumb_up, color: grey400, size: 13),
                           Text('\t${item.likes.obs}', style: contentStyle),
                         ],
                       ),
@@ -104,7 +103,6 @@ SizedBox nboFirstImg(NboList item) {
     width: double.infinity,
     height: 80,
     child: Card(
-      elevation: 4,
       shadowColor: grey200,
       color: Colors.white,
       shape: RoundedRectangleBorder(

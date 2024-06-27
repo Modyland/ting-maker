@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ting_maker/main.dart';
 import 'package:ting_maker/service/navigation_service.dart';
 import 'package:ting_maker/widget/common_style.dart';
 
@@ -53,7 +52,7 @@ AppBar registerAppbar(String title, bool isReady, VoidCallback callback) {
   );
 }
 
-AppBar viewAppbar(String title, int itemIdx, Function menuOpen) {
+AppBar viewAppbar(int itemIdx, Function menuOpen) {
   return AppBar(
     elevation: 0,
     scrolledUnderElevation: 0,
@@ -61,21 +60,6 @@ AppBar viewAppbar(String title, int itemIdx, Function menuOpen) {
       splashRadius: 15,
       icon: Icon(Icons.arrow_back, color: grey500),
       onPressed: () => Get.back(),
-    ),
-    title: Center(
-      child: Container(
-        alignment: Alignment.center,
-        width: MyApp.width * 0.5,
-        child: Text(
-          title.splitMapJoin('\n', onMatch: (m) => ' '),
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w300,
-              height: 1),
-        ),
-      ),
     ),
     actions: [
       itemIdx == NavigationProvider.to.getPerson.idx
@@ -114,8 +98,8 @@ AppBar homeAppbar(
       );
     case Navigation.community:
       return AppBar(
-        elevation: ele ?? 3,
-        scrolledUnderElevation: ele ?? 3,
+        elevation: ele ?? 0,
+        scrolledUnderElevation: ele ?? 0,
         flexibleSpace: SizedBox(
           width: double.infinity,
           height: kToolbarHeight,

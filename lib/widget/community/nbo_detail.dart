@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:ting_maker/controller/community/community_view_controller.dart';
-import 'package:ting_maker/icons/ting_icons_icons.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/model/comment.dart';
 import 'package:ting_maker/model/nbo_detail.dart';
@@ -165,7 +164,7 @@ Container nboDetailContent(NboDetail item, CommunityViewController controller) {
             }
           },
           child: Icon(
-            isLike ? TingIcons.favorite : TingIcons.favorite_border,
+            isLike ? Icons.thumb_up : Icons.thumb_up_alt_outlined,
             color: isLike ? pointColor : grey400,
           ),
         ),
@@ -304,9 +303,10 @@ Container nboCommentProfile(
                 child: Row(
                   children: [
                     if (isLike)
-                      Icon(TingIcons.favorite, color: pointColor, size: 12)
+                      Icon(Icons.thumb_up, color: pointColor, size: 12)
                     else
-                      Icon(TingIcons.favorite_border, color: grey400, size: 12),
+                      Icon(Icons.thumb_up_alt_outlined,
+                          color: grey400, size: 12),
                     const SizedBox(width: 2),
                     Text(
                       '좋아요 ${item.likes}',
@@ -419,9 +419,10 @@ List<Widget> nboCommentReple(
                 child: Row(
                   children: [
                     if (isLike)
-                      Icon(TingIcons.favorite, color: pointColor, size: 11)
+                      Icon(Icons.thumb_up, color: pointColor, size: 11)
                     else
-                      Icon(TingIcons.favorite_border, color: grey400, size: 11),
+                      Icon(Icons.thumb_up_alt_outlined,
+                          color: grey400, size: 11),
                     const SizedBox(width: 2),
                     Text(
                       '좋아요 ${comments[i].likes}',

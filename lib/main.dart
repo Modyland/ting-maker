@@ -161,7 +161,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               bottomNavigationBarTheme: const BottomNavigationBarThemeData(
                 backgroundColor: Colors.white,
                 selectedItemColor: Colors.black,
-                elevation: 10,
+                elevation: 0,
               ),
               bottomSheetTheme: const BottomSheetThemeData(
                 backgroundColor: Colors.white,
