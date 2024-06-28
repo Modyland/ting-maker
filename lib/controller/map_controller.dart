@@ -211,8 +211,6 @@ class CustomNaverMapController extends GetxController {
           NavigationProvider.to.getPerson.imgupDate.replaceAll(' ', 'T'),
       'visible': 1
     });
-
-    log('${_users.value.first}');
     final zoom = await nowCameraZoom();
     await zoomChange(zoom);
   }
