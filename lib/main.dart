@@ -90,18 +90,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     final isLogin = utilBox.get('isLogin') ?? false;
     final person = personBox.get('person');
-    final Map<String, dynamic> requestData = {'id': '', 'activity': ''};
+    final req = {'id': '', 'kind': ''};
     if (isLogin && person != null) {
-      requestData['id'] = person.id;
+      req['id'] = person.id;
       if (state == AppLifecycleState.resumed) {
-        requestData['activity'] = 'login';
-        service.loginLog(requestData);
+        req['kind'] = 'login_log';
+        service.tingApiGetdata(req);
         Log.e('Front');
       }
       if (state == AppLifecycleState.detached ||
           state == AppLifecycleState.paused) {
-        requestData['activity'] = 'logout';
-        service.loginLog(requestData);
+        req['kind'] = 'logout';
+        service.tingApiGetdata(req);
         Log.e("Back");
       }
     }
@@ -173,13 +173,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               ),
             ),
             initialBinding: BindingsBuilder(() {
-              Get.put(MainProvider());
-              Get.lazyPut(() => NavigationProvider());
-              Get.lazyPut(() => CustomNaverMapController());
-              Get.lazyPut(() => CommunityController());
-              Get.lazyPut(() => MyInfoController());
-              Get.lazyPut(() => MyPlaceController());
-              Get.lazyPut(() => ChattingController());
+              Get.put(MainProvider(), permanent: true);
+              Get.put(NavigationProvider(), permanent: true);
+              Get.put(CustomNaverMapController(), permanent: true);
+              Get.put(CommunityController(), permanent: true);
+              Get.put(MyInfoController(), permanent: true);
+              Get.put(MyPlaceController(), permanent: true);
+              Get.put(ChattingController(), permanent: true);
             }),
             navigatorKey: Get.key,
             navigatorObservers: [RouterObserver()],

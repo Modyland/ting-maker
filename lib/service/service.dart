@@ -16,10 +16,6 @@ class MainProvider extends GetConnect {
       ..timeout = const Duration(seconds: 5);
   }
 
-  Future<Response> loginLog(Map data) async {
-    return httpClient.post('Login_log/api_getdata', body: data);
-  }
-
   Future<Response> phoneCheck(String phone, bool check) async {
     return httpClient.get('SMS/sendSMS?id=&phone=$phone&check=$check');
   }
