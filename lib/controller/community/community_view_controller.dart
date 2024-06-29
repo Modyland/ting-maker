@@ -78,6 +78,7 @@ class CommunityViewController extends GetxController {
     try {
       comment.clear();
       comments.clear();
+      rawImageData.clear();
       final item = await service.getNboDetailSelect(
         getArgs['idx'],
         NavigationProvider.to.getPerson.id,
@@ -104,7 +105,9 @@ class CommunityViewController extends GetxController {
   }
 
   Future<Map<String, Object>> getLoadContentImage(
-      NboDetail item, int idx) async {
+    NboDetail item,
+    int idx,
+  ) async {
     final image = ExtendedNetworkImageProvider(
       '${MainProvider.base}nbo/nboImgSelect?imgIdx=$idx',
       cacheKey: 'nboImg_${item.idx}_$idx',
@@ -125,7 +128,9 @@ class CommunityViewController extends GetxController {
       ),
     );
     final info = await completer.future;
-    rawImageData.add(image.rawImageData);
+    if (item.img.length > rawImageData.length) {
+      rawImageData.add(image.rawImageData);
+    }
 
     return {'image': image, 'info': info};
   }

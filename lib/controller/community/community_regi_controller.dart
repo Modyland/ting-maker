@@ -7,11 +7,15 @@ import 'package:ting_maker/controller/community_controller.dart';
 import 'package:ting_maker/controller/map_controller.dart';
 import 'package:ting_maker/main.dart';
 import 'package:ting_maker/service/navigation_service.dart';
+import 'package:ting_maker/util/logger.dart';
 import 'package:ting_maker/util/overlay.dart';
 import 'package:ting_maker/widget/sheet/community_sheet.dart';
 import 'package:ting_maker/widget/snackbar/snackbar.dart';
 
 class CommunityRegiController extends GetxController {
+  final TextEditingController contentController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+
   static CommunityRegiController get to => Get.find();
   final Rx<Map<String, dynamic>?> args = Rx(Get.arguments);
 
@@ -19,22 +23,32 @@ class CommunityRegiController extends GetxController {
   Rx<String> regiTitle = Rx<String>('');
   Rx<String> regiContent = Rx<String>('');
   RxList<Uint8List> regiImage = RxList<Uint8List>([]);
+  Rx<bool> isReady = Rx(false);
 
   Map<String, dynamic>? get getArgs => args.value;
   String get getSubject => regiSubject.value;
-  String get getTitle => regiTitle.value;
-  String get getContent => regiContent.value;
+  bool get getReady => isReady.value;
 
   set setSubject(String v) => regiSubject(v);
-  set setTitle(String v) => regiTitle(v);
-  set setContent(String v) => regiContent(v);
+  set setReady(bool b) => isReady(b);
 
   @override
   void onReady() async {
     super.onReady();
     if (getArgs == null) {
       await showSubjectSheetList();
+    } else {
+      setReady = true;
+      contentController.text = getArgs?['content'];
+      titleController.text = getArgs?['title'];
+      setSubject = getArgs?['subject'];
+      regiImage(getArgs?['img']);
     }
+  }
+
+  void readyCheck() {
+    setReady =
+        titleController.text.isNotEmpty && contentController.text.isNotEmpty;
   }
 
   Future<void> showSubjectSheetList() async {
@@ -59,8 +73,8 @@ class CommunityRegiController extends GetxController {
         "aka": NavigationProvider.to.getPerson.aka,
         "vilege": CustomNaverMapController.to.getReverseGeocoding,
         "subject": getSubject,
-        "title": getTitle,
-        "content": getContent,
+        "title": titleController.text,
+        "content": contentController.text,
         "nboImg": regiImage.toList().isNotEmpty ? regiImage.toList() : null
       };
 
@@ -71,6 +85,7 @@ class CommunityRegiController extends GetxController {
         registerSuccess();
       }
     } catch (err) {
+      Log.e(err);
       noTitleSnackbar(MyApp.normalErrorMsg);
     } finally {
       OverlayManager.hideOverlay();
@@ -81,6 +96,10 @@ class CommunityRegiController extends GetxController {
     CommunityController.to.nboList.clear();
     CommunityController.to.getPagingController.refresh();
     Get.back();
-    noTitleSnackbar('게시글이 등록되었습니다.', time: 2);
+    if (getArgs == null) {
+      noTitleSnackbar('게시글이 등록되었습니다.', time: 2);
+    } else {
+      noTitleSnackbar('게시글이 수정되었습니다.', time: 2);
+    }
   }
 }

@@ -10,6 +10,7 @@ class Comment {
   final int isImg;
   final int commentCount;
   final List<Comments> comments;
+  String imgupDate;
   Comment({
     required this.idx,
     required this.userIdx,
@@ -22,6 +23,7 @@ class Comment {
     required this.isImg,
     required this.comments,
     required this.commentCount,
+    required this.imgupDate,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
@@ -39,6 +41,7 @@ class Comment {
       comments: (json['comments'] as List<dynamic>)
           .map((item) => Comments.fromJson(item))
           .toList(),
+      imgupDate: json['imgupDate'],
     );
   }
 
@@ -55,6 +58,7 @@ class Comment {
       'isImg': isImg,
       'commentes': commentCount,
       'comments': comments,
+      'imgupDate': imgupDate,
     };
   }
 }
@@ -71,6 +75,7 @@ class Comments {
   final String content;
   final int isImg;
   final int? pause;
+  String imgupDate;
 
   Comments({
     required this.idx,
@@ -84,6 +89,7 @@ class Comments {
     required this.content,
     required this.isImg,
     this.pause,
+    required this.imgupDate,
   });
 
   factory Comments.fromJson(Map<String, dynamic> json) {
@@ -99,6 +105,7 @@ class Comments {
       content: json['content'],
       isImg: json['isImg'],
       pause: json['pause'],
+      imgupDate: json['imgupDate'],
     );
   }
 
@@ -115,6 +122,7 @@ class Comments {
       'content': content,
       'isImg': isImg,
       'pause': pause,
+      'imgupDate': imgupDate,
     };
   }
 }

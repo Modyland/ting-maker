@@ -19,9 +19,7 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
         child: Obx(
           () => registerAppbar(
             '동네생활 글쓰기',
-            controller.getSubject.isNotEmpty &&
-                controller.getTitle.isNotEmpty &&
-                controller.getContent.isNotEmpty,
+            controller.getSubject.isNotEmpty && controller.getReady,
             () async {
               OverlayManager.showOverlay(Get.overlayContext!);
               await controller.registerSubmit();
@@ -155,6 +153,8 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
       style: const TextStyle(fontSize: 15, height: 1),
       minLines: 10,
       maxLines: null,
+      controller: controller.contentController,
+      keyboardType: TextInputType.multiline,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
         hintText: '내용을 입력하세요',
@@ -164,7 +164,7 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
         enabledBorder: InputBorder.none,
       ),
       onChanged: (value) {
-        controller.setContent = value;
+        controller.readyCheck();
       },
     );
   }
@@ -174,6 +174,8 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
       style: const TextStyle(fontSize: 18, height: 1),
       minLines: 1,
       maxLines: null,
+      controller: controller.titleController,
+      keyboardType: TextInputType.text,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
         hintText: '제목을 입력하세요',
@@ -183,7 +185,7 @@ class CommunityRegiScreen extends GetView<CommunityRegiController> {
         enabledBorder: InputBorder.none,
       ),
       onChanged: (value) {
-        controller.setTitle = value;
+        controller.readyCheck();
       },
     );
   }

@@ -13,6 +13,7 @@ class NboDetail {
   final List<int> img;
   int commentCount;
   final List<Comment> comment;
+  String imgupDate;
 
   NboDetail({
     required this.idx,
@@ -27,6 +28,7 @@ class NboDetail {
     required this.img,
     required this.comment,
     required this.commentCount,
+    required this.imgupDate,
   });
 
   factory NboDetail.fromJson(Map<String, dynamic> json) {
@@ -45,6 +47,7 @@ class NboDetail {
           .map((item) => Comment.fromJson(item))
           .toList(),
       commentCount: json['commentCount'],
+      imgupDate: json['imgupDate'],
     );
   }
 
@@ -62,6 +65,7 @@ class NboDetail {
       'imgIdxArr': img,
       'commentDto': comment,
       'commentCount': commentCount,
+      'imgupDate': imgupDate,
     };
   }
 }
