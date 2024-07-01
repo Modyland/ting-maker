@@ -173,13 +173,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               ),
             ),
             initialBinding: BindingsBuilder(() {
-              Get.put(MainProvider(), permanent: true);
-              Get.put(NavigationProvider(), permanent: true);
-              Get.put(CustomNaverMapController(), permanent: true);
-              Get.put(CommunityController(), permanent: true);
-              Get.put(MyInfoController(), permanent: true);
-              Get.put(MyPlaceController(), permanent: true);
-              Get.put(ChattingController(), permanent: true);
+              Get.put(MainProvider());
+              Get.lazyPut(() => NavigationProvider(), fenix: true);
+              Get.lazyPut(() => CustomNaverMapController(), fenix: true);
+              Get.lazyPut(() => CommunityController(), fenix: true);
+              Get.lazyPut(() => MyInfoController(), fenix: true);
+              Get.lazyPut(() => MyPlaceController(), fenix: true);
+              Get.lazyPut(() => ChattingController(), fenix: true);
             }),
             navigatorKey: Get.key,
             navigatorObservers: [RouterObserver()],

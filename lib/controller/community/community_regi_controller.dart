@@ -71,6 +71,7 @@ class CommunityRegiController extends GetxController {
         "id": NavigationProvider.to.getPerson.id,
         'useridx': NavigationProvider.to.getPerson.idx,
         "aka": NavigationProvider.to.getPerson.aka,
+        'imgupDate': NavigationProvider.to.getPerson.imgupDate,
         "vilege": CustomNaverMapController.to.getReverseGeocoding,
         "subject": getSubject,
         "title": titleController.text,
